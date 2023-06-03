@@ -1,0 +1,7 @@
+server:
+  port: 9600
+#广场ID及GatewayId
+epc:
+  gatewayId: FD
+  gcId: 3611020000
+  subsystem: fd/
