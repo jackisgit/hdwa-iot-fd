@@ -1,0 +1,29 @@
+server:
+  port: 9600
+#广场ID及GatewayId
+epc:
+  gatewayId: FD
+  gcId: 3413020010
+  subsystem: fd/
+  rcvAddress: 10.117.32.90|7700
+  pCtlAddress: 10.117.32.91|7700
+  serviceIp: 10.117.32.102|7700
+  threadNum: 1
+mqtt:
+  hostUrl: tcp://127.0.0.1:1883
+  username: admin
+  password: wanda@1234
+  client-id: IOT-EPC-FD
+  cleanSession: true
+  reconnect: true
+  keepAlive: 100
+  isOpen: true
+  qos: 1
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 16379
+    password:
+
+beanName: boschSecurityDeviceSdk
