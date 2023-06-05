@@ -27,8 +27,6 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
 
     Thread thread;
 
-    private boolean isFirst = true;
-
     @Override
     public void sendMessage(DeviceMessage dm) {
         //如果数据变化则，发送emqx
@@ -50,7 +48,7 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("接收到上饶防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}",meter,funcid,value,message);
+        log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}",meter,funcid,value,message);
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
             if (redisUtil.hasKey(deviceMessage.getOutParamId())) {
                 commonDevice.feedback(message);
@@ -89,6 +87,7 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
         return false;
     }
 
+    @Override
     public void dataArrive(String message) {
         log.info("接收到主机传回的事件信息" + message);
         if (StringUtils.hasText(message)) {
@@ -170,7 +169,7 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
         }
     }
 
-    public String Alarm(String code) {
+    private String Alarm(String code) {
         String alarmName = "";
         if (code.equals("1100")) {
             alarmName = "个人救护报警";

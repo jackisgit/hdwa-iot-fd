@@ -2,6 +2,7 @@ package com.wanda.epc.device;
 import com.sun.jna.Pointer;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Vector;
@@ -15,11 +16,14 @@ public class BosFdCommunicator implements Runnable {
 
     private Pointer pObject;
 
-    private String rcvAddress = "10.11.80.85|7700";
+    @Value("${epc.rcvAddress}")
+    private String rcvAddress;
 
-    private String pCtlAddress = "10.11.80.84|7700";
+    @Value("${epc.pCtlAddress}")
+    private String pCtlAddress;
 
-    private String serviceIp = "10.11.80.224|7700";
+    @Value("${epc.serviceIp}")
+    private String serviceIp;
 
     private boolean interrupted = false;
 
