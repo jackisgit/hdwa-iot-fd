@@ -5,7 +5,7 @@ epc:
   gatewayId: FD
   gcId: 4419001220
   subsystem: fd/
-
+  threadNum: 1
 #防盗报警串口相关配置
 serial:
   serialNumber: COM4
