@@ -3,11 +3,11 @@ server:
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 5101060270
+  gcId: 3304020130
   subsystem: fd/
-  rcvAddress: 192.168.1.200|7700
-  pCtlAddress: 192.168.1.201|7700
-  serviceIp: 192.168.1.170|7700
+  rcvAddress: 10.11.80.85|7700
+  pCtlAddress: 10.11.80.84|7700
+  serviceIp: 10.11.80.85|7700
   threadNum: 1
 mqtt:
   hostUrl: tcp://127.0.0.1:1883

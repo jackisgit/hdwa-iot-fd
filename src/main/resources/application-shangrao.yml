@@ -8,7 +8,7 @@ epc:
   rcvAddress: 10.11.80.85|7700
   pCtlAddress: 10.11.80.84|7700
   serviceIp: 10.11.80.224|7700
-
+  threadNum: 1
 mqtt:
   hostUrl: tcp://127.0.0.1:1883
   username: admin
