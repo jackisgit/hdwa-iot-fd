@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>iot_epc_fd</artifactId>
+    <version>1.0.0-R20230606</version>
 
     <dependencies>
         <dependency>
@@ -31,7 +32,7 @@
 
 
     <build>
-        <finalName>IEPC_SR_FD</finalName>
+        <finalName>IOT_EPC_FD_Bosch_MTSW_V1.30.01</finalName>
     </build>
 
 </project>
