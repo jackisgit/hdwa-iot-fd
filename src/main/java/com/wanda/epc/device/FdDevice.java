@@ -66,8 +66,10 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
     }
 
     @Override
-    public void dispatchCommand(String outParamId, String value) {
-        if (outParamId != null && outParamId.endsWith(Constant.DEPLOY_WITH_DRAW_ALARM_SET)) {
+    public void dispatchCommand(String meter, Integer funcid, String value, String message) {
+        DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
+        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(Constant.DEPLOY_WITH_DRAW_ALARM_SET)) {
+            String outParamId = deviceMessage.getOutParamId();
             if (redisUtil.hasKey(outParamId)) {
                 return;
             }
