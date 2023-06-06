@@ -41,27 +41,30 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
                     isDefend = "1";
                 }
                 List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    for (DeviceMessage deviceMessage : deviceMessageList) {
-                        deviceMessage.setValue(isDefend);
-                        fdDevice.sendMessage(deviceMessage);
-                    }
+                if (CollectionUtils.isEmpty(deviceMessageList)) {
+                    return;
                 }
-            } else if (Constant.AZ_STATUS.equals(cmdType)) {
-                String data1 = packageDto.getData1();
-                String[] data1Split = data1.split("-");
-                String outParamId = data1Split[0] + "_" + data1Split[1] + "_" + Constant.IS_ALARM;
+                for (DeviceMessage deviceMessage : deviceMessageList) {
+                    deviceMessage.setValue(isDefend);
+                    fdDevice.sendMessage(deviceMessage);
+                }
+            } else if (Constant.EVENT_OUTPUT.equals(cmdType)) {
+                String data3 = packageDto.getData3();
+                //报警状态
+                String str = "4,5,6,7,8,9,10,11,12,13";
+                String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
                 String isAlarm = "0";
                 //0: 未知 1: 正常 2: 禁用 3: 旁路 4: 报警 5: 未准备 6: 故障 7: 布防
-                if ("4".equals(packageDto.getData2())) {
+                if (str.contains(data3)) {
                     isAlarm = "1";
                 }
                 List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    for (DeviceMessage deviceMessage : deviceMessageList) {
-                        deviceMessage.setValue(isAlarm);
-                        fdDevice.sendMessage(deviceMessage);
-                    }
+                if (CollectionUtils.isEmpty(deviceMessageList)) {
+                    return;
+                }
+                for (DeviceMessage deviceMessage : deviceMessageList) {
+                    deviceMessage.setValue(isAlarm);
+                    fdDevice.sendMessage(deviceMessage);
                 }
             }
         } catch (Exception e) {

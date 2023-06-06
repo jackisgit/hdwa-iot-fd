@@ -2,7 +2,7 @@
 epc:
   gatewayId: FD
   gcId: 5001130030
-  subsystem: fd/
+  subsystem: fdxt/
   threadNum: 1
 tcp:
   serverIP: 10.19.32.183

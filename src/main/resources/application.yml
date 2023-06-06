@@ -19,12 +19,6 @@ spring:
     host: 127.0.0.1
     port: 16379
     password:
-#广场ID及GatewayId
-epc:
-  gatewayId: FD
-  gcId: 5001130030
-  subsystem: fd/
-  threadNum: 1
 tcp:
   serverIP: 10.19.32.183
   port: 8202

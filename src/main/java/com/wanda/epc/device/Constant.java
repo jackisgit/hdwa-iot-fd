@@ -17,7 +17,7 @@ public class Constant {
     /**
      * 报警防区状态
      */
-    public static final String AZ_STATUS = "AZ_Status";
+    public static final String EVENT_OUTPUT = "Event_Output";
 
     /**
      * 控制报警用户（分区），（布防和撤防）
