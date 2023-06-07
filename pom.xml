@@ -26,7 +26,7 @@
 
 
     <build>
-        <finalName>IOT_EPC_FD</finalName>
+        <finalName>IOT_EPC_FD_Bosch_DS-7400</finalName>
     </build>
 
 </project>
