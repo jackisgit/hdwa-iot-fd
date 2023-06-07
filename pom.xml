@@ -4,11 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.wanda.epc</groupId>
-        <artifactId>iot_epc</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>iot_epc_dependencies</artifactId>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>iot_epc_fd</artifactId>
+    <version>1.0.0-R20230606</version>
 
     <dependencies>
         <dependency>
@@ -25,7 +26,7 @@
 
 
     <build>
-        <finalName>IEPC_PX_FD</finalName>
+        <finalName>IOT_EPC_FD_hikvision_v1.5.102.20200708210908</finalName>
     </build>
 
 </project>
