@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 孙率众
@@ -127,4 +128,14 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
             }
         }
     }
+
+    @Override
+    public void channelUnregistered(final ChannelHandlerContext ctx) {
+        ctx.channel().eventLoop().schedule(() -> {
+            println("重连接: " + ReconnectClient.HOST + ':' + ReconnectClient.PORT);
+            ReconnectClient.connect();
+        }, ReconnectClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+    }
+
+
 }

@@ -67,6 +67,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) {
+        commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(Constant.DEPLOY_WITH_DRAW_ALARM_SET)) {
             String outParamId = deviceMessage.getOutParamId();
@@ -138,5 +139,14 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
             group.shutdownGracefully();
 
         }
+    }
+
+    static void connect() {
+        b.connect().addListener(future -> {
+            if (future.cause() != null) {
+                handler.startTime = -1;
+                handler.println("建立连接失败: " + future.cause());
+            }
+        });
     }
 }
