@@ -1,6 +1,8 @@
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 3306210010
+  gcId: 3310020020
   subsystem: fdxt/
   threadNum: 5
+mqtt:
+  hostUrl: tcp://127.0.0.1:1883
