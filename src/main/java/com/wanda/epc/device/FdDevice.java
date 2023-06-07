@@ -35,6 +35,8 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
     @Value("${tcp.port}")
     private Integer port;
 
+    private Bootstrap b;
+
     private SocketChannel socketChannel;
 
     private EventLoopGroup group;
@@ -117,7 +119,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
         //配置服务端的NIO线程组
         group = new NioEventLoopGroup();
         try {
-            Bootstrap b = new Bootstrap();
+            b = new Bootstrap();
             // 绑定线程池
             b.group(group)
                     .channel(NioSocketChannel.class)
@@ -141,12 +143,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
         }
     }
 
-    static void connect() {
-        b.connect().addListener(future -> {
-            if (future.cause() != null) {
-                handler.startTime = -1;
-                handler.println("建立连接失败: " + future.cause());
-            }
-        });
+    public void connect() {
+        b.connect();
     }
 }

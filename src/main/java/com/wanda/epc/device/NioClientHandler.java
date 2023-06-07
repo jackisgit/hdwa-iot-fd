@@ -9,6 +9,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class NioClientHandler extends ChannelInboundHandlerAdapter {
+
+    @Autowired
+    private FdDevice fdDevice;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -132,9 +136,9 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) {
         ctx.channel().eventLoop().schedule(() -> {
-            println("重连接: " + ReconnectClient.HOST + ':' + ReconnectClient.PORT);
-            ReconnectClient.connect();
-        }, ReconnectClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+            log.error("重连接");
+            fdDevice.connect();
+        }, 1, TimeUnit.MINUTES);
     }
 
 
