@@ -1,18 +1,5 @@
 server:
   port: 9600
-#广场ID及GatewayId
-epc:
-  gatewayId: FD
-  gcId: 4419001220
-  subsystem: fd/
-  threadNum: 1
-#防盗报警串口相关配置
-serial:
-  serialNumber: COM4
-  baudRate: 2400
-  checkoutBit: 1
-  dataBit: 8
-  stopBit: 1
 mqtt:
   hostUrl: tcp://127.0.0.1:1883
   username: admin
@@ -25,6 +12,8 @@ mqtt:
   qos: 1
 
 spring:
+  profiles:
+    active: fuqing_qingchang
   redis:
     host: 127.0.0.1
     port: 16379

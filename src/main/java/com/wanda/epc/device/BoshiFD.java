@@ -2,6 +2,7 @@ package com.wanda.epc.device;
 
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.param.DispatchResult;
+import com.wanda.epc.util.ConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class BoshiFD extends BaseDevice{
-
-    private List<String> data = Arrays.asList("89", "92", "70", "84", "82", "87", "86", "21", "93");
 
     @Autowired
     CommonDevice commonDevice;
@@ -38,30 +37,19 @@ public class BoshiFD extends BaseDevice{
             String outParamId = next.getKey();
             DeviceMessage deviceMessage = next.getValue();
             if(StringUtils.isEmpty(deviceMessage.getValue())){
-                /*if(outParamId.endsWith("_onlineStatus")){
-                    deviceMessage.setValue("0");
-                }else*/
                 if(outParamId.endsWith("_alarmStatus")){
                     deviceMessage.setValue("0");
                 }else if(outParamId.endsWith("_faultStatus")){
                     deviceMessage.setValue("0");
                 }else if(outParamId.endsWith("_defenceStatus")){
-                    String fenqu = outParamId.split("_")[2];
-                    if(data.contains(fenqu)){
-                        deviceMessage.setValue("1");
-                    }else{
-                        deviceMessage.setValue("0");
-                    }
-                }
-            }else{
-                if(outParamId.endsWith("_defenceStatus")){
-                    String fenqu = outParamId.split("_")[2];
-                    if(data.contains(fenqu)){
-                        deviceMessage.setValue("1");
-                    }
+                    deviceMessage.setValue("0");
+                }else if(outParamId.endsWith("_onlineStatus")){
+                    deviceMessage.setValue("1");
                 }
             }
+            deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
             sendMessage(deviceMessage);
+            log.info("发送"+outParamId+"数据值为："+deviceMessage.getValue());
         }
         log.info("定时任务执行完成");
         return true;
