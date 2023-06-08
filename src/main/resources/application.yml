@@ -13,7 +13,7 @@ mqtt:
 
 spring:
   profiles:
-    active: guangzhou_zenegcheng
+    active: guangzhou_zengcheng
   redis:
     host: 127.0.0.1
     port: 16379
