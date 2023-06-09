@@ -177,7 +177,14 @@ public class BoshiFD extends BaseDevice{
         }
     }
 
-    public String toHex(byte[] data, int off, int length) {
+    /**
+     * 进制转换
+     * @param data
+     * @param off
+     * @param length
+     * @return
+     */
+    private String toHex(byte[] data, int off, int length) {
         StringBuffer buf = new StringBuffer(data.length * 2);
         for (int i = off; i < length; i++) {
             if ((data[i] & 0xFF) < 16)
@@ -190,7 +197,12 @@ public class BoshiFD extends BaseDevice{
     }
 
 
-    public String dataDesc(int status){
+    /**
+     * 数据备注
+     * @param status
+     * @return
+     */
+    private String dataDesc(int status){
         String desc = "";
         switch (status){
             case 1:
