@@ -1,0 +1,9 @@
+﻿#广场ID及GatewayId
+epc:
+  gatewayId: FD
+  gcId: 3405040030
+  subsystem: fd/
+  rcvAddress: 192.168.1.220|7700
+  pCtlAddress: 192.168.1.222|7700
+  serviceIp: 192.168.1.8|7700
+  threadNum: 1
