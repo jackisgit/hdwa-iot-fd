@@ -1,28 +1,25 @@
 package com.wanda.epc.device;
 
 import com.wanda.epc.param.DeviceMessage;
-import com.wanda.epc.param.DispatchResult;
 import com.wanda.epc.util.ConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
-public class BoshiFD extends BaseDevice{
+public class BoshiFD extends BaseDevice {
 
     @Autowired
     CommonDevice commonDevice;
 
     @Override
     public void sendMessage(DeviceMessage dm) {
-        if (dm != null){
+        if (dm != null) {
             //log.info("发送消息[{}]", dm);
             commonDevice.sendMessage(dm);
         }
@@ -32,24 +29,24 @@ public class BoshiFD extends BaseDevice{
     public boolean processData() throws Exception {
         log.info("定时任务开始执行");
         Iterator<Map.Entry<String, DeviceMessage>> iterator = super.deviceParamMap.entrySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Map.Entry<String, DeviceMessage> next = iterator.next();
             String outParamId = next.getKey();
             DeviceMessage deviceMessage = next.getValue();
-            if(StringUtils.isEmpty(deviceMessage.getValue())){
-                if(outParamId.endsWith("_alarmStatus")){
+            if (StringUtils.isEmpty(deviceMessage.getValue())) {
+                if (outParamId.endsWith("_alarmStatus")) {
                     deviceMessage.setValue("0");
-                }else if(outParamId.endsWith("_faultStatus")){
+                } else if (outParamId.endsWith("_faultStatus")) {
                     deviceMessage.setValue("0");
-                }else if(outParamId.endsWith("_defenceStatus")){
+                } else if (outParamId.endsWith("_defenceStatus")) {
                     deviceMessage.setValue("0");
-                }else if(outParamId.endsWith("_onlineStatus")){
+                } else if (outParamId.endsWith("_onlineStatus")) {
                     deviceMessage.setValue("1");
                 }
             }
             deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
             sendMessage(deviceMessage);
-            log.info("发送"+outParamId+"数据值为："+deviceMessage.getValue());
+            log.info("发送" + outParamId + "数据值为：" + deviceMessage.getValue());
         }
         log.info("定时任务执行完成");
         return true;
@@ -66,12 +63,12 @@ public class BoshiFD extends BaseDevice{
 
     public void dataArrive(byte[] buff) {
         log.info("收到防盗报警数据:" + toHex(buff, 0, buff.length));
-        if(buff.length % 3 == 0){
+        if (buff.length % 3 == 0) {
 
-        }else if(buff.length % 4 == 0){
+        } else if (buff.length % 4 == 0) {
             int count = buff.length / 4; //需要执行次数 因为有可能上来不是一条指令
-            for(int i = 1; i <= count; i++){
-                if(buff[4 * (i -1)] == -123){ //85
+            for (int i = 1; i <= count; i++) {
+                if (buff[4 * (i - 1)] == -123) { //85
                     int fqNumber = (buff[i * 4 - 2] & 0xFF) + 1; //防区号
                     int status = buff[i * 4 - 3];
                    /* String outParamId = "ipec_fd_" + fqNumber + "_onlineStatus";
@@ -82,24 +79,24 @@ public class BoshiFD extends BaseDevice{
                         sendMessage(deviceMessage);
                         super.deviceParamMap.put(outParamId, deviceMessage);
                     }*/
-                    if(status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6 || status == 7 ||
-                            status == 28 || status == 29 || status == 30){
+                    if (status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6 || status == 7 ||
+                            status == 28 || status == 29 || status == 30) {
                         log.info("第[{}]防区报警,报警状态为[{}],报警描述[{}]", fqNumber, status, dataDesc(status));
                         String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
                         //报警状态
                         DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if(deviceMessage1 != null){
+                        if (deviceMessage1 != null) {
                             deviceMessage1.setValue("1");
                             sendMessage(deviceMessage1);
                             super.deviceParamMap.put(outParamId1, deviceMessage1);
                         }
                     }
-                    if(status == 17 || status == 31 || status == 32 || status == 33 || status == 12){
+                    if (status == 17 || status == 31 || status == 32 || status == 33 || status == 12) {
                         log.info("第[{}]防区报警恢复,描述[{}]", fqNumber, dataDesc(status));
                         String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
                         //报警状态恢复
                         DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if(deviceMessage1 != null) {
+                        if (deviceMessage1 != null) {
                             deviceMessage1.setValue("0");
                             sendMessage(deviceMessage1);
                             super.deviceParamMap.put(outParamId1, deviceMessage1);
@@ -129,35 +126,35 @@ public class BoshiFD extends BaseDevice{
                         }
                     }*/
 
-                    if(status == 13){
+                    if (status == 13) {
                         log.info("第[{}]防区撤防操作成功", fqNumber);
                         String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
                         //撤防状态
                         DeviceMessage deviceMessage1 = deviceParamMap.get("ipec_fd_" + fqNumber + "_defenceStatus");
-                        if(deviceMessage1 != null) {
+                        if (deviceMessage1 != null) {
                             deviceMessage1.setValue("0");
                             sendMessage(deviceMessage1);
                             super.deviceParamMap.put(outParamId1, deviceMessage1);
                         }
                     }
-                    if(status == 14){
+                    if (status == 14) {
                         log.info("第[{}]防区布防操作成功", fqNumber);
                         String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
                         //布防状态
                         DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if(deviceMessage1 != null) {
+                        if (deviceMessage1 != null) {
                             deviceMessage1.setValue("1");
                             sendMessage(deviceMessage1);
                             super.deviceParamMap.put(outParamId1, deviceMessage1);
                         }
                     }
 
-                    if(status == 19){
+                    if (status == 19) {
                         log.info("第[{}]防区正常状态", fqNumber);
                         String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
                         //故障状态
                         DeviceMessage deviceMessage2 = deviceParamMap.get(outParamId1);
-                        if(deviceMessage2 != null) {
+                        if (deviceMessage2 != null) {
                             deviceMessage2.setValue("0");
                             sendMessage(deviceMessage2);
                             super.deviceParamMap.put(outParamId1, deviceMessage2);
@@ -166,7 +163,7 @@ public class BoshiFD extends BaseDevice{
                         String outParamId2 = "ipec_fd_" + fqNumber + "_alarmStatus";
                         //报警状态
                         DeviceMessage deviceMessage3 = deviceParamMap.get(outParamId2);
-                        if(deviceMessage3 != null) {
+                        if (deviceMessage3 != null) {
                             deviceMessage3.setValue("0");
                             sendMessage(deviceMessage3);
                             super.deviceParamMap.put(outParamId2, deviceMessage3);
@@ -179,6 +176,7 @@ public class BoshiFD extends BaseDevice{
 
     /**
      * 进制转换
+     *
      * @param data
      * @param off
      * @param length
@@ -199,12 +197,13 @@ public class BoshiFD extends BaseDevice{
 
     /**
      * 数据备注
+     *
      * @param status
      * @return
      */
-    private String dataDesc(int status){
+    private String dataDesc(int status) {
         String desc = "";
-        switch (status){
+        switch (status) {
             case 1:
                 desc = "火警报警";
                 break;
