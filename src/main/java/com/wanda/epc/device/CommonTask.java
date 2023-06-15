@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @program: iot_epc
  * @description: 变压器采集
- * @author: liuruishuo
+ * @author: 孙率众
  * @create: 2022-11-08 17:07
  **/
 
