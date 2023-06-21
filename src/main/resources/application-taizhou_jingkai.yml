@@ -5,7 +5,7 @@ epc:
   subsystem: fdxt/
   threadNum: 5
 mqtt:
-  hostUrl: tcp://127.0.0.1:1883
+  hostUrl: tcp://127.0.0.1:1893
 hikVision:
   ip: 192.168.3.222
   port: 8000
