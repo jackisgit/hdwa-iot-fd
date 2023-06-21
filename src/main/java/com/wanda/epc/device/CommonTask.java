@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- *@description 绍兴柯桥防盗系统
+ *@description 防盗系统
  *@author LianYanFei
  *@date 2023/3/30
  */

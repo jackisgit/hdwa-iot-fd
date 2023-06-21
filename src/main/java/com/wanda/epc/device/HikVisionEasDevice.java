@@ -40,11 +40,17 @@ public class HikVisionEasDevice extends BaseDevice {
     static List<Integer> nativeL = new ArrayList<>();
 
 
-    @Value("${epc.gcId}")
-    private String gcId;
+    @Value("${hikVision.ip}")
+    private String ip;
 
-    @Value("${epc.gatewayId}")
-    private String gatewayId;
+    @Value("${hikVision.port}")
+    private short port;
+
+    @Value("${hikVision.user}")
+    private String user;
+
+    @Value("${hikVision.pwd}")
+    private String pwd;
 
 
     @PostConstruct
@@ -104,11 +110,9 @@ public class HikVisionEasDevice extends BaseDevice {
         Pointer pStrNET_DVR_LOCAL_GENERAL_CFG = struNET_DVR_LOCAL_GENERAL_CFG.getPointer();
         hCNetSDK.NET_DVR_SetSDKLocalCfg(17, pStrNET_DVR_LOCAL_GENERAL_CFG);
 
-        this.login_V40("192.168.1.251", (short) 8000, "admin", "hkws12345");  //登录设备
+        login_V40(ip, port, user, pwd);  //登录设备
 
-        setupAlarmChan(lUserID,-1);//建立报警布防通道
-
-
+        setupAlarmChan(lUserID, -1);//建立报警布防通道
 
 
     }
@@ -170,7 +174,7 @@ public class HikVisionEasDevice extends BaseDevice {
      * @param user 设备用户名
      * @param psw  设备密码
      */
-    public static void login_V40(String ip, short port, String user, String psw) {
+    private static void login_V40(String ip, short port, String user, String psw) {
         //注册
         HCNetSDK.NET_DVR_USER_LOGIN_INFO m_strLoginInfo = new HCNetSDK.NET_DVR_USER_LOGIN_INFO();//设备登录信息
         HCNetSDK.NET_DVR_DEVICEINFO_V40 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V40();//设备信息
@@ -213,7 +217,7 @@ public class HikVisionEasDevice extends BaseDevice {
         Boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSetupAlarmChan(lUserID, net_dvr_alarmin_setup);
         if (!aBoolean) {
             log.error("对防区" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
-            if (hCNetSDK.NET_DVR_GetLastError()==1209){
+            if (hCNetSDK.NET_DVR_GetLastError() == 1209) {
                 subsystemParamEx(1);
                 subsystemParamEx(2);
             }
@@ -228,11 +232,11 @@ public class HikVisionEasDevice extends BaseDevice {
      *
      * @param num 子系统号，子系统关联的防区将会全部布防，实现防区一键布防
      */
-    public static void alarmHostSubSystemSetupAlarmChan(int num) {
+    private static void alarmHostSubSystemSetupAlarmChan(int num) {
         //报警撤防
         Boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(lUserID, num);
         if (!aBoolean1) {
-            log.info("对子系统"+num+"布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            log.info("对子系统" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
             log.info("对子系统" + num + "布防成功");
         }
@@ -243,7 +247,7 @@ public class HikVisionEasDevice extends BaseDevice {
      *
      * @param num
      */
-    public static void alarmHostSubSystemCloseAlarmChan(int num) {
+    private static void alarmHostSubSystemCloseAlarmChan(int num) {
         //报警撤防
         Boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(lUserID, num);
         if (!aBoolean) {
@@ -252,8 +256,6 @@ public class HikVisionEasDevice extends BaseDevice {
             log.info("对子系统" + num + "撤防成功");
         }
     }
-
-
 
 
     /**
@@ -345,7 +347,7 @@ public class HikVisionEasDevice extends BaseDevice {
      * @param lUserID      唯一标识符
      * @param lAlarmHandle 报警处理器
      */
-    public int setupAlarmChan(int lUserID, int lAlarmHandle) {
+    private int setupAlarmChan(int lUserID, int lAlarmHandle) {
         // 根据设备注册生成的lUserID建立布防的上传通道，即数据的上传通道
         if (lUserID == -1) {
             log.info("请先注册");
@@ -389,8 +391,9 @@ public class HikVisionEasDevice extends BaseDevice {
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
+        commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("绍兴柯桥接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
+        log.info("接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
             try {
                 if ("1.0".equals(value)) {
@@ -404,7 +407,6 @@ public class HikVisionEasDevice extends BaseDevice {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());
             }
         }
-        commonDevice.feedback(message);
     }
 
 
@@ -419,7 +421,7 @@ public class HikVisionEasDevice extends BaseDevice {
      *
      * @param alarmsubsystem_code:子系统号
      */
-    public static void subsystemParamEx( int alarmsubsystem_code) {
+    private static void subsystemParamEx(int alarmsubsystem_code) {
         /**************开启子系统使能**************/
         HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
         net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
@@ -430,7 +432,7 @@ public class HikVisionEasDevice extends BaseDevice {
             net_dvr_alarmsubsystemparam.read();
             net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
             net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
-            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable  = 1;//一键布防使能：0-禁能，1-使能
+            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
             boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(lUserID, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
             if (!b_SetAcsCfg) {
                 log.error("设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
@@ -581,7 +583,7 @@ public class HikVisionEasDevice extends BaseDevice {
      * @author LianYanFei
      * @date 2023/5/24
      */
-    public void alarmStatus() {
+    private void alarmStatus() {
         log.info("开始主动查询防区状态信息");
         HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40 acsWorkStatus = new HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40();
         Pointer pAcsWorkStatus = acsWorkStatus.getPointer();

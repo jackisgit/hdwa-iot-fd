@@ -7,7 +7,7 @@ epc:
 mqtt:
   hostUrl: tcp://127.0.0.1:1883
 hikVision:
-  ip: 192.168.3.222
+  ip: 192.168.18.9
   port: 8000
   user: admin
-  pwd: hkws12345
+  pwd: qzwd1234
