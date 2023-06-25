@@ -38,7 +38,7 @@
 
 
     <build>
-        <finalName>IEPC_EPC_FD_hikvision_IVMS-8700E</finalName>
+        <finalName>IOT_EPC_FD_hikvision_IVMS-8700E</finalName>
     </build>
 
 </project>

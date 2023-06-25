@@ -1,13 +1,11 @@
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 3310020020
+  gcId: 1501050050
   subsystem: fdxt/
   threadNum: 5
-mqtt:
-  hostUrl: tcp://127.0.0.1:1893
 hikVision:
-  ip: 192.168.3.222
+  ip: 10.86.16.188
   port: 8000
   user: admin
-  pwd: hik12345
+  pwd: bj123456
