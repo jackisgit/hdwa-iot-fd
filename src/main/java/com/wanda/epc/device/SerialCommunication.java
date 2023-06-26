@@ -3,6 +3,7 @@ package com.wanda.epc.device;
 import gnu.io.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +30,21 @@ public class SerialCommunication implements SerialPortEventListener {
     private int readmax = 100;
     @Autowired
     private BoshiFD boshiFD;
+
+    @Value("${epc.serialNumber}")
+    private String serialNumber;
+
+    @Value("${epc.baudRate}")
+    private int baudRate;
+
+    @Value("${epc.checkoutBit}")
+    private int checkoutBit;
+
+    @Value("${epc.dataBit}")
+    private int dataBit;
+
+    @Value("${epc.stopBit}")
+    private int stopBit;
 
     /**
      * SerialPort EventListene 的方法,持续监听端口上是否有数据流
@@ -64,7 +80,6 @@ public class SerialCommunication implements SerialPortEventListener {
     }
 
     /**
-     *
      * 通过程序打开COM4串口，设置监听器以及相关的参数
      *
      * @return 返回1 表示端口打开成功，返回 0表示端口打开失败
@@ -80,43 +95,40 @@ public class SerialCommunication implements SerialPortEventListener {
             log.info("获取相应串口对象[{}]", portId);
             // 判断端口类型是否为串口
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                // 判断如果COM4串口存在，就打开该串口
-                if (portId.getName().equals("COM4")) {
-                    try {
-                        // 打开串口名字为COM_4(名字任意),延迟为2毫秒
-                        serialPort = (SerialPort) portId.open("COM4", 2000);
-                    } catch (PortInUseException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                    // 设置当前串口的输入输出流
-                    try {
-                        inputStream = serialPort.getInputStream();
-                        outputStream = serialPort.getOutputStream();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                    // 给当前串口添加一个监听器
-                    try {
-                        serialPort.addEventListener(this);
-                        serialPort.setInputBufferSize(1024);
-                    } catch (TooManyListenersException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                    // 设置监听器生效，即：当有数据时通知
-                    serialPort.notifyOnDataAvailable(true);
-                    // 设置串口的一些读写参数
-                    try {
-                        // 比特率、数据位、停止位、奇偶校验位
-                        serialPort.setSerialPortParams(2400, 8, 1, 1);
-                    } catch (UnsupportedCommOperationException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                    return 1;
+                try {
+                    // 打开串口名字为COM_4(名字任意),延迟为2毫秒
+                    serialPort = (SerialPort) portId.open(serialNumber, 2000);
+                } catch (PortInUseException e) {
+                    log.error("串口打开失败", e);
+                    return 0;
                 }
+                // 设置当前串口的输入输出流
+                try {
+                    inputStream = serialPort.getInputStream();
+                    outputStream = serialPort.getOutputStream();
+                } catch (IOException e) {
+                    log.error("串口获取输入/输出流失败", e);
+                    return 0;
+                }
+                // 给当前串口添加一个监听器
+                try {
+                    serialPort.addEventListener(this);
+                    serialPort.setInputBufferSize(1024);
+                } catch (TooManyListenersException e) {
+                    log.error("串口添加监视器失败", e);
+                    return 0;
+                }
+                // 设置监听器生效，即：当有数据时通知
+                serialPort.notifyOnDataAvailable(true);
+                // 设置串口的一些读写参数
+                try {
+                    // 比特率、数据位、停止位、奇偶校验位
+                    serialPort.setSerialPortParams(baudRate, dataBit, stopBit, checkoutBit);
+                } catch (UnsupportedCommOperationException e) {
+                    log.error("串口设置串口的一些读写参数失败", e);
+                    return 0;
+                }
+                return 1;
             }
         }
         return 0;
