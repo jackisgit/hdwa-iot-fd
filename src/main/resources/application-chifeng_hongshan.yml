@@ -1,7 +1,7 @@
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 1501050050
+  gcId: 1504020100
   subsystem: fdxt/
   threadNum: 5
 hikVision:
