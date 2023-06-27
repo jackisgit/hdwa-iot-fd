@@ -64,19 +64,20 @@ public class SerialCommunication implements SerialPortEventListener {
             case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
                 break;
             case SerialPortEvent.DATA_AVAILABLE:// 当有可用数据时读取数据
-                int len = -1;
+                log.info("有可读取数据");
                 try {
-                    Thread.sleep(300L);
-                    if (this.readmax == 0)
-                        this.readmax = 100;
-                    len = inputStream.read(this.m_msgBuffer, 0, this.readmax);
-                    byte[] buff = new byte[len];
-                    System.arraycopy(this.m_msgBuffer, 0, buff, 0, len);
-                    boshiFD.dataArrive(buff);
+                    int availableBytes = serialPort.getInputStream().available();
+                    if (availableBytes > 0) {
+                        byte[] buff = SerialTool.readFromPort(serialPort);
+                        boshiFD.dataArrive(buff);
+                    }
                 } catch (Exception e) {
-                    log.error("数据读取错误 error:" + e.getMessage());
+                    log.error("读取流信息异常！" + e);
                 }
+
+            default:
                 break;
+
         }
     }
 
