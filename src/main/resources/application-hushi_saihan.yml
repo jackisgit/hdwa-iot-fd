@@ -5,7 +5,7 @@ epc:
   subsystem: fdxt/
   threadNum: 5
 hikVision:
-  ip: 192.168.3.222
+  ip: 192.168.10.252
   port: 8000
   user: admin
-  pwd: hkws12345
+  pwd: wd1234567
