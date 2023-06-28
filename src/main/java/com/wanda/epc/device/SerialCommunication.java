@@ -52,6 +52,7 @@ public class SerialCommunication implements SerialPortEventListener {
      */
     @Override
     public void serialEvent(SerialPortEvent event) {
+        log.info("收到消息");
         switch (event.getEventType()) {
             case SerialPortEvent.BI:
             case SerialPortEvent.OE:
@@ -109,7 +110,7 @@ public class SerialCommunication implements SerialPortEventListener {
             return 0;
         }
         try {
-            // 打开串口名字为COM_4(名字任意),延迟为2毫秒
+            // 打开串口(名字任意),延迟为2毫秒
             serialPort = (SerialPort) portIdentifier.open(serialNumber, 2000);
         } catch (Exception e) {
             log.error("串口打开失败", e);

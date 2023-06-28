@@ -32,7 +32,7 @@
 
 
     <build>
-        <finalName>IOT_EPC_FD_Bosch_DS-7400</finalName>
+        <finalName>IOT_EPC_FD_Bosch_DS-7400_${version}</finalName>
     </build>
 
 </project>
