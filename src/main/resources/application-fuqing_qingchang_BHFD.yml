@@ -11,3 +11,8 @@ serial:
   checkoutBit: 1
   dataBit: 8
   stopBit: 1
+mqtt:
+  hostUrl: tcp://10.121.0.138:1883
+spring:
+  redis:
+    host: 10.121.0.138
