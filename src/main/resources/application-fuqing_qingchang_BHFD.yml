@@ -6,7 +6,7 @@ epc:
   threadNum: 1
 #防盗报警串口相关配置
 serial:
-  serialNumber: COM3
+  serialNumber: COM4
   baudRate: 2400
   checkoutBit: 1
   dataBit: 8
