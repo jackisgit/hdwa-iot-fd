@@ -52,20 +52,8 @@ public class SerialCommunication implements SerialPortEventListener {
      */
     @Override
     public void serialEvent(SerialPortEvent event) {
-        log.info("收到消息");
         switch (event.getEventType()) {
-            case SerialPortEvent.BI:
-            case SerialPortEvent.OE:
-            case SerialPortEvent.FE:
-            case SerialPortEvent.PE:
-            case SerialPortEvent.CD:
-            case SerialPortEvent.CTS:
-            case SerialPortEvent.DSR:
-            case SerialPortEvent.RI:
-            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-                break;
-            case SerialPortEvent.DATA_AVAILABLE:// 当有可用数据时读取数据
-                log.info("有可读取数据");
+            case SerialPortEvent.DATA_AVAILABLE:
                 try {
                     int availableBytes = serialPort.getInputStream().available();
                     if (availableBytes > 0) {
@@ -75,6 +63,15 @@ public class SerialCommunication implements SerialPortEventListener {
                 } catch (Exception e) {
                     log.error("读取流信息异常！" + e);
                 }
+            case SerialPortEvent.BI:
+            case SerialPortEvent.OE:
+            case SerialPortEvent.FE:
+            case SerialPortEvent.PE:
+            case SerialPortEvent.CD:
+            case SerialPortEvent.CTS:
+            case SerialPortEvent.DSR:
+            case SerialPortEvent.RI:
+            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
 
             default:
                 break;
