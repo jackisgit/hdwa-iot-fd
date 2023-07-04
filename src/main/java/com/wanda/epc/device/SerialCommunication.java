@@ -11,9 +11,11 @@ import purejavacomm.SerialPortEvent;
 import purejavacomm.SerialPortEventListener;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -23,12 +25,19 @@ import java.util.List;
 @Slf4j
 @Service
 public class SerialCommunication implements SerialPortEventListener {
-    InputStream inputStream; // 从串口来的输入流
-    static OutputStream outputStream;// 向串口输出的流
-    static SerialPort serialPort; // 串口的引用
-    static int BUFFER_SIZE = 4096;
-    byte[] m_msgBuffer = new byte[BUFFER_SIZE];
-    private int readmax = 100;
+    /**
+     * 从串口来的输入流
+     */
+    InputStream inputStream;
+    /**
+     * 向串口输出的流
+     */
+    static OutputStream outputStream;
+    /**
+     * 串口的引用
+     */
+    static SerialPort serialPort;
+
     @Autowired
     private BoshiFD boshiFD;
 
@@ -48,6 +57,11 @@ public class SerialCommunication implements SerialPortEventListener {
     private int stopBit;
 
     /**
+     * 发送数组集合，线程安全
+     */
+    List<String> list = Collections.synchronizedList(new ArrayList<>());
+
+    /**
      * SerialPort EventListene 的方法,持续监听端口上是否有数据流
      */
     @Override
@@ -56,12 +70,27 @@ public class SerialCommunication implements SerialPortEventListener {
             case SerialPortEvent.DATA_AVAILABLE:
                 try {
                     int availableBytes = serialPort.getInputStream().available();
-                    if (availableBytes > 0) {
-                        byte[] buff = SerialTool.readFromPort(serialPort);
-                        boshiFD.dataArrive(buff);
+                    if (availableBytes <= 0) {
+                        return;
+                    }
+                    byte[] buff = readFromPort(serialPort);
+                    String hex = toHex(buff, 0, buff.length);
+                    log.info("收到防盗报警数据，16进制为:{}", hex);
+                    for (int i = 0; i < buff.length; i++) {
+                        //如果buff是以133（16进制的85开头），则需要清空当前数组
+                        byte b = buff[i];
+                        if (b == (byte) 0x85) {
+                            list.clear();
+                        }
+                        //转换当前buff为16进制字符串并添加到待解析的数组中
+                        list.add(String.valueOf(b));
+                        if (list.size() == 4) {
+                            log.info("待发送的10进制数据为：{}", JSONObject.toJSONString(list));
+                            boshiFD.dataArrive(list);
+                        }
                     }
                 } catch (Exception e) {
-                    log.error("读取流信息异常！" + e);
+                    log.error("读取流信息异常！", e);
                 }
             case SerialPortEvent.BI:
             case SerialPortEvent.OE:
@@ -140,6 +169,66 @@ public class SerialCommunication implements SerialPortEventListener {
             return 0;
         }
         return 1;
+    }
+
+    /**
+     * 从串口读取数据
+     *
+     * @param serialPort 当前已建立连接的SerialPort对象
+     * @return 读取到的数据
+     */
+    private byte[] readFromPort(SerialPort serialPort) throws Exception {
+        InputStream in = null;
+        byte[] bytes = null;
+        try {
+            if (serialPort != null) {
+                in = serialPort.getInputStream();
+            } else {
+                return null;
+            }
+            // 获取buffer里的数据长度
+            int bufflenth = in.available();
+            while (bufflenth != 0) {
+                // 初始化byte数组为buffer中数据的长度
+                bytes = new byte[bufflenth];
+                in.read(bytes);
+                bufflenth = in.available();
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                    in = null;
+                }
+            } catch (IOException e) {
+                log.error("IO异常", e);
+            }
+        }
+        return bytes;
+    }
+
+    /**
+     * 进制转换
+     *
+     * @param data
+     * @param off
+     * @param length
+     * @return
+     */
+    private static String toHex(byte[] data, int off, int length) {
+        StringBuffer buf = new StringBuffer(data.length * 2);
+        for (int i = off; i < length; i++) {
+            if ((data[i] & 0xFF) < 16) {
+                buf.append("0");
+            }
+            buf.append(Long.toString((data[i] & 0xFF), 16));
+            if (i < data.length - 1) {
+                buf.append(" ");
+            }
+        }
+        return buf.toString();
     }
 
 }

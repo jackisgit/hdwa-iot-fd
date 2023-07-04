@@ -1,7 +1,6 @@
 package com.wanda.epc.device;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.util.ConvertUtil;
@@ -12,7 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -34,11 +36,6 @@ public class BoshiFD extends BaseDevice {
      * 软撤布防
      */
     private final String SOFT_DEPLOY_WITHDRAW_ALARM_SET = "softdeployWithdrawAlarmSet";
-
-    /**
-     * 解析拼装后的点位集合
-     */
-    static List<String> list = new ArrayList<>();
 
     @Override
     public void sendMessage(DeviceMessage dm) {
@@ -105,41 +102,22 @@ public class BoshiFD extends BaseDevice {
     }
 
     /**
-     * 数据处理
+     * 数据处理,单线程进行处理，因为数据拼接、和解析都要按照顺序进行
      *
-     * @param buff
+     * @param list
      */
-    public void dataArrive(byte[] buff) {
-        //85 19 0e 6d
-        String hex = toHex(buff, 0, buff.length);
-        log.info("收到防盗报警数据，16进制转10进制:{}", hex);
-        for (int i = 0; i < buff.length; i++) {
-            //如果buff是以133（16进制的85开头），则需要清空当前数组
-            byte b = buff[i];
-            if ("-123".equals(b)) {
-                list.clear();
-            }
-            //转换当前buff为16进制字符串并添加到待解析的数组中
-            list.add(byteToHexString(b));
-        }
-        //如果长度不为4则继续结束方法进行缓存
-        if (list.size() != 4) {
-            return;
-        }
-        //如果list长度为4，但是的开头不为64进制的85则清空list，并且结束方法重新进行缓存
-        if (!"85".equals(list.get(0))) {
-            list.clear();
-            return;
-        }
-        log.info("拼装转换后报文为:{}", JSONObject.toJSONString(list));
+    public synchronized void dataArrive(List<String> list) {
         //状态码
         int status = Integer.parseInt(list.get(1));
         //防区号
         int fqNumber = Integer.parseInt(list.get(2)) + 1;
         if (status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6 || status == 7 ||
-                status == 28 || status == 29 || status == 30) {
+                status == 40 || status == 41 || status == 48) {
             log.info("第[{}]防区报警,报警状态为[{}],报警描述[{}]", fqNumber, status, dataDesc(status));
-            if ("0".equals(redisUtil.get(SOFT_DEPLOY_WITHDRAW_ALARM_SET))) {
+            Object obj = redisUtil.get(SOFT_DEPLOY_WITHDRAW_ALARM_SET);
+            if ("0.0".equals(obj) || "0".equals(obj)) {
+                log.info("软撤防不进行报警");
+            } else {
                 String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
                 //报警状态
                 DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
@@ -149,8 +127,9 @@ public class BoshiFD extends BaseDevice {
                     super.deviceParamMap.put(outParamId1, deviceMessage1);
                 }
             }
+
         }
-        if (status == 17 || status == 31 || status == 32 || status == 33 || status == 12) {
+        if (status == 23 || status == 49 || status == 50 || status == 51 || status == 18) {
             log.info("第[{}]防区报警恢复,描述[{}]", fqNumber, dataDesc(status));
             String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
             //报警状态恢复
@@ -161,7 +140,7 @@ public class BoshiFD extends BaseDevice {
                 super.deviceParamMap.put(outParamId1, deviceMessage1);
             }
         }
-        if (status == 13) {
+        if (status == 19) {
             log.info("第[{}]防区撤防操作成功", fqNumber);
             String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
             //撤防状态
@@ -172,7 +151,7 @@ public class BoshiFD extends BaseDevice {
                 super.deviceParamMap.put(outParamId1, deviceMessage1);
             }
         }
-        if (status == 14) {
+        if (status == 20) {
             log.info("第[{}]防区布防操作成功", fqNumber);
             String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
             //布防状态
@@ -183,7 +162,7 @@ public class BoshiFD extends BaseDevice {
                 super.deviceParamMap.put(outParamId1, deviceMessage1);
             }
         }
-        if (status == 19) {
+        if (status == 25) {
             log.info("第[{}]防区正常状态", fqNumber);
             String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
             //故障状态
@@ -203,42 +182,6 @@ public class BoshiFD extends BaseDevice {
             }
         }
     }
-
-    /**
-     * byte转16进制
-     *
-     * @param mByte
-     * @return
-     */
-    private static String byteToHexString(byte mByte) {
-        char[] Digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        char[] arr = new char[2];
-        arr[0] = Digit[(mByte >>> 4) & 0X0F];// ? >>>
-        arr[1] = Digit[mByte & 0X0F];
-        String tmp = new String(arr);
-        return tmp;
-    }
-
-    /**
-     * 进制转换
-     *
-     * @param data
-     * @param off
-     * @param length
-     * @return
-     */
-    private static String toHex(byte[] data, int off, int length) {
-        StringBuffer buf = new StringBuffer(data.length * 2);
-        for (int i = off; i < length; i++) {
-            if ((data[i] & 0xFF) < 16)
-                buf.append("0");
-            buf.append(Long.toString((data[i] & 0xFF), 16));
-            if (i < data.length - 1)
-                buf.append(" ");
-        }
-        return buf.toString();
-    }
-
 
     /**
      * 数据备注
