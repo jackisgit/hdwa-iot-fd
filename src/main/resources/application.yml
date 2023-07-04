@@ -13,7 +13,7 @@ mqtt:
 
 spring:
   profiles:
-    active: fuqing_qingchang_FD
+    active: fuqing_qingchang_DSYFD
   redis:
     host: 127.0.0.1
     port: 16379

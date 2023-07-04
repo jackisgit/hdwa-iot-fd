@@ -1,14 +1,18 @@
 package com.wanda.epc.device;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.util.ConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -16,6 +20,25 @@ public class BoshiFD extends BaseDevice {
 
     @Autowired
     CommonDevice commonDevice;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Value("${epc.gcId}")
+    private String gcId;
+
+    @Value("${epc.gatewayId}")
+    private String gatewayId;
+
+    /**
+     * 软撤布防
+     */
+    private final String SOFT_DEPLOY_WITHDRAW_ALARM_SET = "softdeployWithdrawAlarmSet";
+
+    /**
+     * 解析拼装后的点位集合
+     */
+    static List<String> list = new ArrayList<>();
 
     @Override
     public void sendMessage(DeviceMessage dm) {
@@ -59,119 +82,141 @@ public class BoshiFD extends BaseDevice {
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
+        commonDevice.feedback(message);
+        //软布防，撤布防时需遍历所有防盗点位并将软撤布防点位设置为相同值,1.布防；0.撤防
+        DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
+        //设置软撤布防点位，用于判断是否进行报警
+        redisUtil.set(SOFT_DEPLOY_WITHDRAW_ALARM_SET, value);
+        log.info("接收门禁指令下发：deviceMessage {},状态：{}", JSON.toJSONString(deviceMessage), value);
+        if (deviceMessage == null) {
+            return;
+        }
+        Set<String> keys = redisUtil.scan("Pj" + gcId + "." + gatewayId + ".*");
+        if (CollectionUtils.isEmpty(keys)) {
+            return;
+        }
+        for (String key : keys) {
+            DeviceMessage msg = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
+            if (SOFT_DEPLOY_WITHDRAW_ALARM_SET.equals(msg.getOutParamId())) {
+                msg.setValue(value);
+                sendMessage(msg);
+            }
+        }
     }
 
+    /**
+     * 数据处理
+     *
+     * @param buff
+     */
     public void dataArrive(byte[] buff) {
-        log.info("收到防盗报警数据:" + toHex(buff, 0, buff.length));
-        if (buff.length % 3 == 0) {
-
-        } else if (buff.length % 4 == 0) {
-            int count = buff.length / 4; //需要执行次数 因为有可能上来不是一条指令
-            for (int i = 1; i <= count; i++) {
-                if (buff[4 * (i - 1)] == -123) { //85
-                    int fqNumber = (buff[i * 4 - 2] & 0xFF) + 1; //防区号
-                    int status = buff[i * 4 - 3];
-                   /* String outParamId = "ipec_fd_" + fqNumber + "_onlineStatus";
-                    //在线状态
-                    DeviceMessage deviceMessage = deviceParamMap.get(outParamId);
-                    if(deviceMessage != null){
-                        deviceMessage.setValue("0");
-                        sendMessage(deviceMessage);
-                        super.deviceParamMap.put(outParamId, deviceMessage);
-                    }*/
-                    if (status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6 || status == 7 ||
-                            status == 28 || status == 29 || status == 30) {
-                        log.info("第[{}]防区报警,报警状态为[{}],报警描述[{}]", fqNumber, status, dataDesc(status));
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
-                        //报警状态
-                        DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if (deviceMessage1 != null) {
-                            deviceMessage1.setValue("1");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }
-                    if (status == 17 || status == 31 || status == 32 || status == 33 || status == 12) {
-                        log.info("第[{}]防区报警恢复,描述[{}]", fqNumber, dataDesc(status));
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
-                        //报警状态恢复
-                        DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if (deviceMessage1 != null) {
-                            deviceMessage1.setValue("0");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }
-
-                    /*if(status == 8 || status == 9 || status == 10 || status == 11 || status == 23 || status == 24){
-                        log.info("第[{}]防区故障,故障状态为[{}],故障描述[{}]", fqNumber, status,  dataDesc(status));
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
-                        //故障状态
-                        DeviceMessage deviceMessage1 = deviceParamMap.get("ipec_fd_" + fqNumber + "_faultStatus");
-                        if(deviceMessage1 != null) {
-                            deviceMessage1.setValue("1");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }
-                    if(status == 22 || status == 31 || status == 32 || status == 33 ){
-                        log.info("第[{}]防区故障恢复", fqNumber);
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
-                        //故障状态恢复
-                        DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if(deviceMessage1 != null) {
-                            deviceMessage1.setValue("0");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }*/
-
-                    if (status == 13) {
-                        log.info("第[{}]防区撤防操作成功", fqNumber);
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
-                        //撤防状态
-                        DeviceMessage deviceMessage1 = deviceParamMap.get("ipec_fd_" + fqNumber + "_defenceStatus");
-                        if (deviceMessage1 != null) {
-                            deviceMessage1.setValue("0");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }
-                    if (status == 14) {
-                        log.info("第[{}]防区布防操作成功", fqNumber);
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
-                        //布防状态
-                        DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
-                        if (deviceMessage1 != null) {
-                            deviceMessage1.setValue("1");
-                            sendMessage(deviceMessage1);
-                            super.deviceParamMap.put(outParamId1, deviceMessage1);
-                        }
-                    }
-
-                    if (status == 19) {
-                        log.info("第[{}]防区正常状态", fqNumber);
-                        String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
-                        //故障状态
-                        DeviceMessage deviceMessage2 = deviceParamMap.get(outParamId1);
-                        if (deviceMessage2 != null) {
-                            deviceMessage2.setValue("0");
-                            sendMessage(deviceMessage2);
-                            super.deviceParamMap.put(outParamId1, deviceMessage2);
-                        }
-
-                        String outParamId2 = "ipec_fd_" + fqNumber + "_alarmStatus";
-                        //报警状态
-                        DeviceMessage deviceMessage3 = deviceParamMap.get(outParamId2);
-                        if (deviceMessage3 != null) {
-                            deviceMessage3.setValue("0");
-                            sendMessage(deviceMessage3);
-                            super.deviceParamMap.put(outParamId2, deviceMessage3);
-                        }
-                    }
+        //85 19 0e 6d
+        String hex = toHex(buff, 0, buff.length);
+        log.info("收到防盗报警数据，16进制转10进制:{}", hex);
+        for (int i = 0; i < buff.length; i++) {
+            //如果buff是以133（16进制的85开头），则需要清空当前数组
+            byte b = buff[i];
+            if ("-123".equals(b)) {
+                list.clear();
+            }
+            //转换当前buff为16进制字符串并添加到待解析的数组中
+            list.add(byteToHexString(b));
+        }
+        //如果长度不为4则继续结束方法进行缓存
+        if (list.size() != 4) {
+            return;
+        }
+        //如果list长度为4，但是的开头不为64进制的85则清空list，并且结束方法重新进行缓存
+        if (!"85".equals(list.get(0))) {
+            list.clear();
+            return;
+        }
+        log.info("拼装转换后报文为:{}", JSONObject.toJSONString(list));
+        //状态码
+        int status = Integer.parseInt(list.get(1));
+        //防区号
+        int fqNumber = Integer.parseInt(list.get(2)) + 1;
+        if (status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6 || status == 7 ||
+                status == 28 || status == 29 || status == 30) {
+            log.info("第[{}]防区报警,报警状态为[{}],报警描述[{}]", fqNumber, status, dataDesc(status));
+            if ("0".equals(redisUtil.get(SOFT_DEPLOY_WITHDRAW_ALARM_SET))) {
+                String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
+                //报警状态
+                DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
+                if (deviceMessage1 != null) {
+                    deviceMessage1.setValue("1");
+                    sendMessage(deviceMessage1);
+                    super.deviceParamMap.put(outParamId1, deviceMessage1);
                 }
             }
         }
+        if (status == 17 || status == 31 || status == 32 || status == 33 || status == 12) {
+            log.info("第[{}]防区报警恢复,描述[{}]", fqNumber, dataDesc(status));
+            String outParamId1 = "ipec_fd_" + fqNumber + "_alarmStatus";
+            //报警状态恢复
+            DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
+            if (deviceMessage1 != null) {
+                deviceMessage1.setValue("0");
+                sendMessage(deviceMessage1);
+                super.deviceParamMap.put(outParamId1, deviceMessage1);
+            }
+        }
+        if (status == 13) {
+            log.info("第[{}]防区撤防操作成功", fqNumber);
+            String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
+            //撤防状态
+            DeviceMessage deviceMessage1 = deviceParamMap.get("ipec_fd_" + fqNumber + "_defenceStatus");
+            if (deviceMessage1 != null) {
+                deviceMessage1.setValue("0");
+                sendMessage(deviceMessage1);
+                super.deviceParamMap.put(outParamId1, deviceMessage1);
+            }
+        }
+        if (status == 14) {
+            log.info("第[{}]防区布防操作成功", fqNumber);
+            String outParamId1 = "ipec_fd_" + fqNumber + "_defenceStatus";
+            //布防状态
+            DeviceMessage deviceMessage1 = deviceParamMap.get(outParamId1);
+            if (deviceMessage1 != null) {
+                deviceMessage1.setValue("1");
+                sendMessage(deviceMessage1);
+                super.deviceParamMap.put(outParamId1, deviceMessage1);
+            }
+        }
+        if (status == 19) {
+            log.info("第[{}]防区正常状态", fqNumber);
+            String outParamId1 = "ipec_fd_" + fqNumber + "_faultStatus";
+            //故障状态
+            DeviceMessage deviceMessage2 = deviceParamMap.get(outParamId1);
+            if (deviceMessage2 != null) {
+                deviceMessage2.setValue("0");
+                sendMessage(deviceMessage2);
+                super.deviceParamMap.put(outParamId1, deviceMessage2);
+            }
+            String outParamId2 = "ipec_fd_" + fqNumber + "_alarmStatus";
+            //报警状态
+            DeviceMessage deviceMessage3 = deviceParamMap.get(outParamId2);
+            if (deviceMessage3 != null) {
+                deviceMessage3.setValue("0");
+                sendMessage(deviceMessage3);
+                super.deviceParamMap.put(outParamId2, deviceMessage3);
+            }
+        }
+    }
+
+    /**
+     * byte转16进制
+     *
+     * @param mByte
+     * @return
+     */
+    private static String byteToHexString(byte mByte) {
+        char[] Digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        char[] arr = new char[2];
+        arr[0] = Digit[(mByte >>> 4) & 0X0F];// ? >>>
+        arr[1] = Digit[mByte & 0X0F];
+        String tmp = new String(arr);
+        return tmp;
     }
 
     /**
@@ -182,7 +227,7 @@ public class BoshiFD extends BaseDevice {
      * @param length
      * @return
      */
-    private String toHex(byte[] data, int off, int length) {
+    private static String toHex(byte[] data, int off, int length) {
         StringBuffer buf = new StringBuffer(data.length * 2);
         for (int i = off; i < length; i++) {
             if ((data[i] & 0xFF) < 16)
