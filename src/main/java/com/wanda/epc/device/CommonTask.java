@@ -16,11 +16,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class CommonTask {
 
     @Autowired
-    private BoshiFD boshiFD;// opc
+    private BoshiFD boshiFD;
 
     @Scheduled(cron = "0/30 * * * * ?")
     public boolean processData() throws Exception {
         return boshiFD.processData();
     }
+
+    @Scheduled(cron = "0/30 * * * * ?")
+    public void syncSoftdeployWithdrawAlarmSet() throws Exception {
+        boshiFD.syncSoftdeployWithdrawAlarmSet();
+    }
+
 
 }

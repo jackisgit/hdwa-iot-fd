@@ -80,14 +80,16 @@ public class BoshiFD extends BaseDevice {
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
         commonDevice.feedback(message);
-        //软布防，撤布防时需遍历所有防盗点位并将软撤布防点位设置为相同值,1.布防；0.撤防
-        DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         //设置软撤布防点位，用于判断是否进行报警
         redisUtil.set(SOFT_DEPLOY_WITHDRAW_ALARM_SET, value);
-        log.info("接收门禁指令下发：deviceMessage {},状态：{}", JSON.toJSONString(deviceMessage), value);
-        if (deviceMessage == null) {
-            return;
-        }
+    }
+
+    /**
+     * 同步软布防点位
+     */
+    public void syncSoftdeployWithdrawAlarmSet() {
+        log.info("同步软布防点位");
+        Object obj = redisUtil.get(SOFT_DEPLOY_WITHDRAW_ALARM_SET);
         Set<String> keys = redisUtil.scan("Pj" + gcId + "." + gatewayId + ".*");
         if (CollectionUtils.isEmpty(keys)) {
             return;
@@ -95,7 +97,7 @@ public class BoshiFD extends BaseDevice {
         for (String key : keys) {
             DeviceMessage msg = JSON.parseObject(JSON.toJSONString(redisUtil.get(key)), DeviceMessage.class);
             if (SOFT_DEPLOY_WITHDRAW_ALARM_SET.equals(msg.getOutParamId())) {
-                msg.setValue(value);
+                msg.setValue(String.valueOf(obj));
                 sendMessage(msg);
             }
         }
