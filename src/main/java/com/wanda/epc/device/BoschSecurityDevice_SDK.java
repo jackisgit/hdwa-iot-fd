@@ -1,6 +1,5 @@
 package com.wanda.epc.device;
 
-import cn.hutool.json.JSONUtil;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.param.DeviceMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
         //如果数据变化则，发送emqx
         if (dm != null) {
             commonDevice.sendMessage(dm);
-            log.info("发送消息: {}" + JSONUtil.toJsonStr(dm));
         }
     }
 
@@ -47,8 +45,9 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
+        commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}",meter,funcid,value,message);
+        log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}", meter, funcid, value, message);
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
             if (redisUtil.hasKey(deviceMessage.getOutParamId())) {
                 commonDevice.feedback(message);
@@ -79,8 +78,8 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
                 log.info("防盗报警控制命令下发失败：" + e.getMessage());
             }
         }
-        commonDevice.feedback(message);
     }
+
 
     @Override
     public boolean processData(String... obj) throws Exception {

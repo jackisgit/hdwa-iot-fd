@@ -34,7 +34,7 @@ public class CommonTask {
 
     @Scheduled(cron = "0/60 * * * * ?")
     public boolean processData() throws Exception {
-        log.info("消息推送定时任务开始===================================");
+        log.info("子系统不返回报警恢复指令，自动处理");
         Iterator<Map.Entry<String, List<DeviceMessage>>> iterator = baseDevice.deviceParamListMap.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry<String, List<DeviceMessage>> next = iterator.next();
@@ -42,21 +42,11 @@ public class CommonTask {
                 for(DeviceMessage deviceMessage: next.getValue()){
                     if(StringUtils.isEmpty(deviceMessage.getValue())){
                         deviceMessage.setValue("0");
+                        commonDevice.sendMessage(deviceMessage);
                     }
-                    commonDevice.sendMessage(deviceMessage);
-                }
-
-            }
-            if(next.getKey().endsWith("_deployWithdrawAlarmSetFeedback")){
-                for(DeviceMessage deviceMessage: next.getValue()){
-                    if(StringUtils.isEmpty(deviceMessage.getValue())){
-                        deviceMessage.setValue("0");
-                    }
-                    commonDevice.sendMessage(deviceMessage);
                 }
             }
         }
-        log.info("消息推送定时任务结束===================================");
         return true;
     }
 
