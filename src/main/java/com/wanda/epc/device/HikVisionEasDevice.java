@@ -600,7 +600,7 @@ public class HikVisionEasDevice extends BaseDevice {
             //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
             DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_deployWithdrawAlarmStatus");
             if (Objects.nonNull(deviceMessage)) {
-                log.info("撤布防状态：{}=={}", lUserID, i, b);
+                log.info("撤布防状态：{}=={}", i, b);
                 deviceMessage.setValue(String.valueOf(b));
                 deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 sendMessage(deviceMessage);
