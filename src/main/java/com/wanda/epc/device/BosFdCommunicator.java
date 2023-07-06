@@ -1,4 +1,5 @@
 package com.wanda.epc.device;
+
 import com.sun.jna.Pointer;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -32,34 +33,28 @@ public class BosFdCommunicator implements Runnable {
     private boolean isRevice = true;
 
     public void openReceived() {
-        pObject = BoschSecurity.BS7400CtlDLL.instance.New_Object(); // 实例化panel
+        // 实例化panel
+        pObject = BoschSecurity.BS7400CtlDLL.instance.New_Object();
         BoschSecurity.BS7400CtlDLL.instance.ArrangeRcvAddress(pObject, rcvAddress, pCtlAddress);
 
         int dwResult = BoschSecurity.BS7400CtlDLL.instance.OpenReceiver(pObject,
-                new BoschSecurity.Trandataproc() {
-                    @Override
-                    public void invoke(Pointer pPara, String sRcvData,
-                                       int iDataLen) {
-                        // 将监听读取到的数据放入监听类，返回给BGM
-                        for (BostFdDataArriveListener listener : eventRepository) {
-                            // 将数据放入此队列
-                            listener.dataArrive(sRcvData);
-                        }
-                        System.out.println("re:" + sRcvData);//事件数据
-                        System.out.println("re:" + iDataLen);//事件数据长度
+                (pPara, sRcvData, iDataLen) -> {
+                    // 将监听读取到的数据放入监听类，返回给BGM
+                    for (BostFdDataArriveListener listener : eventRepository) {
+                        // 将数据放入此队列
+                        listener.dataArrive(sRcvData);
                     }
-
+                    //事件数据
+                    log.info("事件数据:{},时间数据长度:{}" + sRcvData, iDataLen);
                 }, pObject);
         if (dwResult == 0) {
-            System.out.println("打开接收事件/发送控制功能的IP地址成功打开");
-//			logger.debug("打开接收事件/发送控制功能的IP地址成功打开");
+            log.info("打开接收事件/发送控制功能的IP地址成功打开");
         } else if (dwResult == 7) {
-            System.out.println("接收事件的IP地址成功打开");
+            log.info("接收事件的IP地址成功打开");
         } else if (dwResult == 11) {
-            System.out.println("发送控制指令IP地址成功打开");
+            log.info("发送控制指令IP地址成功打开");
         } else {
-            System.out.println("接收事件的IP地址以及发送控制的IP地址无效");
-//			logger.debug("接收事件的IP地址以及发送控制的IP地址无效");
+            log.error("接收事件的IP地址以及发送控制的IP地址无效");
         }
     }
 
@@ -68,7 +63,7 @@ public class BosFdCommunicator implements Runnable {
         boolean canControl = BoschSecurity.BS7400CtlDLL.instance.CanControlPanel(this.pObject);
         log.info("当前发送控制功能是否可用" + canControl);
         int result = BoschSecurity.BS7400CtlDLL.instance.Execute(this.pObject, this.serviceIp, data.getCommand(), data.getsPara(), data.getType());
-        String info = "发送命令：命令描述" + data.getDesc() + "，主机的IP地址=" + this.serviceIp + "，命令="+ data.getCommand() + "，参数="+ data.getsPara() + ",主机类型" + data.getType();
+        String info = "发送命令：命令描述" + data.getDesc() + "，主机的IP地址=" + this.serviceIp + "，命令=" + data.getCommand() + "，参数=" + data.getsPara() + ",主机类型" + data.getType();
         if (0 == result) {
             info = info + "，返回结果，已成功发送控制命令";
         } else if (-3 == result) {
