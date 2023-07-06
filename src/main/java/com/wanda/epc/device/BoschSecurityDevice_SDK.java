@@ -1,11 +1,11 @@
 package com.wanda.epc.device;
 
-import cn.hutool.json.JSONUtil;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.param.DeviceMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -32,7 +32,6 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
         //如果数据变化则，发送emqx
         if (dm != null) {
             commonDevice.sendMessage(dm);
-            log.info("发送消息: {}" + JSONUtil.toJsonStr(dm));
         }
     }
 
@@ -47,8 +46,9 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
+        commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}",meter,funcid,value,message);
+        log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}", meter, funcid, value, message);
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
             if (redisUtil.hasKey(deviceMessage.getOutParamId())) {
                 commonDevice.feedback(message);
@@ -75,12 +75,22 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
                 data.setDesc(desc);
                 log.info("开始调用子系统做撤布防操作====");
                 this.bosFdCommunicator.write(data);
+                //因为上饶子系统不发送撤布防反馈，所以直接在下发撤布防指令完成后直接往反馈点反馈
+                String feedBackOutParamId = fenqu + "_deployWithdrawAlarmSetFeedback";
+                List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(feedBackOutParamId);
+                if (CollectionUtils.isEmpty(deviceMessageList)) {
+                    return;
+                }
+                for (DeviceMessage dm : deviceMessageList) {
+                    dm.setValue(value);
+                    sendMessage(dm);
+                }
             } catch (Exception e) {
                 log.info("防盗报警控制命令下发失败：" + e.getMessage());
             }
         }
-        commonDevice.feedback(message);
     }
+
 
     @Override
     public boolean processData(String... obj) throws Exception {
