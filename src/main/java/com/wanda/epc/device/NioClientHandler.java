@@ -59,7 +59,6 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
                 String str = "4,5,6,7,8,9,10,11,12,13";
                 String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
                 String isAlarm = "0";
-                //0: 未知 1: 正常 2: 禁用 3: 旁路 4: 报警 5: 未准备 6: 故障 7: 布防
                 if (str.contains(data3)) {
                     isAlarm = "1";
                 }
