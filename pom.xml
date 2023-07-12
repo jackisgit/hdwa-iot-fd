@@ -10,6 +10,7 @@
 
     <artifactId>iot_epc_fd</artifactId>
     <name>iot_epc_fd</name>
+    <version>1.0.0-R20230606</version>
 
     <dependencies>
         <dependency>
@@ -26,7 +27,7 @@
     </dependencies>
 
     <build>
-        <finalName>IOT_EPC_FD_Bosch_model2</finalName>
+        <finalName>IOT_EPC_FD_Bosch_B9512G_${version}</finalName>
     </build>
 
 </project>
