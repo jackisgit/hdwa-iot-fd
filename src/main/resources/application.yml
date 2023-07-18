@@ -19,9 +19,3 @@ spring:
     host: 127.0.0.1
     port: 16379
     password:
-tcp:
-  serverIP: 10.19.32.183
-  port: 8202
-
-
-
