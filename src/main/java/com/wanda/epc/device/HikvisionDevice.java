@@ -71,10 +71,7 @@ public class HikvisionDevice extends BaseDevice {
 
     @Override
     public void sendMessage(DeviceMessage dm) {
-        log.info("发送数据:{}", JSON.toJSONString(dm));
-        if (dm != null) {
-            commonDevice.sendMessage(dm);
-        }
+        commonDevice.sendMessage(dm);
     }
 
     @Override
@@ -84,8 +81,10 @@ public class HikvisionDevice extends BaseDevice {
 
     @Override
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
+        //反馈到iot-project
+        commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("接受到泉州浦西防盗报警撤布防指令 meter:{},funcid:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
+        log.info("接受到防盗报警撤布防指令 meter:{},funcid:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
         String outParamId = deviceMessage.getOutParamId();
         String[] split = outParamId.split("_");
         String indexCode = split[0];
@@ -113,8 +112,6 @@ public class HikvisionDevice extends BaseDevice {
                 sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat("_deployWithdrawAlarmSetFeedback"), "0");
             }
         }
-        //反馈到iot-project
-        commonDevice.feedback(message);
     }
 
     @Override
@@ -158,9 +155,9 @@ public class HikvisionDevice extends BaseDevice {
         }
         //2.查询子系统状态
         List<HikvisionsubSystemIStatusVo> subSysStatus = getSubSysStatus(sysSubIndexCodeList);
-        if (!CollectionUtils.isEmpty(subSysStatus)){
+        if (!CollectionUtils.isEmpty(subSysStatus)) {
             //子系统状态 子系统状态，-1：未知，0：撤防，1：布防
-            subSysStatus.forEach(subSys->{
+            subSysStatus.forEach(subSys -> {
                 //1.撤防状态
                 if (subSys.getStatus() == 0) {
                     sendMsg(subSys.getSubSystemIndexCode().concat("_defenceStatus"), "0");
@@ -292,9 +289,9 @@ public class HikvisionDevice extends BaseDevice {
     }
 
     /**
-     *@description 查询子系统状态
-     *@author LianYanFei
-     *@date 2023/5/10
+     * @description 查询子系统状态
+     * @author LianYanFei
+     * @date 2023/5/10
      */
     public List<HikvisionsubSystemIStatusVo> getSubSysStatus(List<String> defenceIndexCodes) {
         log.info("开始调用海康威视查询子系统状态");

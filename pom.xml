@@ -37,7 +37,7 @@
 
 
     <build>
-        <finalName>IOT_EPC_FD_hikvision_v1.5.102.20200708210908</finalName>
+        <finalName>IOT_EPC_FD_hikvision_v1.5.102_${version}</finalName>
     </build>
 
 </project>
