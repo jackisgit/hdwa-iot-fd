@@ -39,10 +39,7 @@ public class BoshiFD extends BaseDevice {
 
     @Override
     public void sendMessage(DeviceMessage dm) {
-        if (dm != null) {
-            //log.info("发送消息[{}]", dm);
-            commonDevice.sendMessage(dm);
-        }
+        commonDevice.sendMessage(dm);
     }
 
     @Override
