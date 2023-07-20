@@ -57,9 +57,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
 
     @Override
     public void sendMessage(DeviceMessage dm) {
-        if (dm != null) {
-            commonDevice.sendMessage(dm);
-        }
+        commonDevice.sendMessage(dm);
     }
 
     @Override
@@ -99,7 +97,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
                 log.info("发送控制,指令为：{}，{}", JSONObject.toJSONString(controlPackageDto), controlPackageStr);
                 socketChannel.writeAndFlush(controlPackageStr);
             } catch (Exception e) {
-                log.info("防盗报警控制命令下发失败：" + e.getMessage());
+                log.error("防盗报警控制命令下发失败", e);
             }
         }
     }
@@ -136,7 +134,7 @@ public class FdDevice extends BaseDevice implements ApplicationRunner {
             // 关闭服务器通道
             f.channel().closeFuture().sync();
         } catch (Exception e) {
-            log.error("与服务器{}:{}连接出现异常", host, port);
+            log.error("与服务器{}:{}连接出现异常", host, port, e);
         } finally {
             group.shutdownGracefully();
 
