@@ -294,7 +294,6 @@ public class HikVisionEasDevice extends BaseDevice {
     @Override
     public void sendMessage(DeviceMessage dm) {
         if (dm != null) {
-            log.info("发送数据：{}", JSON.toJSONString(dm));
             commonDevice.sendMessage(dm);
         }
     }
@@ -318,7 +317,6 @@ public class HikVisionEasDevice extends BaseDevice {
                     deviceMessageList.forEach(deviceMessage -> {
                         if (deviceMessage != null) {
                             deviceMessage.setValue("1");
-                            deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                             sendMessage(deviceMessage);
                         }
                     });
@@ -330,7 +328,6 @@ public class HikVisionEasDevice extends BaseDevice {
                     deviceMessageList.forEach(deviceMessage -> {
                         if (deviceMessage != null) {
                             deviceMessage.setValue("0");
-                            deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                             sendMessage(deviceMessage);
                         }
                     });
@@ -421,7 +418,7 @@ public class HikVisionEasDevice extends BaseDevice {
      *
      * @param alarmsubsystem_code:子系统号
      */
-    private static void subsystemParamEx(int alarmsubsystem_code) {
+    public static void subsystemParamEx(int alarmsubsystem_code) {
         /**************开启子系统使能**************/
         HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
         net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
@@ -602,7 +599,6 @@ public class HikVisionEasDevice extends BaseDevice {
             if (Objects.nonNull(deviceMessage)) {
                 log.info("撤布防状态：{}=={}", i, b);
                 deviceMessage.setValue(String.valueOf(b));
-                deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 sendMessage(deviceMessage);
             }
         }
@@ -615,7 +611,6 @@ public class HikVisionEasDevice extends BaseDevice {
             if (Objects.nonNull(deviceMessage)) {
                 log.info("防区报警状态：{}=={}", i, b);
                 deviceMessage.setValue(String.valueOf(b));
-                deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 sendMessage(deviceMessage);
             }
         }
@@ -628,7 +623,6 @@ public class HikVisionEasDevice extends BaseDevice {
             if (Objects.nonNull(deviceMessage)) {
                 log.info("防区故障状态：{}=={}", i, b);
                 deviceMessage.setValue(String.valueOf(b));
-                deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 sendMessage(deviceMessage);
             }
         }
@@ -641,7 +635,6 @@ public class HikVisionEasDevice extends BaseDevice {
             if (Objects.nonNull(deviceMessage)) {
                 log.info("防区防拆状态：{}=={}", i, b);
                 deviceMessage.setValue(String.valueOf(b));
-                deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                 sendMessage(deviceMessage);
             }
         }
