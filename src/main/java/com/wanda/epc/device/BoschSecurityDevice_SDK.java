@@ -115,7 +115,7 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
                     }*/
                     log.info("防盗报警 分区防区号:" + fenqu + "_" + fangqu + "强拆报警恢复");
                 } else if (eventCode.startsWith("11")) {
-                    String outParamId = fangqu + "_isAlarm";
+                    String outParamId = fenqu + "_" + fangqu + "_isAlarm";
                     List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
                     if (deviceMessageList != null) {
                         for (DeviceMessage deviceMessage : deviceMessageList) {
@@ -127,7 +127,7 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
                     log.info("防盗报警 分区防区号" + fenqu + "_" + fangqu + "  报警码：" + eventCode + "  报警信息：" + Alarm(eventCode));
                 } else if ("1615,1465,3465,3642,3654,3344".contains(eventCode) || eventCode.startsWith("313") || eventCode
                         .startsWith("314") || eventCode.startsWith("315") || eventCode.startsWith("316")) {
-                    String outParamId = fangqu + "_isAlarm";
+                    String outParamId = fenqu + "_" + fangqu + "_isAlarm";
                     List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
                     if (deviceMessageList != null) {
                         for (DeviceMessage deviceMessage : deviceMessageList) {
