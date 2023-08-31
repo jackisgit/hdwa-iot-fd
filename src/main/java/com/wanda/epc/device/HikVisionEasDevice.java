@@ -6,7 +6,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.wanda.epc.device.NetSDKDemo.HCNetSDK;
 import com.wanda.epc.param.DeviceMessage;
-import com.wanda.epc.util.ConvertUtil;
 import com.wanda.epc.util.PingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,72 +51,6 @@ public class HikVisionEasDevice extends BaseDevice {
     @Value("${hikVision.pwd}")
     private String pwd;
 
-
-    @PostConstruct
-    public void init() {
-        if (hCNetSDK == null) {
-            if (!createSDKInstance()) {
-                System.out.println("Load SDK fail");
-                return;
-            }
-        }
-        //linux系统建议调用以下接口加载组件库
-        if (osSelect.isLinux()) {
-            HCNetSDK.BYTE_ARRAY ptrByteArray1 = new HCNetSDK.BYTE_ARRAY(256);
-            HCNetSDK.BYTE_ARRAY ptrByteArray2 = new HCNetSDK.BYTE_ARRAY(256);
-            //这里是库的绝对路径，请根据实际情况修改，注意改路径必须有访问权限
-            String strPath1 = System.getProperty("user.dir") + "/lib/libcrypto.so.1.1";
-            String strPath2 = System.getProperty("user.dir") + "/lib/libssl.so.1.1";
-
-            System.arraycopy(strPath1.getBytes(), 0, ptrByteArray1.byValue, 0, strPath1.length());
-            ptrByteArray1.write();
-            hCNetSDK.NET_DVR_SetSDKInitCfg(3, ptrByteArray1.getPointer());
-
-            System.arraycopy(strPath2.getBytes(), 0, ptrByteArray2.byValue, 0, strPath2.length());
-            ptrByteArray2.write();
-            hCNetSDK.NET_DVR_SetSDKInitCfg(4, ptrByteArray2.getPointer());
-
-            String strPathCom = System.getProperty("user.dir") + "/lib/";
-            HCNetSDK.NET_DVR_LOCAL_SDK_PATH struComPath = new HCNetSDK.NET_DVR_LOCAL_SDK_PATH();
-            System.arraycopy(strPathCom.getBytes(), 0, struComPath.sPath, 0, strPathCom.length());
-            struComPath.write();
-            hCNetSDK.NET_DVR_SetSDKInitCfg(2, struComPath.getPointer());
-        }
-
-        /**初始化*/
-        hCNetSDK.NET_DVR_Init();
-        /**加载日志*/
-        hCNetSDK.NET_DVR_SetLogToFile(3, "./sdklog", false);
-        //设置报警回调函数
-        if (fMSFCallBack_V31 == null) {
-            fMSFCallBack_V31 = new FMSGCallBack_V31();
-            Pointer pUser = null;
-            if (!hCNetSDK.NET_DVR_SetDVRMessageCallBack_V31(fMSFCallBack_V31, pUser)) {
-                log.info("设置回调函数失败!");
-                return;
-            } else {
-                log.info("设置回调函数成功!");
-            }
-        }
-        /** 设备上传的报警信息是COMM_VCA_ALARM(0x4993)类型，
-         在SDK初始化之后增加调用NET_DVR_SetSDKLocalCfg(enumType为NET_DVR_LOCAL_CFG_TYPE_GENERAL)设置通用参数NET_DVR_LOCAL_GENERAL_CFG的byAlarmJsonPictureSeparate为1，
-         将Json数据和图片数据分离上传，这样设置之后，报警布防回调函数里面接收到的报警信息类型为COMM_ISAPI_ALARM(0x6009)，
-         报警信息结构体为NET_DVR_ALARM_ISAPI_INFO（与设备无关，SDK封装的数据结构），更便于解析。*/
-
-        HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG struNET_DVR_LOCAL_GENERAL_CFG = new HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG();
-        struNET_DVR_LOCAL_GENERAL_CFG.byAlarmJsonPictureSeparate = 1;   //设置JSON透传报警数据和图片分离
-        struNET_DVR_LOCAL_GENERAL_CFG.write();
-        Pointer pStrNET_DVR_LOCAL_GENERAL_CFG = struNET_DVR_LOCAL_GENERAL_CFG.getPointer();
-        hCNetSDK.NET_DVR_SetSDKLocalCfg(17, pStrNET_DVR_LOCAL_GENERAL_CFG);
-
-        login_V40(ip, port, user, pwd);  //登录设备
-
-        setupAlarmChan(lUserID, -1);//建立报警布防通道
-
-
-    }
-
-
     /**
      * 开启监听
      *
@@ -136,7 +69,6 @@ public class HikVisionEasDevice extends BaseDevice {
             log.info("监听成功");
         }
     }
-
 
     /**
      * 动态库加载
@@ -164,7 +96,6 @@ public class HikVisionEasDevice extends BaseDevice {
         }
         return true;
     }
-
 
     /**
      * 设备登录V40 与V30功能一致
@@ -257,7 +188,6 @@ public class HikVisionEasDevice extends BaseDevice {
         }
     }
 
-
     /**
      * 设备撤防，设备注销
      *
@@ -273,6 +203,104 @@ public class HikVisionEasDevice extends BaseDevice {
         } else {
             log.info("对防区" + num + "撤防成功");
         }
+
+    }
+
+    /**
+     * 功能描述:子系统关联防区
+     * 子系统关联参数设置规则：索引都默认为0代表关联1-8防区（subsystem_param_ex.byJointAlarmIn[0]） 1代表9-16防区，以此类推 subsystem_param_ex.byJointAlarmIn[1]）
+     * 所设置的十进制值将会转换成2禁止，转成二进制1代表关联，0代表取消关联
+     * 注意:防区从右到左依次递增
+     * 例如：byJointAlarmIn[0] = 7; 7转换成2进制为：111，代表关联1，2，3三个防区
+     * byJointAlarmIn[0] = 5; 5转换成2进制为：101，代表关联1，3两个个防区
+     * 注意：由于byte最大值为127，如果8位二进制转成byte超出，直接强转成byte,或自动进行补位
+     *
+     * @param alarmsubsystem_code:子系统号
+     */
+    public static void subsystemParamEx(int alarmsubsystem_code) {
+        log.info("使能开始，子系统号：{}", alarmsubsystem_code);
+        /**************开启子系统使能**************/
+        HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
+        net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
+        net_dvr_alarmsubsystemparam.write();
+        IntByReference lpBytesReturned = new IntByReference(0);
+        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
+        if (b_GetAcsCfg) {
+            net_dvr_alarmsubsystemparam.read();
+            net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
+            net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
+            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
+            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(lUserID, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
+            if (!b_SetAcsCfg) {
+                log.error("设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            }
+        } else {
+            log.error("获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+        }
+        log.info("使能成功，子系统号：{}", alarmsubsystem_code);
+    }
+
+    @PostConstruct
+    public void init() {
+        if (hCNetSDK == null) {
+            if (!createSDKInstance()) {
+                System.out.println("Load SDK fail");
+                return;
+            }
+        }
+        //linux系统建议调用以下接口加载组件库
+        if (osSelect.isLinux()) {
+            HCNetSDK.BYTE_ARRAY ptrByteArray1 = new HCNetSDK.BYTE_ARRAY(256);
+            HCNetSDK.BYTE_ARRAY ptrByteArray2 = new HCNetSDK.BYTE_ARRAY(256);
+            //这里是库的绝对路径，请根据实际情况修改，注意改路径必须有访问权限
+            String strPath1 = System.getProperty("user.dir") + "/lib/libcrypto.so.1.1";
+            String strPath2 = System.getProperty("user.dir") + "/lib/libssl.so.1.1";
+
+            System.arraycopy(strPath1.getBytes(), 0, ptrByteArray1.byValue, 0, strPath1.length());
+            ptrByteArray1.write();
+            hCNetSDK.NET_DVR_SetSDKInitCfg(3, ptrByteArray1.getPointer());
+
+            System.arraycopy(strPath2.getBytes(), 0, ptrByteArray2.byValue, 0, strPath2.length());
+            ptrByteArray2.write();
+            hCNetSDK.NET_DVR_SetSDKInitCfg(4, ptrByteArray2.getPointer());
+
+            String strPathCom = System.getProperty("user.dir") + "/lib/";
+            HCNetSDK.NET_DVR_LOCAL_SDK_PATH struComPath = new HCNetSDK.NET_DVR_LOCAL_SDK_PATH();
+            System.arraycopy(strPathCom.getBytes(), 0, struComPath.sPath, 0, strPathCom.length());
+            struComPath.write();
+            hCNetSDK.NET_DVR_SetSDKInitCfg(2, struComPath.getPointer());
+        }
+
+        /**初始化*/
+        hCNetSDK.NET_DVR_Init();
+        /**加载日志*/
+        hCNetSDK.NET_DVR_SetLogToFile(3, "./sdklog", false);
+        //设置报警回调函数
+        if (fMSFCallBack_V31 == null) {
+            fMSFCallBack_V31 = new FMSGCallBack_V31();
+            Pointer pUser = null;
+            if (!hCNetSDK.NET_DVR_SetDVRMessageCallBack_V31(fMSFCallBack_V31, pUser)) {
+                log.info("设置回调函数失败!");
+                return;
+            } else {
+                log.info("设置回调函数成功!");
+            }
+        }
+        /** 设备上传的报警信息是COMM_VCA_ALARM(0x4993)类型，
+         在SDK初始化之后增加调用NET_DVR_SetSDKLocalCfg(enumType为NET_DVR_LOCAL_CFG_TYPE_GENERAL)设置通用参数NET_DVR_LOCAL_GENERAL_CFG的byAlarmJsonPictureSeparate为1，
+         将Json数据和图片数据分离上传，这样设置之后，报警布防回调函数里面接收到的报警信息类型为COMM_ISAPI_ALARM(0x6009)，
+         报警信息结构体为NET_DVR_ALARM_ISAPI_INFO（与设备无关，SDK封装的数据结构），更便于解析。*/
+
+        HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG struNET_DVR_LOCAL_GENERAL_CFG = new HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG();
+        struNET_DVR_LOCAL_GENERAL_CFG.byAlarmJsonPictureSeparate = 1;   //设置JSON透传报警数据和图片分离
+        struNET_DVR_LOCAL_GENERAL_CFG.write();
+        Pointer pStrNET_DVR_LOCAL_GENERAL_CFG = struNET_DVR_LOCAL_GENERAL_CFG.getPointer();
+        hCNetSDK.NET_DVR_SetSDKLocalCfg(17, pStrNET_DVR_LOCAL_GENERAL_CFG);
+
+        login_V40(ip, port, user, pwd);  //登录设备
+
+        setupAlarmChan(lUserID, -1);//建立报警布防通道
+
 
     }
 
@@ -406,42 +434,74 @@ public class HikVisionEasDevice extends BaseDevice {
         }
     }
 
-
-    /**
-     * 功能描述:子系统关联防区
-     * 子系统关联参数设置规则：索引都默认为0代表关联1-8防区（subsystem_param_ex.byJointAlarmIn[0]） 1代表9-16防区，以此类推 subsystem_param_ex.byJointAlarmIn[1]）
-     * 所设置的十进制值将会转换成2禁止，转成二进制1代表关联，0代表取消关联
-     * 注意:防区从右到左依次递增
-     * 例如：byJointAlarmIn[0] = 7; 7转换成2进制为：111，代表关联1，2，3三个防区
-     * byJointAlarmIn[0] = 5; 5转换成2进制为：101，代表关联1，3两个个防区
-     * 注意：由于byte最大值为127，如果8位二进制转成byte超出，直接强转成byte,或自动进行补位
-     *
-     * @param alarmsubsystem_code:子系统号
-     */
-    public static void subsystemParamEx(int alarmsubsystem_code) {
-        /**************开启子系统使能**************/
-        HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
-        net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
-        net_dvr_alarmsubsystemparam.write();
-        IntByReference lpBytesReturned = new IntByReference(0);
-        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
-        if (b_GetAcsCfg) {
-            net_dvr_alarmsubsystemparam.read();
-            net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
-            net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
-            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
-            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(lUserID, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
-            if (!b_SetAcsCfg) {
-                log.error("设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
-            }
-        } else {
-            log.error("获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
-        }
-    }
-
     @Override
     public boolean processData(String... obj) throws Exception {
         return false;
+    }
+
+    /**
+     * @description 查询防盗报警撤布防状态
+     * @author LianYanFei
+     * @date 2023/5/24
+     */
+    private void alarmStatus() {
+        log.info("开始主动查询防区状态信息");
+        HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40 acsWorkStatus = new HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40();
+        Pointer pAcsWorkStatus = acsWorkStatus.getPointer();
+        if (!hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_ALARMHOST_MAIN_STATUS_V40, 0, pAcsWorkStatus,
+                acsWorkStatus.size(), new IntByReference(0))) {
+            log.error("Failed to get door status! Error code: " + hCNetSDK.NET_DVR_GetLastError());
+            return;
+        }
+        acsWorkStatus.read();
+        //撤布防状态
+        log.info("bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
+        for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
+            byte b = acsWorkStatus.bySetupAlarmStatus[i];
+            //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
+            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_deployWithdrawAlarmStatus");
+            if (Objects.nonNull(deviceMessage)) {
+                log.info("撤布防状态：{}=={}", i, b);
+                deviceMessage.setValue(String.valueOf(b));
+                sendMessage(deviceMessage);
+            }
+        }
+        //防区报警状态
+        log.info("byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
+        for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
+            byte b = acsWorkStatus.byAlarmInStatus[i];
+            //0- 对应防区当前无报警，1- 对应防区当前有报警
+            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_alarmStatus");
+            if (Objects.nonNull(deviceMessage)) {
+                log.info("防区报警状态：{}=={}", i, b);
+                deviceMessage.setValue(String.valueOf(b));
+                sendMessage(deviceMessage);
+            }
+        }
+        //防区故障状态
+        log.info("byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
+        for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
+            byte b = acsWorkStatus.byAlarmInFaultStatus[i];
+            //0-对应防区处于正常状态，1-对应防区处于故障状态
+            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_faultStatus");
+            if (Objects.nonNull(deviceMessage)) {
+                log.info("防区故障状态：{}=={}", i, b);
+                deviceMessage.setValue(String.valueOf(b));
+                sendMessage(deviceMessage);
+            }
+        }
+        //防区防拆状态
+        log.info("byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
+        for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
+            byte b = acsWorkStatus.byAlarmInTamperStatus[i];
+            //0-对应防区当前无报警，1-对应防区当前有报警
+            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_fangchaiStatus");
+            if (Objects.nonNull(deviceMessage)) {
+                log.info("防区防拆状态：{}=={}", i, b);
+                deviceMessage.setValue(String.valueOf(b));
+                sendMessage(deviceMessage);
+            }
+        }
     }
 
     /**
@@ -570,72 +630,6 @@ public class HikVisionEasDevice extends BaseDevice {
                     log.info("异常" + "lUserID:" + lUserID);
                     break;
 
-            }
-        }
-    }
-
-
-    /**
-     * @description 查询防盗报警撤布防状态
-     * @author LianYanFei
-     * @date 2023/5/24
-     */
-    private void alarmStatus() {
-        log.info("开始主动查询防区状态信息");
-        HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40 acsWorkStatus = new HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40();
-        Pointer pAcsWorkStatus = acsWorkStatus.getPointer();
-        if (!hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_ALARMHOST_MAIN_STATUS_V40, 0, pAcsWorkStatus,
-                acsWorkStatus.size(), new IntByReference(0))) {
-            log.error("Failed to get door status! Error code: " + hCNetSDK.NET_DVR_GetLastError());
-            return;
-        }
-        acsWorkStatus.read();
-        //撤布防状态
-        log.info("bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
-        for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
-            byte b = acsWorkStatus.bySetupAlarmStatus[i];
-            //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_deployWithdrawAlarmStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("撤布防状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
-            }
-        }
-        //防区报警状态
-        log.info("byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInStatus[i];
-            //0- 对应防区当前无报警，1- 对应防区当前有报警
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_alarmStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区报警状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
-            }
-        }
-        //防区故障状态
-        log.info("byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInFaultStatus[i];
-            //0-对应防区处于正常状态，1-对应防区处于故障状态
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_faultStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区故障状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
-            }
-        }
-        //防区防拆状态
-        log.info("byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInTamperStatus[i];
-            //0-对应防区当前无报警，1-对应防区当前有报警
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_fangchaiStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区防拆状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
             }
         }
     }
