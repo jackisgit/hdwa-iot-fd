@@ -13,10 +13,10 @@ mqtt:
 
 spring:
   profiles:
-    active: fuqing_qingchang_DSYFD
+    active: fuzhou_cangshan_pushang
   redis:
     host: 127.0.0.1
     port: 16379
     password:
 
-beanName: boshiFD
+beanName: dhFD

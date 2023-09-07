@@ -17,16 +17,76 @@
             <version>${iot_epc_common.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.3.19</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.purejavacomm</groupId>
             <artifactId>purejavacomm</artifactId>
             <version>1.0.1.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.8</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-web</artifactId>-->
+<!--            <version>5.3.14</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--        <dependency>-->
+<!--            <groupId>com.wanda.epc</groupId>-->
+<!--            <artifactId>iot_epc_fd</artifactId>-->
+<!--            <version>1.0.0-R20230606</version>-->
+<!--            <systemPath>${project.basedir}/lib/DPSDK_Core.dll</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
 
 
     <build>
-        <finalName>IOT_EPC_FD_Bosch_DS-7400_${version}</finalName>
+        <finalName>IOT_EPC_FD_DH_${version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <!-- 根据目录下的文件配置需要扫描的文件类型 -->
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/lib</directory>
+<!--                <targetPath>BOOT-INF/lib/</targetPath>-->
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>pdb</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>dll</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>xml</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
-
 </project>
