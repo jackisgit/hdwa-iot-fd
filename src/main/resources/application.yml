@@ -13,9 +13,9 @@ mqtt:
 
 spring:
   profiles:
-    active: changde_wuling
+    active: fuyang_yingzhou
   redis:
-    host: 127.0.0.1
+    host: 10.117.0.17
     port: 16379
     password:
 
