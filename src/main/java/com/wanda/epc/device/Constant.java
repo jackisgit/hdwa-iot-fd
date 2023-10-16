@@ -10,14 +10,9 @@ public class Constant {
     //=============================================以下为设备静态变量=========================================
 
     /**
-     * 报警用户（分区）状态
+     * 用户（分区）状态
      */
-    public static final String AA_STATUS = "AA_Status";
-
-    /**
-     * 报警防区状态
-     */
-    public static final String EVENT_OUTPUT = "Event_Output";
+    public static final String AZ_STATUS = "AZ_Status";
 
     /**
      * 控制报警用户（分区），（布防和撤防）
@@ -55,6 +50,26 @@ public class Constant {
      * 心跳编号
      */
     public static final String KEEP_ALIVE_NO = "888";
+
+    /**
+     * 布防
+     */
+    public static final String BU_FANG = "4,7";
+
+    /**
+     * 撤防
+     */
+    public static final String CHE_FANG = "0,1,2,3,5,6";
+
+    /**
+     * 报警
+     */
+    public static final String BAO_JING = "4";
+
+    /**
+     * 报警恢复
+     */
+    public static final String BAO_JING_HUI_FU = "0,1,2,3,5,6,7";
 
 
     //=============================================以上为设备静态变量=========================================

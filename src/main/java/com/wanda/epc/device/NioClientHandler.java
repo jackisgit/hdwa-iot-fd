@@ -9,7 +9,6 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -24,57 +23,51 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NioClientHandler extends ChannelInboundHandlerAdapter {
 
-    @Autowired
-    private FdDevice fdDevice;
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
-            FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
             log.info("客户端收到消息：{}", msg);
             PackageDto packageDto = JSON.parseObject(msg.toString(), PackageDto.class);
             String cmdType = packageDto.getCmdType();
-            if (StringUtils.isEmpty(cmdType)) {
+            if (StringUtils.isEmpty(cmdType) || !Constant.AZ_STATUS.equals(cmdType)) {
                 return;
             }
-            if (Constant.AA_STATUS.equals(cmdType)) {
+            if (Constant.BU_FANG.contains(packageDto.getData2())) {
                 String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
-                String isDefend = "0";
-                //0: 未知 1: 禁用 2: 撤防 3: 外出布防 4: 留守布防 5: 报警 6: 未准备 7: 布防 8:脱机
-                if ("3".equals(packageDto.getData2()) || "4".equals(packageDto.getData2())
-                        || "5".equals(packageDto.getData2()) || "7".equals(packageDto.getData2())) {
-                    isDefend = "1";
-                }
-                List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
-                if (CollectionUtils.isEmpty(deviceMessageList)) {
-                    return;
-                }
-                for (DeviceMessage deviceMessage : deviceMessageList) {
-                    deviceMessage.setValue(isDefend);
-                    fdDevice.sendMessage(deviceMessage);
-                }
-            } else if (Constant.EVENT_OUTPUT.equals(cmdType)) {
-                String data3 = packageDto.getData3();
-                //报警状态
-                String str = "4,5,6,7,8,9,10,11,12,13";
+                sendMsg(outParamId, "1");
+            } else if (Constant.CHE_FANG.contains(packageDto.getData2())) {
+                String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
+                sendMsg(outParamId, "0");
+            }
+            if (Constant.BAO_JING.contains(packageDto.getData2())) {
                 String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
-                String isAlarm = "0";
-                if (str.contains(data3)) {
-                    isAlarm = "1";
-                }
-                List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
-                if (CollectionUtils.isEmpty(deviceMessageList)) {
-                    return;
-                }
-                for (DeviceMessage deviceMessage : deviceMessageList) {
-                    deviceMessage.setValue(isAlarm);
-                    fdDevice.sendMessage(deviceMessage);
-                }
+                sendMsg(outParamId, "1");
+            } else if (Constant.BAO_JING_HUI_FU.contains(packageDto.getData2())) {
+                String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
+                sendMsg(outParamId, "0");
             }
         } catch (Exception e) {
             log.error("客户端接收消息异常", e);
         }
 
+    }
+
+    /**
+     * 给点位发送信息
+     *
+     * @param outParamId
+     * @param value
+     */
+    private void sendMsg(String outParamId, String value) {
+        FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
+        List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
+        if (CollectionUtils.isEmpty(deviceMessageList)) {
+            return;
+        }
+        for (DeviceMessage deviceMessage : deviceMessageList) {
+            deviceMessage.setValue(value);
+            fdDevice.sendMessage(deviceMessage);
+        }
     }
 
     /**
@@ -134,6 +127,7 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) {
+        FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
         ctx.channel().eventLoop().schedule(() -> {
             log.error("重连接");
             fdDevice.connect();
