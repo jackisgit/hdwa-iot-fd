@@ -10,9 +10,14 @@ public class Constant {
     //=============================================以下为设备静态变量=========================================
 
     /**
-     * 用户（分区）状态
+     * 报警状态
      */
     public static final String AZ_STATUS = "AZ_Status";
+
+    /**
+     * 撤布防状态
+     */
+    public static final String AA_STATUS = "AA_Status";
 
     /**
      * 控制报警用户（分区），（布防和撤防）
@@ -54,12 +59,12 @@ public class Constant {
     /**
      * 布防
      */
-    public static final String BU_FANG = "4,7";
+    public static final String BU_FANG = "3,4,7";
 
     /**
      * 撤防
      */
-    public static final String CHE_FANG = "0,1,2,3,5,6";
+    public static final String CHE_FANG = "0,1,2,5,6,8";
 
     /**
      * 报警

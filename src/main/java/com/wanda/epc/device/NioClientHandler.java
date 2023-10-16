@@ -29,27 +29,27 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
             log.info("客户端收到消息：{}", msg);
             PackageDto packageDto = JSON.parseObject(msg.toString(), PackageDto.class);
             String cmdType = packageDto.getCmdType();
-            if (StringUtils.isEmpty(cmdType) || !Constant.AZ_STATUS.equals(cmdType)) {
+            if (StringUtils.isEmpty(cmdType)) {
                 return;
-            }
-            if (Constant.BU_FANG.contains(packageDto.getData2())) {
+            } if (Constant.AA_STATUS.equals(cmdType)) {
                 String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
-                sendMsg(outParamId, "1");
-            } else if (Constant.CHE_FANG.contains(packageDto.getData2())) {
-                String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
-                sendMsg(outParamId, "0");
+                if (Constant.BU_FANG.contains(packageDto.getData2())) {
+                    sendMsg(outParamId, "1");
+                } else if (Constant.CHE_FANG.contains(packageDto.getData2())) {
+                    sendMsg(outParamId, "0");
+                }
             }
-            if (Constant.BAO_JING.contains(packageDto.getData2())) {
-                String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
-                sendMsg(outParamId, "1");
-            } else if (Constant.BAO_JING_HUI_FU.contains(packageDto.getData2())) {
-                String outParamId = packageDto.getData5() + "_" + packageDto.getData6() + "_" + Constant.IS_ALARM;
-                sendMsg(outParamId, "0");
+            if (Constant.AZ_STATUS.equals(cmdType)) {
+                String outParamId = packageDto.getData1() + "_" + Constant.IS_ALARM;
+                if (Constant.BAO_JING.contains(packageDto.getData2())) {
+                    sendMsg(outParamId, "1");
+                } else if (Constant.BAO_JING_HUI_FU.contains(packageDto.getData2())) {
+                    sendMsg(outParamId, "0");
+                }
             }
         } catch (Exception e) {
             log.error("客户端接收消息异常", e);
         }
-
     }
 
     /**
