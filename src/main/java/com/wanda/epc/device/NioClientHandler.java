@@ -31,7 +31,8 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
             String cmdType = packageDto.getCmdType();
             if (StringUtils.isEmpty(cmdType)) {
                 return;
-            } if (Constant.AA_STATUS.equals(cmdType)) {
+            }
+            if (Constant.AA_STATUS.equals(cmdType)) {
                 String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
                 if (Constant.BU_FANG.contains(packageDto.getData2())) {
                     sendMsg(outParamId, "1");

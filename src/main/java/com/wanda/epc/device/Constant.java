@@ -59,12 +59,12 @@ public class Constant {
     /**
      * 布防
      */
-    public static final String BU_FANG = "3,4,7";
+    public static final String BU_FANG = "3,4,5,7";
 
     /**
      * 撤防
      */
-    public static final String CHE_FANG = "0,1,2,5,6,8";
+    public static final String CHE_FANG = "0,1,2,6,8";
 
     /**
      * 报警
