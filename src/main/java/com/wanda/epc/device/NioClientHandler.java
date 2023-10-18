@@ -14,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 /**
  * @author 孙率众
@@ -33,15 +33,25 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
             if (Constant.AA_STATUS.equals(cmdType)) {
-                String outParamId = packageDto.getData1() + "_" + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
+                String outParamId = packageDto.getData1() + Constant.DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK;
                 if (Constant.BU_FANG.contains(packageDto.getData2())) {
                     sendMsg(outParamId, "1");
                 } else if (Constant.CHE_FANG.contains(packageDto.getData2())) {
+                    //如果为撤防，则需要把分区下的所有防区都设置成报警恢复
                     sendMsg(outParamId, "0");
+                    final FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
+                    for (Map.Entry<String, List<DeviceMessage>> entry : fdDevice.deviceParamListMap.entrySet()) {
+                        if (entry.getKey().startsWith(packageDto.getData1()) && entry.getKey().startsWith(Constant.IS_ALARM)) {
+                            for (DeviceMessage deviceMessage : entry.getValue()) {
+                                deviceMessage.setValue("0");
+                                fdDevice.sendMessage(deviceMessage);
+                            }
+                        }
+                    }
                 }
             }
             if (Constant.AZ_STATUS.equals(cmdType)) {
-                String outParamId = packageDto.getData1() + "_" + Constant.IS_ALARM;
+                String outParamId = packageDto.getData1() + Constant.IS_ALARM;
                 if (Constant.BAO_JING.contains(packageDto.getData2())) {
                     sendMsg(outParamId, "1");
                 } else if (Constant.BAO_JING_HUI_FU.contains(packageDto.getData2())) {
@@ -60,7 +70,7 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
      * @param value
      */
     private void sendMsg(String outParamId, String value) {
-        FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
+        final FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
         List<DeviceMessage> deviceMessageList = fdDevice.deviceParamListMap.get(outParamId);
         if (CollectionUtils.isEmpty(deviceMessageList)) {
             return;
@@ -75,18 +85,14 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
      * 连接关闭!
      */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         InetSocketAddress socket = (InetSocketAddress) ctx.channel().remoteAddress();
         String ip = socket.getAddress().getHostAddress();
         int port = socket.getPort();
-        log.error(" {}连接关闭！", ip + ":" + port);
-        try {
-            super.channelInactive(ctx);
-        } catch (Exception e) {
-            log.error("客户端连接关闭异常", e);
-        }
-        ctx.close();
-
+        log.error("{}连接关闭！", ip + ":" + port);
+        final FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
+        fdDevice.reconnect();
+        super.channelInactive(ctx);
     }
 
     /**
@@ -125,15 +131,4 @@ public class NioClientHandler extends ChannelInboundHandlerAdapter {
             }
         }
     }
-
-    @Override
-    public void channelUnregistered(final ChannelHandlerContext ctx) {
-        FdDevice fdDevice = SpringUtil.getBean(FdDevice.class);
-        ctx.channel().eventLoop().schedule(() -> {
-            log.error("重连接");
-            fdDevice.connect();
-        }, 1, TimeUnit.MINUTES);
-    }
-
-
 }

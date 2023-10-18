@@ -57,6 +57,16 @@ public class Constant {
     public static final String KEEP_ALIVE_NO = "888";
 
     /**
+     * 重连编号
+     */
+    public static final String GET_ALLDOT_STATUS = "Get_AllDot_Status";
+
+    /**
+     * 重连编号
+     */
+    public static final String RE_CONNECT_NO = "999";
+
+    /**
      * 布防
      */
     public static final String BU_FANG = "3,4,5,7";
@@ -83,14 +93,14 @@ public class Constant {
     /**
      * 撤布防设定
      */
-    public static final String DEPLOY_WITH_DRAW_ALARM_SET = "deployWithdrawAlarmSet";
+    public static final String DEPLOY_WITH_DRAW_ALARM_SET = "_deployWithdrawAlarmSet";
     /**
      * 报警状态
      */
-    public static final String IS_ALARM = "isAlarm";
+    public static final String IS_ALARM = "_isAlarm";
     /**
      * 撤布防反馈
      */
-    public static final String DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK = "deployWithdrawAlarmSetFeedback";
+    public static final String DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK = "_deployWithdrawAlarmSetFeedback";
     //=============================================以上为平台静态变量=========================================
 }
