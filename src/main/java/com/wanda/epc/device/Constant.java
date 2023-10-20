@@ -1,106 +1,57 @@
 package com.wanda.epc.device;
 
 /**
- * 常量类
+ * 静态常量
  *
  * @author 孙率众
  */
 public class Constant {
 
-    //=============================================以下为设备静态变量=========================================
+    /**
+     * 心跳（108000）
+     */
+    public static final int HEART = 108000;
 
     /**
-     * 报警状态
+     * 上传全量设备列表（108001）
      */
-    public static final String AZ_STATUS = "AZ_Status";
+    public static final int DEVICE_LIST = 108001;
 
     /**
-     * 撤布防状态
+     * 新增设备通知（108002）
      */
-    public static final String AA_STATUS = "AA_Status";
+    public static final int ADD_DEVICE = 108002;
 
     /**
-     * 控制报警用户（分区），（布防和撤防）
+     * 删除设备通知（108003）
      */
-    public static final String ALARMCLIENT_CONTROL = "AlarmClient_Control";
-    /**
-     * 控制报警用户（分区）编号，（布防和撤防）
-     */
-    public static final String ALARMCLIENT_CONTROL_NO = "999";
-    /**
-     * 登录
-     */
-    public static final String LOGIN = "Login";
-    /**
-     * 登录编号
-     */
-    public static final String LOGIN_NO = "777";
+    public static final int DEL_DEVICE = 108003;
 
     /**
-     * 登录
+     * 设备状态改变通知（108004）
      */
-    public static final String LOGIN_USER = "API";
+    public static final int DEVICE_STATUS_CHANGE = 108004;
+    /**
+     * 获取设备的防区列表（108005）SERVER
+     */
+    public static final int DEVICE_DEFENCE_AREA = 108005;
 
     /**
-     * 密码
+     * 设备（防区）布/撤防（108006）SERVER
      */
-    public static final String LOGIN_PWD = "API";
+    public static final int DISBAND_DEFENSE = 108006;
 
     /**
-     * 心跳
+     * 设备消警（108007）SERVER
      */
-    public static final String KEEP_ALIVE = "KeepAlive";
-
+    public static final int ALARM_ELIMINATION = 108007;
     /**
-     * 心跳编号
+     * 报警事件通知（108008）
      */
-    public static final String KEEP_ALIVE_NO = "888";
-
+    public static final int ALARM_RECEIVE = 108008;
     /**
-     * 重连编号
+     * 同步设备列表（108009）SERVER
      */
-    public static final String GET_ALLDOT_STATUS = "Get_AllDot_Status";
+    public static final int SYNC_DEVICE = 108009;
 
-    /**
-     * 重连编号
-     */
-    public static final String RE_CONNECT_NO = "999";
-
-    /**
-     * 布防
-     */
-    public static final String BU_FANG = "3,4,5,7";
-
-    /**
-     * 撤防
-     */
-    public static final String CHE_FANG = "0,1,2,6,8";
-
-    /**
-     * 报警
-     */
-    public static final String BAO_JING = "4";
-
-    /**
-     * 报警恢复
-     */
-    public static final String BAO_JING_HUI_FU = "0,1,2,3,5,6,7";
-
-
-    //=============================================以上为设备静态变量=========================================
-
-    //=============================================以下为平台静态变量=========================================
-    /**
-     * 撤布防设定
-     */
-    public static final String DEPLOY_WITH_DRAW_ALARM_SET = "_deployWithdrawAlarmSet";
-    /**
-     * 报警状态
-     */
-    public static final String IS_ALARM = "_isAlarm";
-    /**
-     * 撤布防反馈
-     */
-    public static final String DEPLOY_WITH_DRAW_ALARM_SET_FEEDBACK = "_deployWithdrawAlarmSetFeedback";
-    //=============================================以上为平台静态变量=========================================
 }

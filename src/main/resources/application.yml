@@ -1,6 +1,6 @@
 server:
   port: 8101
-beanName: fdDevice
+beanName: fdHandler
 mqtt:
   hostUrl: tcp://127.0.0.1:1883
   username: admin
@@ -14,7 +14,7 @@ mqtt:
 
 spring:
   profiles:
-    active: chongqing_banan
+    active: zhangzhou_xiangcheng
   redis:
     host: 127.0.0.1
     port: 6379

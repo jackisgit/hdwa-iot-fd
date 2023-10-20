@@ -4,9 +4,10 @@ epc:
   gcId: 5001130030
   subsystem: fdxt/
   threadNum: 1
-tcp:
-  serverIP: 127.0.0.1
+netty:
   port: 60000
+jobs:
+  cron: 0/30 * * * * ?
 
 
 

@@ -23,11 +23,16 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
         </dependency>
+        <!-- 实现对 Spring MVC 的自动化配置 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
     </dependencies>
 
     <build>
-        <finalName>IOT_EPC_FD_Bosch_B9512G_${version}</finalName>
+        <finalName>IOT_EPC_FD_Bosch_jinghualong_V1.1_${version}</finalName>
         <plugins>
             <plugin>
                 <!-- https://gitee.com/roseboy/classfinal -->
