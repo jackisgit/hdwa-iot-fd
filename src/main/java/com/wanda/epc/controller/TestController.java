@@ -1,5 +1,6 @@
-package com.wanda.epc.device;
+package com.wanda.epc.controller;
 
+import com.wanda.epc.device.FdHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +17,8 @@ public class TestController {
         fdHandler.processData();
     }
 
-    @RequestMapping("/control/{deviceId}/{deviceType}/{armingAction}")
-    public void control(@PathVariable int deviceId, @PathVariable int deviceType, @PathVariable int armingAction) throws Exception {
-        fdHandler.control(deviceId, deviceType, armingAction);
+    @RequestMapping("/control/{deviceId}/{deviceType}/{zoneId}/{armingAction}")
+    public void control(@PathVariable int deviceId, @PathVariable int deviceType, @PathVariable int zoneId, @PathVariable int armingAction) throws Exception {
+        fdHandler.control(deviceId, deviceType, zoneId, armingAction);
     }
 }

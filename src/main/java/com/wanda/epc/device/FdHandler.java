@@ -1,5 +1,6 @@
 package com.wanda.epc.device;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wanda.epc.param.DeviceMessage;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,11 +20,11 @@ import java.util.Map;
 @Slf4j
 public class FdHandler extends BaseDevice {
 
-    private static final String collectMsg = "{\"clientId\":32730,\"cmd\":108009,\"data\":\"\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
     @Resource
     NettyServerHandler nettyServerHandler;
     @Resource
     private CommonDevice commonDevice;
+
 
     @Override
     public void sendMessage(DeviceMessage dm) {
@@ -32,6 +33,8 @@ public class FdHandler extends BaseDevice {
 
     @Override
     public boolean processData() throws Exception {
+        String collectMsg = "{\"clientId\":32730,\"cmd\":108009,\"data\":\"\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
+        log.info("发送查询设备报文为:{}", collectMsg);
         for (Map.Entry<String, ChannelHandlerContext> entry : nettyServerHandler.map.entrySet()) {
             entry.getValue().writeAndFlush(Unpooled.copiedBuffer(collectMsg, CharsetUtil.UTF_8));
         }
@@ -45,9 +48,9 @@ public class FdHandler extends BaseDevice {
      * @param deviceType
      * @param armingAction 1、外出布防 2、在家布防 3、撤防状态 4、布防延时
      */
-    public void control(int deviceId, int deviceType, int armingAction) {
+    public void control(int deviceId, int deviceType, int zoneId, int armingAction) {
         log.info("发送撤布防指令设备id为:{},设备类型为:{},命令为:{}", deviceId, deviceType, armingAction);
-        String controlMsg = "{\"clientId\":32730,\"cmd\":108006,\"data\":\"{\\\"armingAction\\\":" + armingAction + ",\\\"deviceId\\\":" + deviceId + ",\\\"zoneId\\\":0,\\\"deviceType\\\":" + deviceType + "}\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
+        String controlMsg = "{\"clientId\":32730,\"cmd\":108006,\"data\":\"{\"armingAction\":" + armingAction + ",\"deviceId\":" + deviceId + ",\"zoneId\":" + zoneId + ",\"deviceType\":" + deviceType + "}\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
         for (Map.Entry<String, ChannelHandlerContext> entry : nettyServerHandler.map.entrySet()) {
             entry.getValue().writeAndFlush(Unpooled.copiedBuffer(controlMsg, CharsetUtil.UTF_8));
         }
@@ -71,7 +74,7 @@ public class FdHandler extends BaseDevice {
             } else {
                 command = 3;
             }
-            control(Integer.valueOf(strings[0]), Integer.valueOf(strings[1]), command);
+            control(Integer.valueOf(strings[0]), Integer.valueOf(strings[1]), Integer.valueOf(strings[2]), command);
         }
     }
 

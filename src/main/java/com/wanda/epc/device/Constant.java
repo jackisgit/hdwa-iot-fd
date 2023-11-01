@@ -53,5 +53,8 @@ public class Constant {
      * 同步设备列表（108009）SERVER
      */
     public static final int SYNC_DEVICE = 108009;
-
+    /**
+     * 获取设备的防区列表（108009）SERVER
+     */
+    public static final int ZONE_LIST = 108105;
 }

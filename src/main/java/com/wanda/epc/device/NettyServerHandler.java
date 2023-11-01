@@ -2,12 +2,17 @@ package com.wanda.epc.device;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import com.wanda.epc.DTO.AlarmDto;
+import com.wanda.epc.DTO.DeviceDto;
+import com.wanda.epc.DTO.ZoneDto;
 import com.wanda.epc.common.SpringUtil;
 import com.wanda.epc.param.DeviceMessage;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
@@ -52,18 +57,24 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 final List<Object> list = (List<Object>) deviceList;
                 for (Object obj : list) {
                     DeviceDto deviceDto = JSONObject.parseObject(obj.toString(), DeviceDto.class);
-                    buildAndSendMsg(deviceDto);
+                    String collectMsg = "{\"clientId\":32730,\"cmd\":108005,\"data\":" +
+                            JSONObject.toJSONString(deviceDto) + ",\"sn\":49701,\"timeStamp\":1657259119841}";
+                    log.info("发送查询防区报文为:{}", collectMsg);
+                    for (Map.Entry<String, ChannelHandlerContext> entry : map.entrySet()) {
+                        entry.getValue().writeAndFlush(Unpooled.copiedBuffer(collectMsg, CharsetUtil.UTF_8));
+                    }
                 }
             } else if (cmd.equals(Constant.ALARM_RECEIVE)) {
                 final Object alarmReceive = JSONPath.read(message, "$.data");
                 if (ObjectUtils.isEmpty(alarmReceive)) {
                     return;
                 }
-                DeviceDto deviceDto = JSONObject.parseObject(alarmReceive.toString(), DeviceDto.class);
-                if (ObjectUtils.isEmpty(deviceDto)) {
+                AlarmDto alarmDto = JSONObject.parseObject(alarmReceive.toString(), AlarmDto.class);
+                if (ObjectUtils.isEmpty(alarmDto)) {
                     return;
                 }
-                List<DeviceMessage> deviceMessages = fdHandler.deviceParamListMap.get(deviceDto.getDeviceId() + "_" + deviceDto.getDeviceType() + "_isAlrm");
+                List<DeviceMessage> deviceMessages = fdHandler.deviceParamListMap.get(
+                        alarmDto.getDeviceId() + "_" + alarmDto.getDeviceType() + "_" + alarmDto.getZoneId() + "_isAlarm");
                 if (CollectionUtils.isEmpty(deviceMessages)) {
                     return;
                 }
@@ -71,16 +82,18 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                     deviceMessage.setValue("1");
                     fdHandler.sendMessage(deviceMessage);
                 }
-            } else if (cmd.equals(Constant.DEVICE_STATUS_CHANGE)) {
-                final Object deviceStatusChange = JSONPath.read(message, "$.data");
-                if (ObjectUtils.isEmpty(deviceStatusChange)) {
+            } else if (cmd.equals(Constant.ZONE_LIST)) {
+                final Object zoneList = JSONPath.read(message, "$.data.zoneList");
+                final Object deviceId = JSONPath.read(message, "$.data.deviceId");
+                final Object deviceType = JSONPath.read(message, "$.data.deviceType");
+                if (ObjectUtils.isEmpty(zoneList)) {
                     return;
                 }
-                DeviceDto deviceDto = JSONObject.parseObject(deviceStatusChange.toString(), DeviceDto.class);
-                if (ObjectUtils.isEmpty(deviceDto)) {
-                    return;
+                final List<Object> list = (List<Object>) zoneList;
+                for (Object obj : list) {
+                    ZoneDto deviceDto = JSONObject.parseObject(obj.toString(), ZoneDto.class);
+                    buildAndSendMsg(deviceId, deviceType, deviceDto);
                 }
-                buildAndSendMsg(deviceDto);
             }
         } catch (Exception e) {
             log.error("服务端接收消息异常", e);
@@ -90,15 +103,15 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     /**
      * 构建和发送消息
      *
-     * @param deviceDto
+     * @param zoneDto
      */
-    private void buildAndSendMsg(DeviceDto deviceDto) {
+    private void buildAndSendMsg(Object deviceId, Object deviceType, ZoneDto zoneDto) {
         FdHandler fdHandler = SpringUtil.getBean(FdHandler.class);
         //报警点位集合
-        List<DeviceMessage> alarmDeviceMessages = fdHandler.deviceParamListMap.get(deviceDto.getDeviceId() + "_" + deviceDto.getDeviceType() + "_alarmStatus");
+        List<DeviceMessage> alarmDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_isAlarm");
         if (!CollectionUtils.isEmpty(alarmDeviceMessages)) {
             String value = "0";
-            if (deviceDto.getDeviceStatus() == 3) {
+            if (zoneDto.getZoneStatus() == 3) {
                 value = "1";
             }
             for (DeviceMessage deviceMessage : alarmDeviceMessages) {
@@ -107,10 +120,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //撤布防反馈点位集合
-        List<DeviceMessage> dwasFeedbackDeviceMessages = fdHandler.deviceParamListMap.get(deviceDto.getDeviceId() + "_" + deviceDto.getDeviceType() + "_deployWithdrawAlarmSetFeedback");
+        List<DeviceMessage> dwasFeedbackDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_deployWithdrawAlarmSetFeedback");
         if (!CollectionUtils.isEmpty(dwasFeedbackDeviceMessages)) {
             String value = "0";
-            if (deviceDto.getArmingStatus() == 1 || deviceDto.getArmingStatus() == 2) {
+            if (zoneDto.getZoneArmingStatus() == 1 || zoneDto.getZoneArmingStatus() == 2) {
                 value = "1";
             }
             for (DeviceMessage deviceMessage : dwasFeedbackDeviceMessages) {
@@ -119,10 +132,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //在线状态点位集合
-        List<DeviceMessage> onlineDeviceMessages = fdHandler.deviceParamListMap.get(deviceDto.getDeviceId() + "_" + deviceDto.getDeviceType() + "_onlineStatus");
+        List<DeviceMessage> onlineDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_onlineStatus");
         if (!CollectionUtils.isEmpty(onlineDeviceMessages)) {
             String value = "1";
-            if (deviceDto.getDeviceStatus() == 2) {
+            if (zoneDto.getZoneStatus() == 2) {
                 value = "0";
             }
             for (DeviceMessage deviceMessage : onlineDeviceMessages) {
@@ -131,10 +144,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //故障状态点位集合
-        List<DeviceMessage> faultDeviceMessages = fdHandler.deviceParamListMap.get(deviceDto.getDeviceId() + "_" + deviceDto.getDeviceType() + "_faultStatus");
+        List<DeviceMessage> faultDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_faultStatus");
         if (!CollectionUtils.isEmpty(faultDeviceMessages)) {
             String value = "0";
-            if (deviceDto.getDeviceStatus() == 4) {
+            if (zoneDto.getZoneStatus() == 4) {
                 value = "1";
             }
             for (DeviceMessage deviceMessage : faultDeviceMessages) {
