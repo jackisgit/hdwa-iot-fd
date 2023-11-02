@@ -35,6 +35,22 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<>();
 
+    public static void main(String[] args) {
+        String message = "{\"clientId\":32730,\"cmd\":108105,\"data\":\"{\\\"deviceId\\\":10029618,\\\"zoneList\\\":[{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":10029618,\\\"zoneName\\\":\\\"������\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":51},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":1,\\\"zoneName\\\":\\\"����1\\\",\\\"zoneStatus\\\":1,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":2,\\\"zoneName\\\":\\\"����2\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":3,\\\"zoneName\\\":\\\"����3\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":4,\\\"zoneName\\\":\\\"����4\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":5,\\\"zoneName\\\":\\\"����5\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":6,\\\"zoneName\\\":\\\"����6\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":7,\\\"zoneName\\\":\\\"����7\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":8,\\\"zoneName\\\":\\\"����8\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1}],\\\"code\\\":0,\\\"deviceType\\\":51}\",\"sn\":49701,\"timeStamp\":1698139999976}\n";
+        final Object zoneList = JSONPath.read(message, "$.data.zoneList");
+        final Object deviceId = JSONPath.read(message, "$.data.deviceId");
+        final Object deviceType = JSONPath.read(message, "$.data.deviceType");
+        if (ObjectUtils.isEmpty(zoneList)) {
+            return;
+        }
+        final List<Object> list = (List<Object>) zoneList;
+        for (Object obj : list) {
+            ZoneDto zoneDto = JSONObject.parseObject(obj.toString(), ZoneDto.class);
+            String s = deviceId + "_" + deviceType + "_" + zoneDto.getZoneId() + "_isAlarm";
+            System.out.println(s);
+        }
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
@@ -57,8 +73,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 final List<Object> list = (List<Object>) deviceList;
                 for (Object obj : list) {
                     DeviceDto deviceDto = JSONObject.parseObject(obj.toString(), DeviceDto.class);
-                    String collectMsg = "{\"clientId\":33477,\"cmd\":108005,\"data\":" +
-                            JSONObject.toJSONString(deviceDto) + ",\"sn\":49701,\"timeStamp\":1657259119841}\n";
+                    String collectMsg = "{\"clientId\":32730,\"cmd\":108005,\"data\":\"{\\\"deviceType\\\":"
+                            + deviceDto.getDeviceType() + ",\\\"deviceId\\\":" + deviceDto.getDeviceId() + "}\",\"sn\":49701,\"timeStamp\":1698139999976}\n";
                     log.info("发送查询防区报文为:{}", collectMsg);
                     for (Map.Entry<String, ChannelHandlerContext> entry : map.entrySet()) {
                         entry.getValue().writeAndFlush(Unpooled.copiedBuffer(collectMsg, CharsetUtil.UTF_8));
@@ -91,8 +107,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 }
                 final List<Object> list = (List<Object>) zoneList;
                 for (Object obj : list) {
-                    ZoneDto deviceDto = JSONObject.parseObject(obj.toString(), ZoneDto.class);
-                    buildAndSendMsg(deviceId, deviceType, deviceDto);
+                    ZoneDto zoneDto = JSONObject.parseObject(obj.toString(), ZoneDto.class);
+                    buildAndSendMsg(deviceId, deviceType, zoneDto);
                 }
             }
         } catch (Exception e) {
@@ -107,8 +123,9 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     private void buildAndSendMsg(Object deviceId, Object deviceType, ZoneDto zoneDto) {
         FdHandler fdHandler = SpringUtil.getBean(FdHandler.class);
+        String prefix = deviceId + "_" + deviceType + "_" + zoneDto.getZoneId();
         //报警点位集合
-        List<DeviceMessage> alarmDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_isAlarm");
+        List<DeviceMessage> alarmDeviceMessages = fdHandler.deviceParamListMap.get(prefix + "_alarmStatus");
         if (!CollectionUtils.isEmpty(alarmDeviceMessages)) {
             String value = "0";
             if (zoneDto.getZoneStatus() == 3) {
@@ -120,7 +137,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //撤布防反馈点位集合
-        List<DeviceMessage> dwasFeedbackDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_deployWithdrawAlarmSetFeedback");
+        List<DeviceMessage> dwasFeedbackDeviceMessages = fdHandler.deviceParamListMap.get(prefix + "_deployWithdrawAlarmSetFeedback");
         if (!CollectionUtils.isEmpty(dwasFeedbackDeviceMessages)) {
             String value = "0";
             if (zoneDto.getZoneArmingStatus() == 1 || zoneDto.getZoneArmingStatus() == 2) {
@@ -132,7 +149,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //在线状态点位集合
-        List<DeviceMessage> onlineDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_onlineStatus");
+        List<DeviceMessage> onlineDeviceMessages = fdHandler.deviceParamListMap.get(prefix + "_onlineStatus");
         if (!CollectionUtils.isEmpty(onlineDeviceMessages)) {
             String value = "1";
             if (zoneDto.getZoneStatus() == 2) {
@@ -144,7 +161,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             }
         }
         //故障状态点位集合
-        List<DeviceMessage> faultDeviceMessages = fdHandler.deviceParamListMap.get(deviceId + "_" + deviceType + "_faultStatus");
+        List<DeviceMessage> faultDeviceMessages = fdHandler.deviceParamListMap.get(prefix + "_faultStatus");
         if (!CollectionUtils.isEmpty(faultDeviceMessages)) {
             String value = "0";
             if (zoneDto.getZoneStatus() == 4) {
