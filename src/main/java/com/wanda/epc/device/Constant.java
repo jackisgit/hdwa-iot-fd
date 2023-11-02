@@ -54,7 +54,7 @@ public class Constant {
      */
     public static final int SYNC_DEVICE = 108009;
     /**
-     * 获取设备的防区列表（108009）SERVER
+     * 获取设备的防区列表（108105）SERVER
      */
     public static final int ZONE_LIST = 108105;
 }

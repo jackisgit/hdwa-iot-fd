@@ -57,8 +57,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 final List<Object> list = (List<Object>) deviceList;
                 for (Object obj : list) {
                     DeviceDto deviceDto = JSONObject.parseObject(obj.toString(), DeviceDto.class);
-                    String collectMsg = "{\"clientId\":32730,\"cmd\":108005,\"data\":" +
-                            JSONObject.toJSONString(deviceDto) + ",\"sn\":49701,\"timeStamp\":1657259119841}";
+                    String collectMsg = "{\"clientId\":33477,\"cmd\":108005,\"data\":" +
+                            JSONObject.toJSONString(deviceDto) + ",\"sn\":49701,\"timeStamp\":1657259119841}\n";
                     log.info("发送查询防区报文为:{}", collectMsg);
                     for (Map.Entry<String, ChannelHandlerContext> entry : map.entrySet()) {
                         entry.getValue().writeAndFlush(Unpooled.copiedBuffer(collectMsg, CharsetUtil.UTF_8));
