@@ -136,7 +136,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         List<DeviceMessage> onlineDeviceMessages = fdHandler.deviceParamListMap.get(prefix + "_onlineStatus");
         if (!CollectionUtils.isEmpty(onlineDeviceMessages)) {
             String value = "1";
-            if (zoneDto.getZoneStatus() == 2) {
+            if (zoneDto.getZoneStatus() == 2 || zoneDto.getZoneStatus() == 0) {
                 value = "0";
             }
             for (DeviceMessage deviceMessage : onlineDeviceMessages) {

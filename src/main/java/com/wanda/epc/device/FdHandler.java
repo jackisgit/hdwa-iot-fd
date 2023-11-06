@@ -1,6 +1,5 @@
 package com.wanda.epc.device;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wanda.epc.param.DeviceMessage;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -49,8 +48,8 @@ public class FdHandler extends BaseDevice {
      * @param armingAction 1、外出布防 2、在家布防 3、撤防状态 4、布防延时
      */
     public void control(int deviceId, int deviceType, int zoneId, int armingAction) {
-        log.info("发送撤布防指令设备id为:{},设备类型为:{},命令为:{}", deviceId, deviceType, armingAction);
-        String controlMsg = "{\"clientId\":32730,\"cmd\":108006,\"data\":\"{\"armingAction\":" + armingAction + ",\"deviceId\":" + deviceId + ",\"zoneId\":" + zoneId + ",\"deviceType\":" + deviceType + "}\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
+        String controlMsg = "{\"clientId\":32730,\"cmd\":108006,\"data\":\"{\\\"armingAction\\\":" + armingAction + ",\\\"deviceId\\\":" + deviceId + ",\\\"zoneId\\\":" + zoneId + ",\\\"deviceType\\\":" + deviceType + "}\",\"sn\":49698,\"timeStamp\":1657259119841}\n";
+        log.info("发送撤布防指令设备id为:{},设备类型为:{},防区为:{},命令为:{},完整报文为:{}", deviceId, deviceType, zoneId, armingAction, controlMsg);
         for (Map.Entry<String, ChannelHandlerContext> entry : nettyServerHandler.map.entrySet()) {
             entry.getValue().writeAndFlush(Unpooled.copiedBuffer(controlMsg, CharsetUtil.UTF_8));
         }
