@@ -35,22 +35,6 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<>();
 
-    public static void main(String[] args) {
-        String message = "{\"clientId\":32730,\"cmd\":108105,\"data\":\"{\\\"deviceId\\\":10029618,\\\"zoneList\\\":[{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":10029618,\\\"zoneName\\\":\\\"������\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":51},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":1,\\\"zoneName\\\":\\\"����1\\\",\\\"zoneStatus\\\":1,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":2,\\\"zoneName\\\":\\\"����2\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":3,\\\"zoneName\\\":\\\"����3\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":4,\\\"zoneName\\\":\\\"����4\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":5,\\\"zoneName\\\":\\\"����5\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":6,\\\"zoneName\\\":\\\"����6\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":7,\\\"zoneName\\\":\\\"����7\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1},{\\\"zoneArmingStatus\\\":3,\\\"zoneId\\\":8,\\\"zoneName\\\":\\\"����8\\\",\\\"zoneStatus\\\":2,\\\"zoneType\\\":1}],\\\"code\\\":0,\\\"deviceType\\\":51}\",\"sn\":49701,\"timeStamp\":1698139999976}\n";
-        final Object zoneList = JSONPath.read(message, "$.data.zoneList");
-        final Object deviceId = JSONPath.read(message, "$.data.deviceId");
-        final Object deviceType = JSONPath.read(message, "$.data.deviceType");
-        if (ObjectUtils.isEmpty(zoneList)) {
-            return;
-        }
-        final List<Object> list = (List<Object>) zoneList;
-        for (Object obj : list) {
-            ZoneDto zoneDto = JSONObject.parseObject(obj.toString(), ZoneDto.class);
-            String s = deviceId + "_" + deviceType + "_" + zoneDto.getZoneId() + "_isAlarm";
-            System.out.println(s);
-        }
-    }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
