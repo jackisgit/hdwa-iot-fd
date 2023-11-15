@@ -19,6 +19,5 @@ public class TestController {
 
     @RequestMapping("/control/{deviceId}/{deviceType}/{zoneId}/{armingAction}")
     public void control(@PathVariable int deviceId, @PathVariable int deviceType, @PathVariable int zoneId, @PathVariable int armingAction) throws Exception {
-        fdHandler.control(deviceId, deviceType, zoneId, armingAction);
     }
 }
