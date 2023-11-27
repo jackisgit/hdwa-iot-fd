@@ -328,7 +328,7 @@ public class HikVisionEasDevice extends BaseDevice {
 
     @Override
     public boolean processData() throws Exception {
-        deviceParamMap.entrySet().forEach(entry -> {
+        deviceParamListMap.entrySet().forEach(entry -> {
             List<String> ipList = Arrays.asList(entry.getKey().split("_"));
             String ip = ipList.get(0);
             Queue<String> allIp = new LinkedList<String>();
@@ -459,11 +459,13 @@ public class HikVisionEasDevice extends BaseDevice {
         for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
             byte b = acsWorkStatus.bySetupAlarmStatus[i];
             //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_deployWithdrawAlarmStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("撤布防状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
+            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_deployWithdrawAlarmStatus");
+            if (!CollectionUtils.isEmpty(deviceMessages)) {
+                for (DeviceMessage deviceMessage : deviceMessages) {
+                    log.info("撤布防状态：{}=={}", i, b);
+                    deviceMessage.setValue(String.valueOf(b));
+                    sendMessage(deviceMessage);
+                }
             }
         }
         //防区报警状态
@@ -471,11 +473,13 @@ public class HikVisionEasDevice extends BaseDevice {
         for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInStatus[i];
             //0- 对应防区当前无报警，1- 对应防区当前有报警
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_alarmStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区报警状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
+            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_alarmStatus");
+            if (!CollectionUtils.isEmpty(deviceMessages)) {
+                for (DeviceMessage deviceMessage : deviceMessages) {
+                    log.info("防区报警状态：{}=={}", i, b);
+                    deviceMessage.setValue(String.valueOf(b));
+                    sendMessage(deviceMessage);
+                }
             }
         }
         //防区故障状态
@@ -483,11 +487,13 @@ public class HikVisionEasDevice extends BaseDevice {
         for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInFaultStatus[i];
             //0-对应防区处于正常状态，1-对应防区处于故障状态
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_faultStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区故障状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
+            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_faultStatus");
+            if (!CollectionUtils.isEmpty(deviceMessages)) {
+                for (DeviceMessage deviceMessage : deviceMessages) {
+                    log.info("防区故障状态：{}=={}", i, b);
+                    deviceMessage.setValue(String.valueOf(b));
+                    sendMessage(deviceMessage);
+                }
             }
         }
         //防区防拆状态
@@ -495,11 +501,13 @@ public class HikVisionEasDevice extends BaseDevice {
         for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInTamperStatus[i];
             //0-对应防区当前无报警，1-对应防区当前有报警
-            DeviceMessage deviceMessage = deviceParamMap.get(i + 1 + "_fangchaiStatus");
-            if (Objects.nonNull(deviceMessage)) {
-                log.info("防区防拆状态：{}=={}", i, b);
-                deviceMessage.setValue(String.valueOf(b));
-                sendMessage(deviceMessage);
+            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_fangchaiStatus");
+            if (!CollectionUtils.isEmpty(deviceMessages)) {
+                for (DeviceMessage deviceMessage : deviceMessages) {
+                    log.info("防区防拆状态：{}=={}", i, b);
+                    deviceMessage.setValue(String.valueOf(b));
+                    sendMessage(deviceMessage);
+                }
             }
         }
     }
