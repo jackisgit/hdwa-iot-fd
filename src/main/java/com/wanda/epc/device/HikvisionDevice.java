@@ -183,7 +183,6 @@ public class HikvisionDevice extends BaseDevice {
             deviceMessageList.forEach(deviceMessage -> {
                 if (Objects.nonNull(deviceMessage)) {
                     deviceMessage.setValue(value);
-                    deviceMessage.setUpdateTime(ConvertUtil.getNowDateTime("yyyyMMddHHmmss"));
                     sendMessage(deviceMessage);
                 }
             });
