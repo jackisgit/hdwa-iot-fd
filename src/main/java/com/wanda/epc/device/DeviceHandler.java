@@ -245,6 +245,10 @@ public class DeviceHandler extends BaseDevice {
             log.info("接口:{},头:{}", url, JSONObject.toJSONString(header));
             String result = HttpRequest.get(url).addHeaders(header).timeout(2000).execute().body();
             log.info("接口:{},返回值:{}", url, result);
+            Object read = JSONPath.read(result, "$.success");
+            if (ObjectUtils.isNotEmpty(read) && !"false".equals(String.valueOf(read))) {
+                sendMsg(strings[0] + "_deployWithdrawAlarmStatus", value);
+            }
         }
     }
 
