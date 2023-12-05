@@ -1,23 +1,24 @@
 package com.wanda.epc.controller;
 
-import com.wanda.epc.device.FdHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.alibaba.fastjson.JSONObject;
+import com.wanda.epc.DTO.AlarmDTO;
+import com.wanda.epc.device.DeviceHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
+@Slf4j
 public class TestController {
     @Resource
-    private FdHandler fdHandler;
+    private DeviceHandler deviceHandler;
 
-    @RequestMapping("/collect")
-    public void collect() throws Exception {
-        fdHandler.processData();
+
+    @PostMapping("/receive")
+    public void receive(@RequestBody AlarmDTO alarmDTO) throws Exception {
+        log.info("收到数据:{}", JSONObject.toJSONString(alarmDTO));
+        deviceHandler.receive(alarmDTO);
     }
 
-    @RequestMapping("/control/{deviceId}/{deviceType}/{zoneId}/{armingAction}")
-    public void control(@PathVariable int deviceId, @PathVariable int deviceType, @PathVariable int zoneId, @PathVariable int armingAction) throws Exception {
-    }
 }

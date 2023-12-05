@@ -27,7 +27,7 @@
     </dependencies>
 
     <build>
-        <finalName>IOT_EPC_FD_jinghualong_V1.1_${version}</finalName>
+        <finalName>IOT_EPC_FD_dahua_API_${version}</finalName>
         <plugins>
             <plugin>
                 <!-- https://gitee.com/roseboy/classfinal -->

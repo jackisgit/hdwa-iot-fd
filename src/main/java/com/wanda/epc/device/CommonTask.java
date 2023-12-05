@@ -16,11 +16,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class CommonTask {
 
     @Autowired
-    private FdHandler fdHandler;
+    private DeviceHandler deviceHandler;
 
     @Scheduled(cron = "${jobs.cron:0/30 * * * * ?}")
-    public boolean processData() throws Exception {
-        return fdHandler.processData();
+    public void collect() throws Exception {
+        deviceHandler.collect();
     }
 
+    @Scheduled(cron = "${40 10 * * * ?}")
+    public void getToken() throws Exception {
+        deviceHandler.init();
+    }
 }
