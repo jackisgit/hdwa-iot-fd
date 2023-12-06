@@ -1,6 +1,6 @@
 server:
   port: 8101
-beanName: fdHandler
+beanName: deviceHandler
 mqtt:
   hostUrl: tcp://127.0.0.1:1883
   username: admin
