@@ -4,9 +4,13 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 public class Department {
 
+    List<Device> devices;
+    List<Channel> channels;
+    List<Department> children;
     private String coding;
     private String name;
     private String modifytime;
@@ -17,12 +21,6 @@ public class Department {
     private String chargebooth;
     private String OrgNum;
 
-    List<Device> devices;
-
-    List<Channel> channels;
-
-    List<Department> children;
-
     public Department(String coding, String name) {
         this.coding = coding;
         this.name = name;
@@ -30,6 +28,7 @@ public class Department {
         this.channels = new ArrayList<>();
         this.children = new ArrayList<>();
     }
+
     public String getCoding() {
         return coding;
     }

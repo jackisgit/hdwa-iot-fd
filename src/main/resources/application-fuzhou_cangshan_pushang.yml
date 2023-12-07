@@ -10,13 +10,3 @@ epc:
   DeviceId: 1000012
   #广场所属设备下的单元类型
   UnitNodesType: 3
-
-fzcs:
-  #登录平台ip
-  strIp: 172.16.10.4
-  #登录平台端口
-  nPort: 9000
-  #登录平台用户名
-  strUser: system
-  #登录平台密码
-  strPassword: CSWd123456

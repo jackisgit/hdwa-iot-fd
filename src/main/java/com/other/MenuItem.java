@@ -1,17 +1,15 @@
 package com.other;
 
-public class MenuItem 
-{
+public class MenuItem {
 
-	Object instance;
-	String strItemName;
-	String strItemFunc;
+    Object instance;
+    String strItemName;
+    String strItemFunc;
 
-	
-	public  MenuItem(Object instance , String strItemName , String strItemFunc )
-	{
-		this.instance = instance;
-		this.strItemName = strItemName;
-		this.strItemFunc = strItemFunc;
-	}
+
+    public MenuItem(Object instance, String strItemName, String strItemFunc) {
+        this.instance = instance;
+        this.strItemName = strItemName;
+        this.strItemFunc = strItemFunc;
+    }
 }

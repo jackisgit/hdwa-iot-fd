@@ -2,40 +2,39 @@ package com.wanda.epc.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dh.DpsdkCore.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.wanda.epc.service.TestService;
-import com.wanda.epc.vo.*;
+import com.wanda.epc.vo.Channel;
+import com.wanda.epc.vo.ChannelInfo;
+import com.wanda.epc.vo.Device;
+import com.wanda.epc.vo.Devices;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
-public class ITestServiceImpl implements TestService{
+@Slf4j
+public class ITestServiceImpl implements TestService {
 
     public static int m_nDLLHandle = 1;
     //通道布撤防
@@ -48,147 +47,52 @@ public class ITestServiceImpl implements TestService{
     public static int cheType = dpsdk_AlarmhostOperator_e.CONTROL_DEV_DISARM;
     public static String channelId = "1000012$3$0$3";
     public static String deviceId = "1000012";
+    public fDPSDKDevStatusCallback fDeviceStatus = new fDPSDKDevStatusCallback() {
+        @Override
+        public void invoke(int nPDLLHandle, byte[] szDeviceId, int nStatus) {
+            log.info("回调函数fDeviceStatus的返回值，szDeviceId：" + new String(szDeviceId));
+            log.info("回调函数fDeviceStatus的返回值，nStatus：" + nStatus);
+            Device_Info_Ex_t deviceInfo = new Device_Info_Ex_t();
+            String status = "离线";
+            if (nStatus == 1) {
+                status = "在线";
+                log.info("DPSDK_GetDeviceInfoExById之前的参数，deviceInfo：" + JSON.toJSON(deviceInfo));
+                //查询设备信息
+                int nRet = IDpsdkCore.DPSDK_GetDeviceInfoExById(m_nDLLHandle, szDeviceId, deviceInfo);
+                log.info("DPSDK_GetDeviceInfoExById之后的参数，deviceInfo：" + JSON.toJSON(deviceInfo));
+                if (deviceInfo.nDevType == dpsdk_dev_type_e.DEV_TYPE_NVR) {
+                    //查询NVR通道信息
+                    nRet = IDpsdkCore.DPSDK_QueryNVRChnlStatus(m_nDLLHandle, szDeviceId, 10 * 1000);
+                    log.info("DPSDK_QueryNVRChnlStatus之后的参数，deviceInfo：" + JSON.toJSON(deviceInfo));
+                    if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+                        log.info("查询NVR通道状态成功，deviceID = %s", new String(szDeviceId));
+                    } else {
+                        log.info("查询NVR通道状态失败，deviceID = %s, nRet = %d", new String(szDeviceId), nRet);
+                    }
+                    //
+                }
+            }
+            //log.info("Device Status Report!, szDeviceId = %s, nStatus = %s", new String(szDeviceId),status);
+            //
+        }
+    };
+    public fDPSDKNVRChnlStatusCallback fNVRChnlStatus = new fDPSDKNVRChnlStatusCallback() {
+        @Override
+        public void invoke(int nPDLLHandle, byte[] szCameraId, int nStatus) {
+            log.info("回调函数的返回值，szDeviceId：" + new String(szCameraId));
+            log.info("回调函数的返回值，nStatus：" + nStatus);
+            String status = "离线";
+            if (nStatus == 1) {
+                status = "在线";
+            }
+            //log.info("NVR Channel Status Report!, szCameraId = %s, nStatus = %s", new String(szCameraId),status);
+            //
+        }
+    };
     Return_Value_Info_t nGroupLen = new Return_Value_Info_t();
     @Value("${epc.DeviceId}")
     private String DeviceId;
 
-    public fDPSDKDevStatusCallback fDeviceStatus = new fDPSDKDevStatusCallback() {
-        @Override
-        public void invoke(int nPDLLHandle, byte[] szDeviceId, int nStatus) {
-            System.out.println("回调函数fDeviceStatus的返回值，szDeviceId："+new String(szDeviceId));
-            System.out.println("回调函数fDeviceStatus的返回值，nStatus："+nStatus);
-            Device_Info_Ex_t deviceInfo = new Device_Info_Ex_t();
-            String status = "离线";
-            if(nStatus == 1)
-            {
-                status = "在线";
-                System.out.println("DPSDK_GetDeviceInfoExById之前的参数，deviceInfo："+ JSON.toJSON(deviceInfo));
-                //查询设备信息
-                int nRet = IDpsdkCore.DPSDK_GetDeviceInfoExById(m_nDLLHandle, szDeviceId, deviceInfo);
-                System.out.println("DPSDK_GetDeviceInfoExById之后的参数，deviceInfo："+ JSON.toJSON(deviceInfo));
-                if(deviceInfo.nDevType == dpsdk_dev_type_e.DEV_TYPE_NVR ){
-                    //查询NVR通道信息
-                    nRet = IDpsdkCore.DPSDK_QueryNVRChnlStatus(m_nDLLHandle, szDeviceId, 10*1000);
-                    System.out.println("DPSDK_QueryNVRChnlStatus之后的参数，deviceInfo："+ JSON.toJSON(deviceInfo));
-                    if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-                        System.out.printf("查询NVR通道状态成功，deviceID = %s",new String(szDeviceId));
-                    }else{
-                        System.out.printf("查询NVR通道状态失败，deviceID = %s, nRet = %d", new String(szDeviceId), nRet);
-                    }
-                    //System.out.println();
-                }
-            }
-            //System.out.printf("Device Status Report!, szDeviceId = %s, nStatus = %s", new String(szDeviceId),status);
-            //System.out.println();
-        }
-    };
-
-    public fDPSDKNVRChnlStatusCallback fNVRChnlStatus = new fDPSDKNVRChnlStatusCallback() {
-        @Override
-        public void invoke(int nPDLLHandle, byte[] szCameraId, int nStatus) {
-            System.out.println("回调函数的返回值，szDeviceId："+new String(szCameraId));
-            System.out.println("回调函数的返回值，nStatus："+nStatus);
-            String status = "离线";
-            if(nStatus == 1)
-            {
-                status = "在线";
-            }
-            //System.out.printf("NVR Channel Status Report!, szCameraId = %s, nStatus = %s", new String(szCameraId),status);
-            //System.out.println();
-        }
-    };
-
-
-    @Override
-    public Devices getTree() throws Exception {
-        System.out.println("------------------------------开始查询组织树------------------------");
-        int nRet1 = IDpsdkCore.DPSDK_LoadDGroupInfo(m_nDLLHandle, nGroupLen, 180000 );
-        byte[] szGroupBuf = new byte[nGroupLen.nReturnValue];
-        System.out.printf("获取所有组织树串参数m_nDLLHandle："+m_nDLLHandle+";szGroupBuf："+szGroupBuf+";nGroupLen.nReturnValue："+nGroupLen.nReturnValue);
-        int nRet = IDpsdkCore.DPSDK_GetDGroupStr(m_nDLLHandle, szGroupBuf, nGroupLen.nReturnValue, 10000);
-        System.out.println("------------------------------是否查询成功------------------------"+nRet);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(szGroupBuf);
-            // Parse input stream into Document object
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(inputStream));
-            // Convert Document object to XML string
-            String xmlString = documentToString(doc);
-            System.out.println("获取组织树： "+xmlString);
-            xmlString=getDeviceString(xmlString);
-            //设置设备状态上报监听函数
-            Devices res = parse(xmlString);
-            nRet = IDpsdkCore.DPSDK_SetDPSDKDeviceStatusCallback(m_nDLLHandle, fDeviceStatus);
-            //设置NVR通道状态上报监听函数
-            nRet =IDpsdkCore.DPSDK_SetDPSDKNVRChnlStatusCallback(m_nDLLHandle, fNVRChnlStatus);
-            return res;
-        }
-        return null;
-    }
-
-    @Override
-    public List<ChannelInfo> getChannelInfo() throws Exception {
-        byte[] szDeviceId = getChannelByte(DeviceId);
-        Devices device = getTree();
-        List<Device> deviceList=device.getDevice();
-        List<Channel> channelList= new ArrayList<>();
-        for(Device vo :deviceList){
-            if(DeviceId.equals(vo.getId())){
-                channelList=vo.getChannels();
-            }
-        }
-        int size = channelList.size();
-        dpsdk_AHostDefenceStatus_t[] hostDefenceStatusArray = new dpsdk_AHostDefenceStatus_t[size];
-        for(int i=0;i<size;i++){
-            dpsdk_AHostDefenceStatus_t defenceStatus =new dpsdk_AHostDefenceStatus_t();
-            hostDefenceStatusArray[i] = defenceStatus;
-        }
-        System.out.println("==============查询channel信息接口参数m_nDLLHandle："+ m_nDLLHandle);
-        System.out.println("==============查询channel信息接口参数szDeviceId："+ szDeviceId);
-        System.out.println("==============查询channel信息接口参数channelList.size()："+ channelList.size());
-        System.out.println("==============查询channel信息接口参数hostDefenceStatusArray："+ hostDefenceStatusArray);
-        int nRet = IDpsdkCore.DPSDK_QueryNetAlarmHostStatus(m_nDLLHandle, szDeviceId, channelList.size(), hostDefenceStatusArray, 1000);
-        System.out.println("==============查询channel信息接口===="+ nRet);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // 可选，用于美化输出的 JSON 字符串
-            List<ChannelInfo> res=new ArrayList<>();
-            for(int i=0;i<size;i++){
-                ChannelInfo channelInfo=new ChannelInfo();
-                dpsdk_AHostDefenceStatus_t defenceStatus =hostDefenceStatusArray[i];
-                channelInfo.setId(transfString(defenceStatus.szNodeID));
-                channelInfo.setBDefend(defenceStatus.bDefend);
-                channelInfo.setAlarmStatus(defenceStatus.nAlarm);
-                channelInfo.setNUndefendAlarm(defenceStatus.nUndefendAlarm);
-                res.add(channelInfo);
-            }
-            // 将 hostDefenceStatusArray 转换为 JSON 字符串
-            String json = objectMapper.writeValueAsString(res);
-            return res;
-        }
-        return null;
-    }
-        public String transfString(byte[] channelId){
-            int length = 0;
-            for (int i = 0; i < channelId.length; i++) {
-                if (channelId[i] != 0) {
-                    length++;
-                } else {
-                    break;
-                }
-            }
-            byte[] nonZeroBytes = new byte[length];
-            System.arraycopy(channelId, 0, nonZeroBytes, 0, length);
-            // 将字节数组转换为字符串
-            String res = new String(nonZeroBytes);
-            // 找到最后一个$符号的索引位置
-            int lastIndex = res.lastIndexOf("$");
-            // 在最后一个$符号前插入$0
-            String modifiedString = res.substring(0, lastIndex) + "$0" + res.substring(lastIndex);
-            System.out.println(modifiedString);
-            return res;
-        }
     //    public static void main(String[] args) throws Exception {
 //        String xmlString = "<Organization>\n" +
 //                "\t<Department coding=\"001\" name=\"仓山万达商管\" modifytime=\"\" sn=\"\" memo=\"\" deptype=\"1\" depsort=\"0\" chargebooth=\"0\" OrgNum=\"\">\n" +
@@ -238,7 +142,7 @@ public class ITestServiceImpl implements TestService{
 //        xmlString=getDeviceString(xmlString);
 //        parse(xmlString);
 //    }
-    public static String getDeviceString(String xml){
+    public static String getDeviceString(String xml) {
         String startTag = "<Devices>";
         String endTag = "</Devices>";
         int startIndex = xml.indexOf(startTag);
@@ -246,6 +150,7 @@ public class ITestServiceImpl implements TestService{
         String result = xml.substring(startIndex, endIndex);
         return result;
     }
+
     public static Devices parse(String xml) throws Exception {
         // Parse XML string into Document object
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -253,27 +158,27 @@ public class ITestServiceImpl implements TestService{
         Document doc = builder.parse(new InputSource(new StringReader(xml)));
         // Find root element and parse it recursively
         Element root = doc.getDocumentElement();
-        List<Device> deviceList=parseDepartment(root);
-        Devices devices=new Devices();
+        List<Device> deviceList = parseDepartment(root);
+        Devices devices = new Devices();
         devices.setDevice(deviceList);
         // 创建Gson对象
         Gson gson = new Gson();
         // 将对象转换为JSON字符串
         String json = gson.toJson(devices);
-        System.out.println("获取json组织树： "+json);
+        log.info("获取json组织树： " + json);
         return devices;
     }
 
     private static List<Device> parseDepartment(Element el) {
         //获取Device节点
         NodeList deviceNodes = el.getElementsByTagName("Device");
-        List<Device> deviceNodesList=new ArrayList<>();
+        List<Device> deviceNodesList = new ArrayList<>();
         for (int k = 0; k < deviceNodes.getLength(); k++) {
             Element deviceNode = (Element) deviceNodes.item(k);
             String deviceId = deviceNode.getAttribute("id");
             String deviceType = deviceNode.getAttribute("type");
             String deviceIp = deviceNode.getAttribute("deviceIp");
-            Device device = new Device(deviceId,deviceType,deviceIp);
+            Device device = new Device(deviceId, deviceType, deviceIp);
             deviceNodesList.add(device);
         }
 //        //获取UnitNodes节点
@@ -289,17 +194,17 @@ public class ITestServiceImpl implements TestService{
 //        }
         //获取Channel节点
         NodeList channelNodes = el.getElementsByTagName("Channel");
-        List<Channel> ChannelNodesList=new ArrayList<>();
+        List<Channel> ChannelNodesList = new ArrayList<>();
         for (int j = 0; j < channelNodes.getLength(); j++) {
             Element channelNode = (Element) channelNodes.item(j);
             String channelId = channelNode.getAttribute("id");
             Channel channelVo = new Channel(channelId);
             ChannelNodesList.add(channelVo);
         }
-        for (int i= 0; i<deviceNodesList.size(); i++){
-            List<Channel> channelList=new ArrayList<>();
-            for (int j= 0; j<ChannelNodesList.size(); j++){
-                if(ChannelNodesList.get(j).getId().startsWith(deviceNodesList.get(i).getId())){
+        for (int i = 0; i < deviceNodesList.size(); i++) {
+            List<Channel> channelList = new ArrayList<>();
+            for (int j = 0; j < ChannelNodesList.size(); j++) {
+                if (ChannelNodesList.get(j).getId().startsWith(deviceNodesList.get(i).getId())) {
                     channelList.add(ChannelNodesList.get(j));
                 }
             }
@@ -307,7 +212,122 @@ public class ITestServiceImpl implements TestService{
         }
         return deviceNodesList;
     }
-    private  String documentToString(Document doc) throws Exception {
+
+    public static long getStartTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date date = calendar.getTime();
+        long timestamp = date.getTime();
+        return timestamp;
+    }
+
+    public static long getEndTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date date = calendar.getTime();
+        long timestamp = date.getTime();
+        return timestamp;
+    }
+
+    @Override
+    public Devices getTree() throws Exception {
+        log.info("------------------------------开始查询组织树------------------------");
+        int nRet1 = IDpsdkCore.DPSDK_LoadDGroupInfo(m_nDLLHandle, nGroupLen, 180000);
+        byte[] szGroupBuf = new byte[nGroupLen.nReturnValue];
+        log.info("获取所有组织树串参数m_nDLLHandle：" + m_nDLLHandle + ";szGroupBuf：" + szGroupBuf + ";nGroupLen.nReturnValue：" + nGroupLen.nReturnValue);
+        int nRet = IDpsdkCore.DPSDK_GetDGroupStr(m_nDLLHandle, szGroupBuf, nGroupLen.nReturnValue, 10000);
+        log.info("------------------------------是否查询成功------------------------" + nRet);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(szGroupBuf);
+            // Parse input stream into Document object
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new InputSource(inputStream));
+            // Convert Document object to XML string
+            String xmlString = documentToString(doc);
+            log.info("获取组织树： " + xmlString);
+            xmlString = getDeviceString(xmlString);
+            //设置设备状态上报监听函数
+            Devices res = parse(xmlString);
+            nRet = IDpsdkCore.DPSDK_SetDPSDKDeviceStatusCallback(m_nDLLHandle, fDeviceStatus);
+            //设置NVR通道状态上报监听函数
+            nRet = IDpsdkCore.DPSDK_SetDPSDKNVRChnlStatusCallback(m_nDLLHandle, fNVRChnlStatus);
+            return res;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ChannelInfo> getChannelInfo() throws Exception {
+        byte[] szDeviceId = getChannelByte(DeviceId);
+        Devices device = getTree();
+        List<Device> deviceList = device.getDevice();
+        List<Channel> channelList = new ArrayList<>();
+        for (Device vo : deviceList) {
+            if (DeviceId.equals(vo.getId())) {
+                channelList = vo.getChannels();
+            }
+        }
+        int size = channelList.size();
+        dpsdk_AHostDefenceStatus_t[] hostDefenceStatusArray = new dpsdk_AHostDefenceStatus_t[size];
+        for (int i = 0; i < size; i++) {
+            dpsdk_AHostDefenceStatus_t defenceStatus = new dpsdk_AHostDefenceStatus_t();
+            hostDefenceStatusArray[i] = defenceStatus;
+        }
+        log.info("==============查询channel信息接口参数m_nDLLHandle：" + m_nDLLHandle);
+        log.info("==============查询channel信息接口参数szDeviceId：" + szDeviceId);
+        log.info("==============查询channel信息接口参数channelList.size()：" + channelList.size());
+        log.info("==============查询channel信息接口参数hostDefenceStatusArray：" + hostDefenceStatusArray);
+        int nRet = IDpsdkCore.DPSDK_QueryNetAlarmHostStatus(m_nDLLHandle, szDeviceId, channelList.size(), hostDefenceStatusArray, 1000);
+        log.info("==============查询channel信息接口====" + nRet);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // 可选，用于美化输出的 JSON 字符串
+            List<ChannelInfo> res = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                ChannelInfo channelInfo = new ChannelInfo();
+                dpsdk_AHostDefenceStatus_t defenceStatus = hostDefenceStatusArray[i];
+                channelInfo.setId(transfString(defenceStatus.szNodeID));
+                channelInfo.setBDefend(defenceStatus.bDefend);
+                channelInfo.setAlarmStatus(defenceStatus.nAlarm);
+                channelInfo.setNUndefendAlarm(defenceStatus.nUndefendAlarm);
+                res.add(channelInfo);
+            }
+            // 将 hostDefenceStatusArray 转换为 JSON 字符串
+            String json = objectMapper.writeValueAsString(res);
+            return res;
+        }
+        return null;
+    }
+
+    public String transfString(byte[] channelId) {
+        int length = 0;
+        for (int i = 0; i < channelId.length; i++) {
+            if (channelId[i] != 0) {
+                length++;
+            } else {
+                break;
+            }
+        }
+        byte[] nonZeroBytes = new byte[length];
+        System.arraycopy(channelId, 0, nonZeroBytes, 0, length);
+        // 将字节数组转换为字符串
+        String res = new String(nonZeroBytes);
+        // 找到最后一个$符号的索引位置
+        int lastIndex = res.lastIndexOf("$");
+        // 在最后一个$符号前插入$0
+        String modifiedString = res.substring(0, lastIndex) + "$0" + res.substring(lastIndex);
+        log.info(modifiedString);
+        return res;
+    }
+
+    private String documentToString(Document doc) throws Exception {
         // Create a transformer to convert Document to XML string
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
@@ -318,126 +338,72 @@ public class ITestServiceImpl implements TestService{
     }
 
     @Override
-    public int testBU(){
-        System.out.printf("------------------------------进入testBU方法------------------------");
+    public int testBU() {
+        log.info("------------------------------进入testBU方法------------------------");
         byte[] ids = getChannelByte(channelId);
         long startTime = getStartTime();
         long endTime = getEndTime();
-        System.out.println("布防参数为：");
-        System.out.println(m_nDLLHandle);
-        System.out.println(channelId);
-        System.out.println(ids);
-        System.out.println(operatChannel);
-        System.out.println(buType);
-        System.out.println(startTime);
-        System.out.println(endTime);
-        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle,ids,operatChannel,buType,startTime,endTime,100000);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            System.out.printf("布防成功，通道id为", channelId);
-        }else{
-            System.out.printf("布防失败，通道id为", channelId);
+        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatChannel, buType, startTime, endTime, 100000);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            log.info("布防成功，通道id为", channelId);
+        } else {
+            log.info("布防失败，通道id为", channelId);
         }
         return nRet;
     }
 
     @Override
     public int testCHE() {
-        System.out.printf("------------------------------testCHE------------------------");
+        log.info("------------------------------testCHE------------------------");
         byte[] ids = getChannelByte(channelId);
         long startTime = getStartTime();
         long endTime = getEndTime();
-        System.out.println("撤防参数为：");
-        System.out.println(m_nDLLHandle);
-        System.out.println(channelId);
-        System.out.println(ids);
-        System.out.println(operatChannel);
-        System.out.println(cheType);
-        System.out.println(startTime);
-        System.out.println(endTime);
-        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle,ids,operatChannel,cheType,startTime,endTime,100000);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            System.out.printf("撤防成功，通道id为", channelId);
-        }else{
-            System.out.printf("撤防失败，通道id为", channelId);
+        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatChannel, cheType, startTime, endTime, 100000);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            log.info("撤防成功，通道id为", channelId);
+        } else {
+            log.info("撤防失败，通道id为", channelId);
         }
         return nRet;
     }
 
     @Override
-    public int testBuDevice(){
-        System.out.printf("------------------------------进入testBU方法------------------------");
+    public int testBuDevice() {
+        log.info("------------------------------进入testBU方法------------------------");
         byte[] ids = getDeviceByte();
         long startTime = 1698870059000L;
         long endTime = 1698950399000L;
-        System.out.println("布防参数为：");
-        System.out.println(m_nDLLHandle);
-        System.out.println(ids);
-        System.out.println(operatChannel);
-        System.out.println(buType);
-        System.out.println(startTime);
-        System.out.println(endTime);
-        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle,ids,operatDevice,buType,0,0,100000);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            System.out.printf("布防成功，设备id为", deviceId);
-        }else{
-            System.out.printf("布防失败，设备id为", deviceId);
+        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatDevice, buType, 0, 0, 100000);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            log.info("布防成功，设备id为", deviceId);
+        } else {
+            log.info("布防失败，设备id为", deviceId);
         }
         return nRet;
     }
 
     @Override
     public int testCheDevice() {
-        System.out.printf("------------------------------testCHE------------------------");
+        log.info("------------------------------testCHE------------------------");
         byte[] ids = getDeviceByte();
         long startTime = 1698870059000L;
         long endTime = 1698950399000L;
-        System.out.println("撤防参数为：");
-        System.out.println(m_nDLLHandle);
-        System.out.println(ids);
-        System.out.println(operatChannel);
-        System.out.println(cheType);
-        System.out.println(startTime);
-        System.out.println(endTime);
-        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle,ids,operatDevice,cheType,0,0,100000);
-        if(nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS){
-            System.out.printf("撤防成功，设备id为", deviceId);
-        }else{
-            System.out.printf("撤防失败，设备id为", deviceId);
+        int nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatDevice, cheType, 0, 0, 100000);
+        if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
+            log.info("撤防成功，设备id为", deviceId);
+        } else {
+            log.info("撤防失败，设备id为", deviceId);
         }
         return nRet;
     }
 
-    public static void main(String[] args) {
-        System.out.println(getStartTime());
-        System.out.println(getEndTime());
-    }
-    public static long getStartTime(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date date = calendar.getTime();
-        long timestamp = date.getTime();
-        return timestamp;
-    }
-    public static long getEndTime(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date date = calendar.getTime();
-        long timestamp = date.getTime();
-        return timestamp;
-    }
-    public byte[] getChannelByte(String channelId){
+    public byte[] getChannelByte(String channelId) {
         // 创建一个与字符串长度相同的 byte 数组
         byte[] byteArray = channelId.getBytes();
         return byteArray;
     }
 
-    public byte[] getDeviceByte(){
+    public byte[] getDeviceByte() {
         // 创建一个与字符串长度相同的 byte 数组
         byte[] byteArray = deviceId.getBytes();
         return byteArray;

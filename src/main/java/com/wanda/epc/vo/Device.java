@@ -1,6 +1,7 @@
 package com.wanda.epc.vo;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data
@@ -45,7 +46,8 @@ public class Device {
     String role;
     String callNumber;
     String rights;
-    public Device(String id,String type,String deviceIp) {
+
+    public Device(String id, String type, String deviceIp) {
         this.id = id;
         this.type = type;
         this.deviceIp = deviceIp;

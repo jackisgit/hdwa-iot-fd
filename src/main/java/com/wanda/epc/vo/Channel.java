@@ -25,6 +25,7 @@ public class Channel {
     String channelRemoteType;
     String subMulticastIp;
     String subMulticastPort;
+
     public Channel(String id) {
         this.id = id;
     }

@@ -1,10 +1,10 @@
 package com.wanda.epc.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wanda.epc.service.TestService;
 import com.wanda.epc.vo.ChannelInfo;
 import com.wanda.epc.vo.Devices;
 import com.wanda.epc.vo.Organization;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,41 +18,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/testController")
+@Slf4j
 public class TestController {
 
 
     @Autowired
     TestService testService;
-
-    @GetMapping("/testBU")
-    public int testBU(){
-        System.out.printf("------------------------------进入controller------------------------");
-        return testService.testBU();
-    }
-
-    @GetMapping("/testCHE")
-    public int testCHE(){
-        System.out.printf("------------------------------进入controller------------------------");
-        return testService.testCHE();
-    }
-
-    @GetMapping("/testBUDevice")
-    public int testBUDevice(){
-        System.out.printf("------------------------------进入controller------------------------");
-        return testService.testBuDevice();
-    }
-
-    @GetMapping("/testCHEDevice")
-    public int testCHEDevice(){
-        System.out.printf("------------------------------进入controller------------------------");
-        return testService.testCheDevice();
-    }
-
-    @GetMapping("/getTree")
-    public Devices getTree() throws Exception {
-        System.out.printf("------------------------------getTree进入controller------------------------");
-        return testService.getTree();
-    }
 
     public static void main(String[] args) {
         String xmlData = "<Organization>\n" +
@@ -108,14 +79,44 @@ public class TestController {
             JAXBContext jaxbContext = JAXBContext.newInstance(Organization.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Organization organization = (Organization) unmarshaller.unmarshal(new StringReader(xmlData));
-            System.out.println(organization);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
+
+    @GetMapping("/testBU")
+    public int testBU() {
+        log.info("------------------------------进入controller------------------------");
+        return testService.testBU();
+    }
+
+    @GetMapping("/testCHE")
+    public int testCHE() {
+        log.info("------------------------------进入controller------------------------");
+        return testService.testCHE();
+    }
+
+    @GetMapping("/testBUDevice")
+    public int testBUDevice() {
+        log.info("------------------------------进入controller------------------------");
+        return testService.testBuDevice();
+    }
+
+    @GetMapping("/testCHEDevice")
+    public int testCHEDevice() {
+        log.info("------------------------------进入controller------------------------");
+        return testService.testCheDevice();
+    }
+
+    @GetMapping("/getTree")
+    public Devices getTree() throws Exception {
+        log.info("------------------------------getTree进入controller------------------------");
+        return testService.getTree();
+    }
+
     @GetMapping("/getChannelInfo")
     public List<ChannelInfo> getChannelInfo() throws Exception {
-        System.out.printf("------------------------------getChannelInfo进入controller------------------------");
+        log.info("------------------------------getChannelInfo进入controller------------------------");
         return testService.getChannelInfo();
     }
 }
