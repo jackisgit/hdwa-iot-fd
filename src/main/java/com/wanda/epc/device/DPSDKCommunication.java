@@ -34,7 +34,7 @@ public class DPSDKCommunication {
                     if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
                         //log.info("查询NVR通道状态成功，deviceID = %s", new String(szDeviceId));
                     } else {
-                        log.info("查询NVR通道状态失败，deviceID = %s, nRet = %d", new String(szDeviceId), nRet);
+                        log.error("查询NVR通道状态失败，deviceID = %s, {}", new String(szDeviceId), nRet);
                     }
                     //
                 }
@@ -172,8 +172,7 @@ public class DPSDKCommunication {
             try {
                 StrCameraId = new String(szCameraId, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.info(e.getMessage(), e);
             }
             log.info("DoorStarusInfo Report, szCameraId=%s, nStatus=%d,nTime=%d", StrCameraId.trim(), nStatus, nTime);
 
@@ -197,16 +196,15 @@ public class DPSDKCommunication {
         Return_Value_Info_t res = new Return_Value_Info_t();
         nRet = IDpsdkCore.DPSDK_Create(dpsdk_sdk_type_e.DPSDK_CORE_SDK_SERVER, res, ("com/dh/DpsdkCore/").getBytes());
         if (nRet != dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("创建DPSDK失败，nRet = %d", nRet);
-
+            log.error("创建DPSDK失败，{}", nRet);
             return;
         }
 
         m_nDLLHandle = res.nReturnValue;
         log.info("获取返回的m_nDLLHandle = " + m_nDLLHandle);
-        String dpsdklog = "D:\\dhfdlog";
+        String dpsdklog = "E:\\dhfdlog\\dhfdlog";
         nRet = IDpsdkCore.DPSDK_SetLog(m_nDLLHandle, dpsdklog.getBytes());
-        String dumpfile = "D:\\dhfdlog";
+        String dumpfile = "E:\\dhfdlog\\dhfdlog";
         nRet = IDpsdkCore.DPSDK_StartMonitor(m_nDLLHandle, dumpfile.getBytes());
         if (m_nDLLHandle > 0) {
             //设置设备状态上报监听函数
@@ -244,9 +242,9 @@ public class DPSDKCommunication {
 
         int nRet = IDpsdkCore.DPSDK_Login(m_nDLLHandle, loginInfo, 10000);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("登录成功，nRet = %d", nRet);
+            log.info("登录成功，{}", nRet);
         } else {
-            log.info("登录失败，nRet = %d", nRet);
+            log.error("登录失败，{}", nRet);
         }
 
     }
@@ -258,9 +256,9 @@ public class DPSDKCommunication {
         int nRet = IDpsdkCore.DPSDK_LoadDGroupInfo(m_nDLLHandle, nGroupLen, 180000);
 
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("加载所有组织树成功，nRet = %d， nDepCount = %d", nRet, nGroupLen.nReturnValue);
+            log.info("加载所有组织树成功，{}， nDepCount = %d", nRet, nGroupLen.nReturnValue);
         } else {
-            log.info("加载所有组织树失败，nRet = %d", nRet);
+            log.error("加载所有组织树失败，{}", nRet);
         }
 
     }
@@ -280,7 +278,7 @@ public class DPSDKCommunication {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            log.info("获取所有组织树串成功，nRet = %d， szGroupBuf = [%s]", nRet, GroupBuf);
+            log.info("获取所有组织树串成功，{}， szGroupBuf = [%s]", nRet, GroupBuf);
             try {
                 File file = new File("D:\\text.xml");
                 if (!file.exists()) {
@@ -295,40 +293,39 @@ public class DPSDKCommunication {
                 e1.printStackTrace();
             }
         } else {
-            log.info("获取所有组织树串失败，nRet = %d", nRet);
+            log.error("获取所有组织树串失败，{}", nRet);
         }
 
     }
 
 
-    /*
+    /**
      * 设置报警回调
-     * */
+     */
     public void SetAlarm() {
-        int nRet = IDpsdkCore.DPSDK_SetDPSDKAlarmCallback(m_nDLLHandle, m_AlarmCB);//设置报警监听函数
+        //设置报警监听函数
+        int nRet = IDpsdkCore.DPSDK_SetDPSDKAlarmCallback(m_nDLLHandle, m_AlarmCB);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("开启报警监听成功，nRet = %d", nRet);
+            log.info("开启报警监听成功，{}", nRet);
         } else {
-            log.info("开启报警监听失败，nRet = %d", nRet);
+            log.error("开启报警监听失败，{}", nRet);
         }
-
-
     }
 
     public void run() {
         Menu menu = new Menu();
-        menu.Run();
+        menu.run();
     }
 
-    /*
+    /**
      * 登出
-     * */
+     */
     public void OnLogout() {
         int nRet = IDpsdkCore.DPSDK_Logout(m_nDLLHandle, 10000);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("登出成功，nRet = %d", nRet);
+            log.info("登出成功，{}", nRet);
         } else {
-            log.info("登出失败，nRet = %d", nRet);
+            log.error("登出失败，{}", nRet);
         }
 
     }
@@ -339,9 +336,9 @@ public class DPSDKCommunication {
     public void OnDestroy() {
         int nRet = IDpsdkCore.DPSDK_Destroy(m_nDLLHandle);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
-            log.info("释放内存成功，nRet = %d", nRet);
+            log.info("释放内存成功，{}", nRet);
         } else {
-            log.info("释放内存失败，nRet = %d", nRet);
+            log.error("释放内存失败，{}", nRet);
         }
 
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -22,7 +23,7 @@ import java.util.List;
 public class TestController {
 
 
-    @Autowired
+    @Resource
     TestService testService;
 
     public static void main(String[] args) {
@@ -86,25 +87,21 @@ public class TestController {
 
     @GetMapping("/testBU")
     public int testBU() {
-        log.info("------------------------------进入controller------------------------");
         return testService.testBU();
     }
 
     @GetMapping("/testCHE")
     public int testCHE() {
-        log.info("------------------------------进入controller------------------------");
         return testService.testCHE();
     }
 
     @GetMapping("/testBUDevice")
     public int testBUDevice() {
-        log.info("------------------------------进入controller------------------------");
         return testService.testBuDevice();
     }
 
     @GetMapping("/testCHEDevice")
     public int testCHEDevice() {
-        log.info("------------------------------进入controller------------------------");
         return testService.testCheDevice();
     }
 

@@ -67,7 +67,7 @@ public class ITestServiceImpl implements TestService {
                     if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
                         log.info("查询NVR通道状态成功，deviceID = %s", new String(szDeviceId));
                     } else {
-                        log.info("查询NVR通道状态失败，deviceID = %s, nRet = %d", new String(szDeviceId), nRet);
+                        log.error("查询NVR通道状态失败，deviceID = %s, {}", new String(szDeviceId), nRet);
                     }
                     //
                 }
@@ -347,7 +347,7 @@ public class ITestServiceImpl implements TestService {
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
             log.info("布防成功，通道id为", channelId);
         } else {
-            log.info("布防失败，通道id为", channelId);
+            log.error("布防失败，通道id为", channelId);
         }
         return nRet;
     }
@@ -362,7 +362,7 @@ public class ITestServiceImpl implements TestService {
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
             log.info("撤防成功，通道id为", channelId);
         } else {
-            log.info("撤防失败，通道id为", channelId);
+            log.error("撤防失败，通道id为", channelId);
         }
         return nRet;
     }
@@ -377,7 +377,7 @@ public class ITestServiceImpl implements TestService {
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
             log.info("布防成功，设备id为", deviceId);
         } else {
-            log.info("布防失败，设备id为", deviceId);
+            log.error("布防失败，设备id为", deviceId);
         }
         return nRet;
     }
@@ -392,7 +392,7 @@ public class ITestServiceImpl implements TestService {
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
             log.info("撤防成功，设备id为", deviceId);
         } else {
-            log.info("撤防失败，设备id为", deviceId);
+            log.error("撤防失败，设备id为", deviceId);
         }
         return nRet;
     }

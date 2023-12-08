@@ -17,7 +17,7 @@ public class Menu {
     }
 
     @SuppressWarnings("resource")
-    public void Run() {
+    public void run() {
         Scanner sc = new Scanner(System.in);
         while (true) {
             try {
@@ -49,13 +49,11 @@ public class Menu {
 
             } catch (Exception e) {
                 log.info(e.getMessage(), e);
-                //e.printStackTrace();
             }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.info(e.getMessage(), e);
             }
         }
     }

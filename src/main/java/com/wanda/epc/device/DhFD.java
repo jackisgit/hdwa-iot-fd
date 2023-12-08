@@ -1,18 +1,15 @@
 package com.wanda.epc.device;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.alibaba.fastjson.JSON;
 import com.dh.DpsdkCore.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
 import com.wanda.epc.common.RedisUtil;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.vo.Channel;
 import com.wanda.epc.vo.ChannelInfo;
 import com.wanda.epc.vo.Device;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -30,10 +28,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -45,22 +39,18 @@ public class DhFD extends BaseDevice {
 
     public static int m_nDLLHandle = 1;
     //通道布撤防
-    public static int operatChannel = dpsdk_netalarmhost_operator_e.AHOST_OPERATE_CHANNEL;
+    public static int operateChannel = dpsdk_netalarmhost_operator_e.AHOST_OPERATE_CHANNEL;
     //设备布撤防
-    public static int operatDevice = dpsdk_netalarmhost_operator_e.AHOST_OPERATE_DEVICE;
+    public static int operateDevice = dpsdk_netalarmhost_operator_e.AHOST_OPERATE_DEVICE;
     //布防类型
     public static int buType = dpsdk_AlarmhostOperator_e.CONTROL_DEV_ARM;
     //撤防类型
     public static int cheType = dpsdk_AlarmhostOperator_e.CONTROL_DEV_DISARM;
-    @Autowired
+    @Resource
     CommonDevice commonDevice;
     Return_Value_Info_t nGroupLen = new Return_Value_Info_t();
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
-    @Value("${epc.gatewayId}")
-    private String gatewayId;
-    @Value("${epc.gcId}")
-    private String gcId;
     @Value("${epc.DeviceId}")
     private String DeviceId;
     @Value("${epc.UnitNodesType}")
@@ -82,7 +72,7 @@ public class DhFD extends BaseDevice {
     }
 
     public Device getTree() throws Exception {
-        IDpsdkCore.DPSDK_LoadDGroupInfo(m_nDLLHandle, nGroupLen, 180000 );
+        IDpsdkCore.DPSDK_LoadDGroupInfo(m_nDLLHandle, nGroupLen, 180000);
         byte[] szGroupBuf = new byte[nGroupLen.nReturnValue];
         int nRet = IDpsdkCore.DPSDK_GetDGroupStr(m_nDLLHandle, szGroupBuf, nGroupLen.nReturnValue, 10000);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
@@ -122,10 +112,6 @@ public class DhFD extends BaseDevice {
                 res = device;
             }
         }
-        // 创建Gson对象
-        Gson gson = new Gson();
-        // 将对象转换为JSON字符串
-        String json = gson.toJson(res);
         return res;
     }
 
@@ -141,17 +127,6 @@ public class DhFD extends BaseDevice {
             Device device = new Device(deviceId, deviceType, deviceIp);
             deviceNodesList.add(device);
         }
-//        //获取UnitNodes节点
-//        NodeList unitNodes = el.getElementsByTagName("UnitNodes");
-//        List<UnitNodes> unitNodesList=new ArrayList<>();
-//        for (int i = 0; i < unitNodes.getLength(); i++) {
-//            UnitNodes unitNode = new UnitNodes();
-//            Element node = (Element) unitNodes.item(i);
-//            String unitNodetype = node.getAttribute("type");
-//            unitNode.setType(unitNodetype);
-//            unitNode.setChannel(ChannelNodesList);
-//            unitNodesList.add(unitNode);
-//        }
         //获取Channel节点
         NodeList channelNodes = el.getElementsByTagName("Channel");
         List<Channel> ChannelNodesList = new ArrayList<>();
@@ -197,8 +172,6 @@ public class DhFD extends BaseDevice {
                 channelInfo.setNUndefendAlarm(defenceStatus.nUndefendAlarm);
                 res.add(channelInfo);
             }
-            // 将 hostDefenceStatusArray 转换为 JSON 字符串
-            String json = objectMapper.writeValueAsString(res);
             return res;
         }
         return null;
@@ -303,18 +276,14 @@ public class DhFD extends BaseDevice {
                         firstParam = device.getId();
                     }
                 }
-                String desc = "";
-                log.info("开始调用子系统做撤布防操作====");
-                log.info("outParamId====" + outParamId);
+                log.info("开始调用子系统做撤布防操作====outParamId:{}", outParamId);
                 if ("1.0".equals(value)) {
-                    desc = "布防";
                     defence(firstParam, type, outParamId);
                 } else {
-                    desc = "撤防";
                     noDefence(firstParam, type, outParamId);
                 }
             } catch (Exception e) {
-                log.info("防盗报警控制命令下发失败：" + e.getMessage());
+                log.error("防盗报警控制命令下发失败：" + e.getMessage());
             }
         }
     }
@@ -329,11 +298,11 @@ public class DhFD extends BaseDevice {
         byte[] ids = getChannelByte(channleId);
         int nRet;
         if ("1".equals(type)) {
-            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatDevice, buType, 0, 0, 100000);
+            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operateDevice, buType, 0, 0, 100000);
         } else {
-            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatChannel, buType, 0, 0, 100000);
+            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operateChannel, buType, 0, 0, 100000);
         }
-        log.info("布防结果，nRet为" + nRet);
+        log.info("布防结果，nRet为{}", nRet);
         return nRet;
     }
 
@@ -347,16 +316,16 @@ public class DhFD extends BaseDevice {
         byte[] ids = getChannelByte(channleId);
         int nRet;
         if ("1".equals(type)) {
-            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatDevice, cheType, 0, 0, 100000);
+            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operateDevice, cheType, 0, 0, 100000);
         } else {
-            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operatChannel, cheType, 0, 0, 100000);
+            nRet = IDpsdkCore.DPSDK_ControlNetAlarmHostCmd(m_nDLLHandle, ids, operateChannel, cheType, 0, 0, 100000);
         }
-        log.info("撤防结果，nRet为" + nRet);
+        log.info("撤防结果，nRet为{}", nRet);
         if (nRet == dpsdk_retval_e.DPSDK_RET_SUCCESS) {
             redisUtil.set(outParamId, "0", 5);
-            log.info("撤防成功，通道id为", channleId);
+            log.info("撤防成功，通道id为{}", channleId);
         } else {
-            log.info("撤防失败，通道id为", channleId);
+            log.error("撤防失败，通道id为{}", channleId);
         }
         return nRet;
     }
