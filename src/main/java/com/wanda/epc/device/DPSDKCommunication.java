@@ -68,7 +68,7 @@ public class DPSDKCommunication {
             try {
                 StrCarNum = new String(szCarNum, "UTF-8");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             log.info("Bay Car Info Report, DeviceId=%s, szChannelId=%s, szDeviceChnName=%s, szCarNum=%s, szImg0Path=%s", new String(szDeviceId), new String(szChannelId), new String(szDeviceChnName), StrCarNum, new String(szImg0Path));
 
@@ -85,7 +85,7 @@ public class DPSDKCommunication {
             try {
                 StrCarNum = new String(szCarNum, "UTF-8");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             log.info("TrafficAlarm Car Info Report, DeviceId=%s, szChannelId=%s, szDeviceChnName=%s, szCarNum=%s, szImg0Path=%s", new String(szDeviceId).trim(), new String(szCameraId).trim(), new String(szDeviceName).trim(), StrCarNum.trim(), new String(szPicUrl0).trim());
 
@@ -102,7 +102,7 @@ public class DPSDKCommunication {
             try {
                 StrCarNum = new String(szCarNum, "UTF-8");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             log.info("AreaSpeedDetectInfo Report, szCarNum=%s, szPicName0=%s", StrCarNum.trim(), new String(szPicName0).trim());
 
@@ -276,7 +276,7 @@ public class DPSDKCommunication {
             try {
                 GroupBuf = new String(szGroupBuf, "UTF-8");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             log.info("获取所有组织树串成功，{}， szGroupBuf = [%s]", nRet, GroupBuf);
             try {

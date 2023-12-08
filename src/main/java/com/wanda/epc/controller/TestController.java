@@ -5,7 +5,6 @@ import com.wanda.epc.vo.ChannelInfo;
 import com.wanda.epc.vo.Devices;
 import com.wanda.epc.vo.Organization;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,7 +80,7 @@ public class TestController {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Organization organization = (Organization) unmarshaller.unmarshal(new StringReader(xmlData));
         } catch (JAXBException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

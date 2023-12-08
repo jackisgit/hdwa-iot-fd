@@ -45,7 +45,7 @@ public class IotEpaFDApplication {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         app.SetAlarm();//打开报警监听,加载组织结构后才能接收到报警信息
         app.run();

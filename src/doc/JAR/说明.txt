@@ -1,1 +1,0 @@
-java使用串口通讯 需要引用外部依赖  将RXTXcomm.jar 放到\jdk1.8.0_221\jre\lib\ext目录下
