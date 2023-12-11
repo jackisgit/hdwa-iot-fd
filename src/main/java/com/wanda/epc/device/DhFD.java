@@ -1,6 +1,7 @@
 package com.wanda.epc.device;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.dh.DpsdkCore.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -202,6 +203,7 @@ public class DhFD extends BaseDevice {
     @Override
     public boolean processData() throws Exception {
         List<ChannelInfo> channelList = getChannelInfos();
+        log.info("子系统返回：{}", JSONObject.toJSONString(channelList));
         for (ChannelInfo info : channelList) {
             int alarmStatus = info.getAlarmStatus();
             Boolean defendStatus = info.getBDefend();
