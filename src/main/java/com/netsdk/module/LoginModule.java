@@ -17,8 +17,6 @@ import java.io.File;
 public class LoginModule {
 
     public static NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
-    public static NetSDKLib configsdk = NetSDKLib.CONFIG_INSTANCE;
-
 
     // 设备信息
     public static NetSDKLib.NET_DEVICEINFO_Ex m_stDeviceInfo = new NetSDKLib.NET_DEVICEINFO_Ex();

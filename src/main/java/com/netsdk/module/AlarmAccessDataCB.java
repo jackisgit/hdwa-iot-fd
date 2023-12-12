@@ -24,13 +24,14 @@ public class AlarmAccessDataCB implements NetSDKLib.fMessCallBack {
     }
 
     @Override
-    public boolean invoke(int lCommand, NetSDKLib.LLong lLoginID, Pointer pStuEvent, int dwBufLen, String strDeviceIP, NativeLong nDevicePort, Pointer dwUser) {
-        log.info("门禁报警事件command = " + lCommand);
+    public boolean invoke(int lCommand, NetSDKLib.LLong lLoginID, Pointer pStuEvent, int dwBufLen, String strDeviceIP,
+                          NativeLong nDevicePort, Pointer dwUser) {
+        log.info("报警事件command = " + lCommand);
         switch (lCommand) {
             case NetSDKLib.NET_ALARM_ACCESS_CTL_NOT_CLOSE:
                 NetSDKLib.ALARM_ACCESS_CTL_EVENT_INFO msg = new NetSDKLib.ALARM_ACCESS_CTL_EVENT_INFO();
                 ToolKits.GetPointerData(pStuEvent, msg);
-                log.info("门禁事件消息：{}", JSON.toJSONString(msg));
+                log.info("报警消息：{}", JSON.toJSONString(msg));
                 break;
         }
 

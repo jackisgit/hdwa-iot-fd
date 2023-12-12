@@ -1226,8 +1226,6 @@ public interface NetSDKLib extends Library {
     //  JNA直接调用方法定义，cbDisConnect 实际情况并不回调Java代码，仅为定义可以使用如下方式进行定义。 fDisConnect 回调
     public boolean CLIENT_Init(Callback cbDisConnect, Pointer dwUser);
 
-    ;
-
     //  JNA直接调用方法定义，SDK退出清理
     public void CLIENT_Cleanup();
 

@@ -25,7 +25,6 @@ import static com.netsdk.lib.Utils.getOsPrefix;
  * @description 三代报警主机布撤防操作、设置旁路功能
  */
 @Slf4j
-@Component
 public class ArmDisarmParamConfigDemo {
     // SDk对象初始化
     public static final NetSDKLib netsdk = NetSDKLib.NETSDK_INSTANCE;
@@ -73,10 +72,8 @@ public class ArmDisarmParamConfigDemo {
         }
         // 配置日志
         ArmDisarmParamConfigDemo.enableLog();
-
         // 设置断线重连回调接口, 此操作为可选操作，但建议用户进行设置
         netsdk.CLIENT_SetAutoReconnect(haveReConnectCB, null);
-
         // 设置登录超时时间和尝试次数，可选
         // 登录请求响应超时时间设置为3S
         int waitTime = 3000;
@@ -103,7 +100,6 @@ public class ArmDisarmParamConfigDemo {
         if (!path.exists()) {
             path.mkdir();
         }
-
         // 这里的log保存地址依据实际情况自己调整
         String logPath = path.getAbsoluteFile().getParent() + "\\sdklog\\" + "sdklog" + ToolKits.getDate()
                 + ".log";
@@ -161,7 +157,6 @@ public class ArmDisarmParamConfigDemo {
         };
         // 输出结构体参数
         NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY pstOutParam = new NetSDKLib.NET_OUT_LOGIN_WITH_HIGHLEVEL_SECURITY();
-
         // 写入sdk
         m_hLoginHandle = netsdk.CLIENT_LoginWithHighLevelSecurity(pstlnParam, pstOutParam);
         if (m_hLoginHandle.longValue() == 0) {
@@ -190,16 +185,13 @@ public class ArmDisarmParamConfigDemo {
      */
     public void setBufangEx() {
         CTRL_ARM_DISARM_PARAM_EX param = new CTRL_ARM_DISARM_PARAM_EX();
-
         CTRL_ARM_DISARM_PARAM_EX_IN in = new CTRL_ARM_DISARM_PARAM_EX_IN();
         // 布撤防状态    撤防 0  布防 1   强制布防 2  部分布防 3
         in.emState = 1;
-
         // 用户密码
         //Win下，将GBK String类型的转为Pointer ;Linux下 UTF-8
         Pointer szDevPwd = ToolKits.GetGBKStringToPointer(m_strPassword);
         in.szDevPwd = szDevPwd;
-
         // 情景模式  未知场景 0   外出模式 1 室内模式 2 全局模式 3 立即模式4  就寝模式 5 自定义模式 6
         in.emSceneMode = 1;
         param.stuIn = in;
@@ -303,13 +295,10 @@ public class ArmDisarmParamConfigDemo {
         //Win下，将GBK String类型的转为Pointer
         Pointer szDevPwd = ToolKits.GetGBKStringToPointer(m_strPassword);
         param.szDevPwd = szDevPwd;
-
         // 通道状态,参考枚举 { @link com.netsdk.lib.NetSDKLib.NET_BYPASS_MODE}
         param.emMode = 1;
-
         // 本地报警输入通道个数
         param.nLocalCount = 1;
-
         // 本地报警输入通道号 ,int数组转化为指针,数组长度为本地报警输入通道个数nLocalCount
         int[] pnLocalArr = new int[1];
         pnLocalArr[0] = 0;// 防区对应通道号
@@ -317,9 +306,7 @@ public class ArmDisarmParamConfigDemo {
         pnLocal.clear(pnLocalArr.length * 4);
         pnLocal.write(0, pnLocalArr, 0, pnLocalArr.length);
         param.pnLocal = pnLocal;
-
         // 扩展模块报警输入通道个数，参考本地报警方式
-
         param.write();
         boolean flg = netsdk.CLIENT_ControlDevice(m_hLoginHandle, CtrlType.CTRLTYPE_CTRL_SET_BYPASS, param.getPointer(), 5000);
         if (flg) {
@@ -337,7 +324,6 @@ public class ArmDisarmParamConfigDemo {
     public void startListen() {
         // 设置报警回调函数
         netsdk.CLIENT_SetDVRMessCallBack(fAlarmAccessDataCB.getInstance(), null);
-
         // 订阅报警
         boolean bRet = netsdk.CLIENT_StartListenEx(m_hLoginHandle);
         if (!bRet) {
@@ -413,15 +399,11 @@ public class ArmDisarmParamConfigDemo {
         menu.addItem(new CaseMenu.Item(this, "消警", "clearAlarmEx"));
         menu.addItem(new CaseMenu.Item(this, "订阅报警信息", "startListen"));
         menu.addItem(new CaseMenu.Item(this, "取消订阅报警信息", "stopListen"));
-
-
         menu.addItem(new CaseMenu.Item(this, "获取布防状态", "getArmMode"));
         menu.addItem(new CaseMenu.Item(this, "下发布撤防操作", "setBufangEx"));
-
         menu.addItem(new CaseMenu.Item(this, "查询报警通道数", "queryAlarmChnCount"));
         //menu.addItem(new CaseMenu.Item(this, "查询报警输入通道信息", "queryAlarmInChn"));
         menu.addItem(new CaseMenu.Item(this, "设置旁路功能", "setBypass"));
-
         menu.run();
     }
 
@@ -438,28 +420,15 @@ public class ArmDisarmParamConfigDemo {
     /**
      * 报警事件回调
      */
-    private static class fAlarmAccessDataCB implements NetSDKLib.fMessCallBack {
-
+    public static class fAlarmAccessDataCB implements NetSDKLib.fMessCallBack {
         private static fAlarmAccessDataCB instance = new fAlarmAccessDataCB();
 
-        private fAlarmAccessDataCB() {
+        public fAlarmAccessDataCB() {
         }
 
         public static fAlarmAccessDataCB getInstance() {
             return instance;
         }
-
-        //private ArmDisarmParamConfigDemo device;
-
-        //@SuppressWarnings("unused")
-        //public  ArmDisarmParamConfigDemo getDevice() {
-        //return device;
-        //}
-
-        //public void setDevice(ArmDisarmParamConfigDemo device) {
-        //this.device = device;
-        //}
-
 
         @Override
         public boolean invoke(int lCommand, LLong lLoginID, Pointer pStuEvent, int dwBufLen, String strDeviceIP,
@@ -499,7 +468,6 @@ public class ArmDisarmParamConfigDemo {
                 default:
                     break;
             }
-
             return true;
         }
     }

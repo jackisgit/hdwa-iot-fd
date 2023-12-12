@@ -1,21 +1,23 @@
 package com.wanda.epc;
 
 import com.alibaba.fastjson.JSON;
-import com.netsdk.common.Res;
 import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
+import com.netsdk.lib.enumeration.EM_ARM_STATE;
+import com.netsdk.lib.enumeration.NET_EM_GET_ALARMREGION_INFO;
+import com.netsdk.lib.structure.*;
+import com.netsdk.module.ArmDisarmParamConfigDemo;
+import com.netsdk.module.DefaultDisConnect;
+import com.netsdk.module.DefaultHaveReconnect;
 import com.netsdk.module.LoginModule;
-import com.sun.jna.Memory;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 import com.wanda.epc.device.BaseDevice;
 import com.wanda.epc.device.CommonDevice;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.util.PingUtil;
-import com.netsdk.module.AlarmAccessDataCB;
-import com.netsdk.module.DefaultDisConnect;
-import com.netsdk.module.DefaultHaveReconnect;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,14 +27,13 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.swing.*;
 import java.util.*;
 
 /**
  * @author LianYanFei
  * @version 1.0
  * @project iot-epc-module
- * @description 大华门禁设备
+ * @description 大华设备
  * @date 2023/4/11 09:55:13
  */
 @Slf4j
@@ -81,7 +82,7 @@ public class DeviceHandler extends BaseDevice {
 
     @Override
     public boolean processData() throws Exception {
-        Queue<String> allIp = new LinkedList<String>();
+        Queue<String> allIp = new LinkedList();
         deviceParamListMap.entrySet().forEach(entry -> {
             List<String> ipList = Arrays.asList(entry.getKey().split("_"));
             if (ipList.size() == 2) {
@@ -92,7 +93,7 @@ public class DeviceHandler extends BaseDevice {
             }
         });
         ping(allIp);
-        doorStatus();
+        getArmMode();
         return true;
     }
 
@@ -100,22 +101,21 @@ public class DeviceHandler extends BaseDevice {
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
-        log.info("接收到门禁指令下发：{},状态：{}", JSON.toJSONString(deviceMessage), value);
-        if (deviceMessage != null) {
-            String outParamId = deviceMessage.getOutParamId();
-            String[] param = outParamId.split("_");
-            String ip = param[0];
-            String doorNum = param[1];
-            NetSDKLib.LLong userId = userMap.get(ip);
-            //开
-            if (value.equals("1.0")) {
-                openDoor(userId, Integer.valueOf(doorNum));
-                //关门
-            } else {
-                closeDoor(userId, Integer.valueOf(doorNum));
-            }
+        log.info("接收到指令下发：{},状态：{}", JSON.toJSONString(deviceMessage), value);
+        if (ObjectUtils.isEmpty(deviceMessage)) {
+            return;
         }
+        String outParamId = deviceMessage.getOutParamId();
+        String[] param = outParamId.split("_");
+        String ip = param[0];
+        NetSDKLib.LLong userIp = userMap.get(ip);
+        int order = 1;
+        if (!value.equals("1.0")) {
+            order = 0;
+        }
+        setBufangEx(userIp, order);
     }
+
 
     @Override
     public boolean processData(String... obj) throws Exception {
@@ -123,109 +123,87 @@ public class DeviceHandler extends BaseDevice {
     }
 
     /**
-     * 开始监听
+     * 订阅报警信息
+     */
+    public void startListen(NetSDKLib.LLong loginHandler) {
+        // 设置报警回调函数
+        LoginModule.netsdk.CLIENT_SetDVRMessCallBack(fAlarmAccessDataCB.getInstance(), null);
+        // 订阅报警
+        boolean bRet = LoginModule.netsdk.CLIENT_StartListenEx(loginHandler);
+        if (!bRet) {
+            log.error("订阅报警失败! LastError = 0x%x\n" + LoginModule.netsdk.CLIENT_GetLastError());
+        } else {
+            log.info("订阅报警成功.");
+        }
+    }
+
+    /**
+     * 取消订阅报警信息
      *
-     * @param loginHandler
      * @return
      */
-    private boolean startListen(NetSDKLib.LLong loginHandler) {
+    public void stopListen(NetSDKLib.LLong loginHandler) {
+        // 停止订阅报警
+        boolean bRet = LoginModule.netsdk.CLIENT_StopListen(loginHandler);
+        if (bRet) {
+            log.info("取消订阅报警信息.");
+        }
+    }
 
-        LoginModule.netsdk.CLIENT_SetDVRMessCallBack(AlarmAccessDataCB.getInstance(), null);
-
-        if (!LoginModule.netsdk.CLIENT_StartListenEx(loginHandler)) {
-            JOptionPane.showMessageDialog(null, ToolKits.getErrorCodeShow(),
-                    Res.string().getErrorMessage(), JOptionPane.ERROR_MESSAGE);
-            return false;
+    /**
+     * 下发布撤防操作
+     */
+    public void setBufangEx(NetSDKLib.LLong m_hLoginHandle, int emState) {
+        CTRL_ARM_DISARM_PARAM_EX param = new CTRL_ARM_DISARM_PARAM_EX();
+        CTRL_ARM_DISARM_PARAM_EX_IN in = new CTRL_ARM_DISARM_PARAM_EX_IN();
+        // 布撤防状态    撤防 0  布防 1   强制布防 2  部分布防 3
+        in.emState = emState;
+        // 用户密码
+        //Win下，将GBK String类型的转为Pointer ;Linux下 UTF-8
+        Pointer szDevPwd = ToolKits.GetGBKStringToPointer(m_strPassword);
+        in.szDevPwd = szDevPwd;
+        // 情景模式  未知场景 0   外出模式 1 室内模式 2 全局模式 3 立即模式4  就寝模式 5 自定义模式 6
+        in.emSceneMode = 1;
+        param.stuIn = in;
+        param.write();
+        boolean flg = LoginModule.netsdk.CLIENT_ControlDevice(
+                m_hLoginHandle, NetSDKLib.CtrlType.CTRLTYPE_CTRL_ARMED_EX, param.getPointer(), 5000);
+        if (flg) {
+            log.info("下发布撤防操作成功");
+            param.read();
+            CTRL_ARM_DISARM_PARAM_EX_OUT stuOut = param.stuOut;
+            log.info("有报警源输入布防失败的防区个数:" + stuOut.dwSourceNum);
+            log.info("有联动报警布防失败的防区个数:" + stuOut.dwLinkNum);
         } else {
-            log.info("CLIENT_StartListenEx success.");
-        }
-        return true;
-    }
-
-    /**
-     * 停止监听
-     *
-     * @param loginHandler
-     * @return
-     */
-    private boolean stopListen(NetSDKLib.LLong loginHandler) {
-        if (!LoginModule.netsdk.CLIENT_StopListen(loginHandler)) {
-            JOptionPane.showMessageDialog(null, Res.string().getStopListenFailed() + "," + ToolKits.getErrorCodeShow(),
-                    Res.string().getErrorMessage(), JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else {
-            log.info("CLIENT_StopListen success.");
-        }
-        return true;
-    }
-
-    /**
-     * 开门
-     */
-    private void openDoor(NetSDKLib.LLong m_hLoginHandle, int channelId) {
-        NetSDKLib.NET_CTRL_ACCESS_OPEN openInfo = new NetSDKLib.NET_CTRL_ACCESS_OPEN();
-        openInfo.nChannelID = channelId;
-        openInfo.emOpenDoorType = NetSDKLib.EM_OPEN_DOOR_TYPE.EM_OPEN_DOOR_TYPE_REMOTE;
-        Pointer pointer = new Memory(openInfo.size());
-        ToolKits.SetStructDataToPointer(openInfo, pointer, 0);
-        boolean ret = LoginModule.netsdk.CLIENT_ControlDeviceEx(m_hLoginHandle,
-                NetSDKLib.CtrlType.CTRLTYPE_CTRL_ACCESS_OPEN, pointer, null, 10000);
-        if (!ret) {
-            log.error("远程开门失败");
+            log.error("下发布撤防操作失败:" + ToolKits.getErrorCodeShow());
         }
     }
 
-
     /**
-     * 关门
+     * 获取布防状态（三代主机）
      */
-    private void closeDoor(NetSDKLib.LLong m_hLoginHandle, int channelId) {
-        final NetSDKLib.NET_CTRL_ACCESS_CLOSE close = new NetSDKLib.NET_CTRL_ACCESS_CLOSE();
-        close.nChannelID = channelId; // 对应的门编号 - 如何开全部的门
-        close.write();
-        boolean result = LoginModule.netsdk.CLIENT_ControlDeviceEx(m_hLoginHandle,
-                NetSDKLib.CtrlType.CTRLTYPE_CTRL_ACCESS_CLOSE, close.getPointer(), null, 5000);
-        close.read();
-        if (!result) {
-            log.error("远程关门失败");
-        }
-    }
-
-
-    /**
-     * 门禁状态
-     */
-    private void doorStatus() {
-        int cmd = NetSDKLib.NET_DEVSTATE_DOOR_STATE;
-        NetSDKLib.NET_DOOR_STATUS_INFO doorStatus = new NetSDKLib.NET_DOOR_STATUS_INFO();
-        IntByReference reference = new IntByReference(0);
-        doorStatus.write();
-        //查询对应门状态
+    private void getArmMode() {
         LoginHandleList.forEach(handle -> {
-            boolean result = LoginModule.netsdk.CLIENT_QueryDevState(handle, cmd, doorStatus.getPointer(), doorStatus.size(), reference, 3000);
-            doorStatus.read();
-            if (!result) {
-                log.error("查询门禁状态失败：{}", Integer.toHexString(LoginModule.netsdk.CLIENT_GetLastError()));
-            }
-            String stateType[] = {"未知", "门打开", "门关闭", "门异常打开"};
-            NetSDKLib.LLong myKey = new NetSDKLib.LLong(handle.longValue());
-            log.info("查询门禁状态用户ID：{},门禁状态：{}，param:{}", handle, stateType[doorStatus.emStateType], loginMap.get(myKey) + "_" + doorStatus.nChannel + "_openStatus");
-            List<DeviceMessage> deviceMessageList = deviceParamListMap.get(loginMap.get(myKey) + "_" + doorStatus.nChannel + "_openStatus");
-            if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                deviceMessageList.forEach(deviceMessage -> {
-                    if ("门打开".equals(stateType[doorStatus.emStateType])) {
-                        String value = "1";
-                    } else if ("门关闭".equals(stateType[doorStatus.emStateType])) {
-                        String value = "0";
-
-                    }
-                    deviceMessage.setValue("0");
-                    sendMessage(deviceMessage);
-                });
+            // 入参
+            NET_IN_GET_ALARMMODE stuIn = new NET_IN_GET_ALARMMODE();
+            stuIn.write();
+            // 出参
+            NET_OUT_GET_ALARMMODE stuOut = new NET_OUT_GET_ALARMMODE();
+            stuOut.write();
+            Boolean bRet = LoginModule.netsdk.CLIENT_GetAlarmRegionInfo(handle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_ARMMODE, stuIn.getPointer(), stuOut.getPointer(), 3000);
+            if (!bRet) {
+                log.error("获取布防状态失败：" + ToolKits.getErrorCodeShow());
+                return;
+            } else {
+                stuOut.read();
+                log.info("获取布防状态成功,布撤防状态个数:" + stuOut.nArmModeRetEx);
+                NET_ARMMODE_INFO[] stuArmModeEx = stuOut.stuArmModeEx;
+                for (int i = 0; i < stuOut.nArmModeRetEx; i++) {
+                    log.info("Area号:{},布撤防状态:{}", (i + 1), EM_ARM_STATE.getNoteByValue(stuArmModeEx[i].emArmState));
+                }
             }
         });
     }
-
 
     /**
      * 设备登录
@@ -268,7 +246,6 @@ public class DeviceHandler extends BaseDevice {
         });
     }
 
-
     /**
      * 销毁
      */
@@ -277,9 +254,7 @@ public class DeviceHandler extends BaseDevice {
         log.info("SDK实例销毁!");
         devicesLogOut();
         LoginModule.cleanup();
-
     }
-
 
     /**
      * ping
@@ -287,7 +262,7 @@ public class DeviceHandler extends BaseDevice {
      * @param allIp
      */
     private void ping(Queue<String> allIp) {
-        log.info("门禁设备开始采集在线离线状态,ip数量{}", allIp.size());
+        log.info("开始采集在线离线状态,ip数量{}", allIp.size());
         PingUtil pingUtil = new PingUtil(allIp);
         pingUtil.setIpsOK("");
         pingUtil.setIpsNO("");
@@ -296,68 +271,85 @@ public class DeviceHandler extends BaseDevice {
         String ipsNo = pingUtil.getIpsNO();
         if (StringUtils.isNotBlank(ipsOK)) {
             List<String> ipList = Arrays.asList(ipsOK.split(","));
-            log.info("门禁在线状态数量：{}", ipList.size());
+            log.info("在线数量：{}", ipList.size());
             ipList.forEach(ip -> {
-                List<DeviceMessage> deviceMessageList = deviceParamListMap.get(ip.concat("_onlineStatus"));
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    deviceMessageList.forEach(deviceMessage -> {
-                        deviceMessage.setValue("1");
-                        sendMessage(deviceMessage);
-                    });
-                }
+                sendMsg(ip.concat("_onlineStatus"), "1");
             });
         }
         if (StringUtils.isNotBlank(ipsNo)) {
             List<String> ipList = Arrays.asList(ipsNo.split(","));
-            log.info("门禁离线状态数量：{}", ipList.size());
-            Queue<String> queue = new LinkedList<String>();
+            log.info("离线数量：{}", ipList.size());
             ipList.forEach(ip -> {
-                queue.offer(ip);
-                reload(queue);
+                sendMsg(ip.concat("_onlineStatus"), "0");
             });
         }
     }
 
     /**
-     * 重试
+     * 发送消息
      *
-     * @param allIp
+     * @param outParamId
+     * @param value
      */
-    private void reload(Queue<String> allIp) {
-        log.info("开始进行设备ip ping重试=============》");
-        PingUtil pingUtil = new PingUtil(allIp);
-        pingUtil.setIpsOK("");
-        pingUtil.setIpsNO("");
-        pingUtil.startPing();
-        String ipsOK = pingUtil.getIpsOK();
-        String ipsNo = pingUtil.getIpsNO();
-        if (StringUtils.isNotBlank(ipsOK)) {
-            List<String> ipList = Arrays.asList(ipsOK.split(","));
-            log.info("重试在线状态数量：{}", ipList.size());
-            ipList.forEach(ip -> {
-                log.info("重试离线param:{}", ip.concat("_onlineStatus"));
-                List<DeviceMessage> deviceMessageList = deviceParamListMap.get(ip.concat("_onlineStatus"));
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    deviceMessageList.forEach(deviceMessage -> {
-                        deviceMessage.setValue("1");
-                        sendMessage(deviceMessage);
-                    });
-                }
+    private void sendMsg(String outParamId, String value) {
+        List<DeviceMessage> deviceMessageList = deviceParamListMap.get(outParamId);
+        if (!CollectionUtils.isEmpty(deviceMessageList)) {
+            deviceMessageList.forEach(deviceMessage -> {
+                deviceMessage.setValue(value);
+                sendMessage(deviceMessage);
             });
         }
-        if (StringUtils.isNotBlank(ipsNo)) {
-            List<String> ipList = Arrays.asList(ipsNo.split(","));
-            log.info("重试离线状态数量：{}", ipList.size());
-            ipList.forEach(ip -> {
-                log.info("重试离线param:{}", ip.concat("_onlineStatus"));
-                List<DeviceMessage> deviceMessageList = deviceParamListMap.get(ip.concat("_onlineStatus"));
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    deviceMessageList.forEach(deviceMessage -> {
-                        deviceMessage.setValue("0");
-                        sendMessage(deviceMessage);
-                    });
+    }
+
+    /**
+     * 报警事件回调
+     */
+    private static abstract class fAlarmAccessDataCB implements NetSDKLib.fMessCallBack {
+        private static ArmDisarmParamConfigDemo.fAlarmAccessDataCB instance = new ArmDisarmParamConfigDemo.fAlarmAccessDataCB();
+
+        private fAlarmAccessDataCB() {
+        }
+
+        public static ArmDisarmParamConfigDemo.fAlarmAccessDataCB getInstance() {
+            return instance;
+        }
+
+        @Override
+        public boolean invoke(int lCommand, NetSDKLib.LLong lLoginID, Pointer pStuEvent, int dwBufLen, String strDeviceIP,
+                              NativeLong nDevicePort, Pointer dwUser) {
+            log.info(">> Event invoke. alarm command 0x" + Integer.toHexString(lCommand));
+            switch (lCommand) {
+                case NetSDKLib.NET_ALARM_ALARM_EX2: {
+                    // 本地报警事件
+                    NetSDKLib.ALARM_ALARM_INFO_EX2 msg = new NetSDKLib.ALARM_ALARM_INFO_EX2();
+                    ToolKits.GetPointerData(pStuEvent, msg);
+                    log.info("Event: ALARM_ALARM_INFO_EX2" + msg);
+                    break;
                 }
-            });
+                case NetSDKLib.NET_ALARM_ARMMODE_CHANGE_EVENT: {
+                    // 设备布防模式变化事件
+                    NetSDKLib.ALARM_ARMMODE_CHANGE_INFO msg = new NetSDKLib.ALARM_ARMMODE_CHANGE_INFO();
+                    ToolKits.GetPointerData(pStuEvent, msg);
+                    log.info("Event: NET_ALARM_ARMMODE_CHANGE_EVENT" + msg);
+                    break;
+                }
+                case NetSDKLib.NET_ALARM_ALARMCLEAR: {
+                    // 消警报警
+                    NetSDKLib.ALARM_ALARMCLEAR_INFO msg = new NetSDKLib.ALARM_ALARMCLEAR_INFO();
+                    ToolKits.GetPointerData(pStuEvent, msg);
+                    log.info("Event: ALARAM CLEAR." + msg);
+                    break;
+                }
+                case NetSDKLib.NET_ALARM_ALARM_EX: {
+                    // 持续的报警事件 ,用户可以设置开关选择是否消警
+                    new Thread(() -> {
+                        //device.clearAlarm(NetSDKLib.NET_ALARM_ALARM_EX);
+                    }).start();
+                }
+                default:
+                    break;
+            }
+            return true;
         }
     }
 }
