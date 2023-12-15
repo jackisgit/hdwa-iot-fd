@@ -20,3 +20,8 @@ spring:
     password:
 
 beanName: boschSecurityDeviceSdk
+
+zhf:
+  cron: 0 0/30 * * * ?
+
+
