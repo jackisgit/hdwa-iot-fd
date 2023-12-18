@@ -1,5 +1,7 @@
 package com.netsdk.lib.structure;
 
+import com.netsdk.lib.NetSDKLib;
+
 import static com.netsdk.lib.NetSDKLib.*;
 
 /**
@@ -8,7 +10,7 @@ import static com.netsdk.lib.NetSDKLib.*;
  * @author ： 47040
  * @since ： Created in 2020/9/28 20:24
  */
-public class NET_COMPOSITECHANNEL_INFO extends SdkStructure {
+public class NET_COMPOSITECHANNEL_INFO extends NetSDKLib.SdkStructure {
     /**
      * 课程名称
      */

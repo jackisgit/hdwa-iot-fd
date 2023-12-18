@@ -261,6 +261,7 @@ public class LastError {
     public static final int NET_ERROR_INSUFFICIENT_INTERAL_BUF = (0x80000000 | 518); // 内部缓冲不足
     public static final int NET_ERROR_NEED_ENCRYPTION_PASSWORD = (0x80000000 | 519); // 修改设备ip时,需要校验密码
     public static final int NET_ERROR_NOSUPPORT_RECORD = (0x80000000 | 520); // 设备不支持此记录集
+    public static final int NET_ERROR_ANALYSE_TASK_FULL = (0x80000000 | 523); // 智能分析任务已经满
     public static final int NET_ERROR_SERIALIZE_ERROR = (0x80000000 | 1010);// 数据序列化错误
     public static final int NET_ERROR_DESERIALIZE_ERROR = (0x80000000 | 1011);// 数据反序列化错误
     public static final int NET_ERROR_LOWRATEWPAN_ID_EXISTED = (0x80000000 | 1012);// 该无线ID已存在
@@ -329,9 +330,6 @@ public class LastError {
     public static final int NET_ERROR_FACE_RECOGNITION_SERVER_GROUP_NOT_FOUND = (0x80000000 | 1076);            // 人脸库不存在
     public static final int NET_ERROR_FACE_RECOGNITION_SERVER_FIND_RECORDS_ERROR = (0x80000000 | 1077);            // 查询原人脸库数据结果无效
     public static final int NET_ERROR_FACE_RECOGNITION_SERVER_DELETE_PERSON_ERROR = (0x80000000 | 1078);            // 删除原人脸库数据失败
-    public static final int NET_ERROR_FACE_RECOGNITION_SERVER_DELETE_GROUP_ERROR = (0x80000000 | 1079);           // 删除人脸库失败
-    public static final int NET_ERROR_FACE_RECOGNITION_SERVER_NAME_FORMAT_ERROR = (0x80000000 | 1080);           // 命名格式错误
-    public static final int NET_ERROR_FACE_RECOGNITION_SERVER_FILEPATH_NOT_SET = (0x80000000 | 1081);           // 图片保存路径未设置
     public static final int NET_ERROR_DEVICE_PARSE_PROTOCOL = (0x80000000 | 1079);          // 设备解析协议错误
     public static final int NET_ERROR_DEVICE_INVALID_REQUEST = (0x80000000 | 1080);          // 设备返回无效请求
     public static final int NET_ERROR_DEVICE_INTERNAL_ERROR = (0x80000000 | 1081);          // 设备内部错误
@@ -358,23 +356,23 @@ public class LastError {
     public static final int NET_ERROR_DEVICE_STREAM_PACKINGFORMAT_UNSUPPORT = (0x80000000 | 1102);    // 设备不支持该码流打包格式
     public static final int NET_ERROR_DEVICE_AUDIO_ENCODINGFORMAT_UNSUPPORT = (0x80000000 | 1103);    // 设备不支持该语音编码格式
     public static final int NET_ERROR_SECURITY_ERROR_SUPPORT_GUI = (0x80000000 | 1104);    // 校验请求安全码失败,可使用本地GUI方式重置密码
-    public static final int NET_ERROR_SECURITY_ERROR_SUPPORT_MULT = (0x80000000 | 1105);    // 校验请求安全码失败,可使用大华渠道APP、configtool工具重置密码
+    public static final int NET_ERROR_SECURITY_ERROR_SUPPORT_MULT = (0x80000000 | 1105);    // 校验请求安全码失败,可使用DH渠道APP、configtool工具重置密码
     public static final int NET_ERROR_SECURITY_ERROR_SUPPORT_UNIQUE = (0x80000000 | 1106);    // 校验请求安全码失败,可登陆Web页面重置密码
     public static final int NET_ERROR_STREAMCONVERTOR_DEFECT = (0x80000000 | 1107);    // 转码库缺失
 
 
-    public static final int NET_ERROR_SECURITY_GENERATE_SAFE_CODE = (0x8000000 | 1108);    // 调用大华加密库产生安全码失败
-    public static final int NET_ERROR_SECURITY_GET_CONTACT = (0x8000000 | 1109);    // 获取联系方式失败
-    public static final int NET_ERROR_SECURITY_GET_QRCODE = (0x8000000 | 1110);    // 获取重置密码的二维码信息失败
-    public static final int NET_ERROR_SECURITY_CANNOT_RESET = (0x8000000 | 1111);    // 设备未初始化,无法重置
-    public static final int NET_ERROR_SECURITY_NOT_SUPPORT_CONTACT_MODE = (0x8000000 | 1112);    // 不支持设置该种联系方式,如只支持设置手机号，却请求设置邮箱
-    public static final int NET_ERROR_SECURITY_RESPONSE_TIMEOUT = (0x8000000 | 1113);    // 对端响应超时
-    public static final int NET_ERROR_SECURITY_AUTHCODE_FORBIDDEN = (0x8000000 | 1114);    // 尝试校验AuthCode次数过多，禁止校验
-    public static final int NET_ERROR_TRANCODE_LOGIN_REMOTE_DEV = (0x8000000 | 1115);        // (虚拟转码)登陆远程设备失败
-    public static final int NET_ERROR_TRANCODE_NOFREE_CHANNEL = (0x8000000 | 1116);        // (虚拟转码)没有可用的通道资源
-    public static final int NET_ERROR_VK_INFO_DECRYPT_FAILED = (0x8000000 | 1117);        // VK信息解密失败
-    public static final int NET_ERROR_VK_INFO_DESERIALIZE_FAILED = (0x8000000 | 1118);        // VK信息解析失败
-    public static final int NET_ERROR_GDPR_ABILITY_NOT_ENABLE = (0x8000000 | 1119);        // SDK GDPR功能未使能
+    public static final int NET_ERROR_SECURITY_GENERATE_SAFE_CODE = (0x80000000 | 1108);    // 调用DH加密库产生安全码失败
+    public static final int NET_ERROR_SECURITY_GET_CONTACT = (0x80000000 | 1109);    // 获取联系方式失败
+    public static final int NET_ERROR_SECURITY_GET_QRCODE = (0x80000000 | 1110);    // 获取重置密码的二维码信息失败
+    public static final int NET_ERROR_SECURITY_CANNOT_RESET = (0x80000000 | 1111);    // 设备未初始化,无法重置
+    public static final int NET_ERROR_SECURITY_NOT_SUPPORT_CONTACT_MODE = (0x80000000 | 1112);    // 不支持设置该种联系方式,如只支持设置手机号，却请求设置邮箱
+    public static final int NET_ERROR_SECURITY_RESPONSE_TIMEOUT = (0x80000000 | 1113);    // 对端响应超时
+    public static final int NET_ERROR_SECURITY_AUTHCODE_FORBIDDEN = (0x80000000 | 1114);    // 尝试校验AuthCode次数过多，禁止校验
+    public static final int NET_ERROR_TRANCODE_LOGIN_REMOTE_DEV = (0x80000000 | 1115);        // (虚拟转码)登陆远程设备失败
+    public static final int NET_ERROR_TRANCODE_NOFREE_CHANNEL = (0x80000000 | 1116);        // (虚拟转码)没有可用的通道资源
+    public static final int NET_ERROR_VK_INFO_DECRYPT_FAILED = (0x80000000 | 1117);        // VK信息解密失败
+    public static final int NET_ERROR_VK_INFO_DESERIALIZE_FAILED = (0x80000000 | 1118);        // VK信息解析失败
+    public static final int NET_ERROR_GDPR_ABILITY_NOT_ENABLE = (0x80000000 | 1119);        // SDK GDPR功能未使能
 
     /*门禁快速导入及复核错误码 start*/
     public static final int NET_ERROR_FAST_CHECK_NO_AUTH = (0x80000000 | 1120);    // 门禁快速复核:无权限
@@ -394,7 +392,7 @@ public class LastError {
 
     public static final int NET_ERROR_INVALID_PARAM = (0x80000000 | 1133);    // 参数无效
     public static final int NET_ERROR_INVALID_PASSWORD = (0x80000000 | 1134);    // 密码无效
-    public static final int NET_ERROR_INVALID_FINGERPRINT = (0x80000000 | 1135);    // 指纹无效
+    public static final int NET_ERROR_INVALID_FINGERPRINT = (0x80000000 | 1135);    // 信息无效
     public static final int NET_ERROR_INVALID_FACE = (0x80000000 | 1136);    // 人脸无效
     public static final int NET_ERROR_INVALID_CARD = (0x80000000 | 1137);    // 卡无效
     public static final int NET_ERROR_INVALID_USER = (0x80000000 | 1138);    // 用户无效
@@ -403,13 +401,13 @@ public class LastError {
     public static final int NET_ERROR_GET_SUBCAPS = (0x80000000 | 1141);    // 获取资源实体能力集失败
     public static final int NET_ERROR_UPTO_INSERT_LIMIT = (0x80000000 | 1142);   // 已达插入上限
     public static final int NET_ERROR_UPTO_MAX_INSERT_RATE = (0x80000000 | 1143);   // 已达最大插入速度
-    public static final int NET_ERROR_ERASE_FINGERPRINT = (0x80000000 | 1144);   // 清除指纹数据失败
+    public static final int NET_ERROR_ERASE_FINGERPRINT = (0x80000000 | 1144);   // 清除信息数据失败
     public static final int NET_ERROR_ERASE_FACE = (0x80000000 | 1145);   // 清除人脸数据失败
     public static final int NET_ERROR_ERASE_CARD = (0x80000000 | 1146);   // 清除卡数据失败
     public static final int NET_ERROR_NO_RECORD = (0x80000000 | 1147);   // 没有记录
     public static final int NET_ERROR_NOMORE_RECORDS = (0x80000000 | 1148);   // 查找到最后，没有更多记录
-    public static final int NET_ERROR_RECORD_ALREADY_EXISTS = (0x80000000 | 1149);   // 下发卡或指纹时，数据重复
-    public static final int NET_ERROR_EXCEED_MAX_FINGERPRINT_PERUSER = (0x80000000 | 1150);   // 超过个人最大指纹记录数
+    public static final int NET_ERROR_RECORD_ALREADY_EXISTS = (0x80000000 | 1149);   // 下发卡或信息时，数据重复
+    public static final int NET_ERROR_EXCEED_MAX_FINGERPRINT_PERUSER = (0x80000000 | 1150);   // 超过个人最大信息记录数
     public static final int NET_ERROR_EXCEED_MAX_CARD_PERUSER = (0x80000000 | 1151);   // 超过个人最大卡片记录数
     public static final int NET_ERROR_EXCEED_ADMINISTRATOR_LIMIT = (0x80000000 | 1152);   // 超过门禁管理员个数限制
 
@@ -424,7 +422,7 @@ public class LastError {
     public static final int NET_ERROR_EXCEED_MAX_PASSWD_PERUSER = (0x80000000 | 1160);    // 用户密码数量超过限制
     public static final int NET_ERROR_PARSE_PROTOCOL = (0x80000000 | 1161);    // 设备内部异常引起协议解析错误
     public static final int NET_ERROR_CARD_NUM_EXIST = (0x80000000 | 1162);    // 卡号已存在
-    public static final int NET_ERROR_FINGERPRINT_EXIST = (0x80000000 | 1163);    // 指纹已存在
+    public static final int NET_ERROR_FINGERPRINT_EXIST = (0x80000000 | 1163);    // 信息已存在
 
     public static final int NET_ERROR_OPEN_PLAYGROUP_FAIL = (0x80000000 | 1164);    // 打开播放组失败
     public static final int NET_ERROR_ALREADY_IN_PLAYGROUP = (0x80000000 | 1165);    // 已位于播放组中

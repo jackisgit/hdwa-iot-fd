@@ -1,5 +1,6 @@
 package com.netsdk.lib.structure;
 
+import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.enumeration.EM_CITIZENIDCARD_SEX_TYPE;
 
 import static com.netsdk.lib.NetSDKLib.*;
@@ -10,7 +11,7 @@ import static com.netsdk.lib.NetSDKLib.*;
  * @author ： 47040
  * @since ： Created in 2020/8/27 10:58
  */
-public class ALARM_CITIZEN_PICTURE_COMPARE_INFO extends SdkStructure {
+public class ALARM_CITIZEN_PICTURE_COMPARE_INFO extends NetSDKLib.SdkStructure {
 
     /**
      * 通道号
@@ -94,7 +95,7 @@ public class ALARM_CITIZEN_PICTURE_COMPARE_INFO extends SdkStructure {
      */
     public int nEventType;
     /**
-     * 人证人脸采集时人员ID（定制）
+     * 人证人脸采集时人员ID
      */
     public byte[] szUserID = new byte[32];
     /**
@@ -111,7 +112,7 @@ public class ALARM_CITIZEN_PICTURE_COMPARE_INFO extends SdkStructure {
     public int nScore;
 
     /**
-     * 物理证件号（证件序列号）
+     *  物理证件号（证件序列号）
      */
     public byte[] szIDPhysicalNumber = new byte[20];
 

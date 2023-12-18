@@ -5,7 +5,7 @@ import com.netsdk.lib.enumeration.EM_MAIN_PAGE_STATE;
 import com.netsdk.lib.enumeration.NET_EM_CFG_OPERATE_TYPE;
 
 /**
- * 门禁定制配置结构体
+ * 门禁配置结构体
  * 枚举见 {@link NET_EM_CFG_OPERATE_TYPE#NET_EM_CFG_BSCCUSTOM}
  *
  * @author 47040

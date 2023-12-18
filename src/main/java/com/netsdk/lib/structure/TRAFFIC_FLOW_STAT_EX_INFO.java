@@ -3,6 +3,8 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
+import java.util.Arrays;
+
 /**
  * @author ： 260611
  * @description ： 路口车道统计信息
@@ -42,11 +44,11 @@ public class TRAFFIC_FLOW_STAT_EX_INFO extends NetSDKLib.SdkStructure {
     @Override
     public String toString() {
         String stuLaneInfos = "";
-        if (nLaneInfoNum > 0) {
+        if(nLaneInfoNum > 0){
             stuLaneInfos += "stuLaneInfo[0] = ";
             stuLaneInfos += stuLaneInfo[0].toString();
         }
-        for (int i = 1; i < nLaneInfoNum; i++) {
+        for(int i = 1; i < nLaneInfoNum; i ++){
             stuLaneInfos += ",stuLaneInfo[" + i + "] = ";
             stuLaneInfos += stuLaneInfo[i].toString();
         }

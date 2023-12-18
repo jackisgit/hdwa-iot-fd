@@ -36,22 +36,13 @@ public enum NET_EM_2DCODE_TYPE {
      */
     NET_EM_2DCODE_TYPE_DEVAUTH(6, "H500平台");
 
-    private int type;
-    private String descrip;
-
     private NET_EM_2DCODE_TYPE(int type, String descrip) {
         this.type = type;
         this.descrip = descrip;
     }
 
-    public static NET_EM_2DCODE_TYPE getCode(int type) {
-        for (NET_EM_2DCODE_TYPE code : NET_EM_2DCODE_TYPE.values()) {
-            if (code.getType() == type) {
-                return code;
-            }
-        }
-        return null;
-    }
+    private int type;
+    private String descrip;
 
     public int getType() {
         return type;
@@ -68,6 +59,15 @@ public enum NET_EM_2DCODE_TYPE {
             }
         }
         return "";
+    }
+
+    public static NET_EM_2DCODE_TYPE getCode(int type) {
+        for (NET_EM_2DCODE_TYPE code : NET_EM_2DCODE_TYPE.values()) {
+            if (code.getType() == type) {
+                return code;
+            }
+        }
+        return null;
     }
 
     public String getDescrip() {

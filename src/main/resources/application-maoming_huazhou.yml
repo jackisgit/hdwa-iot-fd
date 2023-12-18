@@ -6,6 +6,7 @@ epc:
   gcId: 4409820010
   subsystem: fdxt/
   threadNum: 1
-m_nPort: 37777
-m_strUser: admin
-m_strPassword: 123456
+ipAddr: 192.168.1.134
+port: 37777
+user: admin
+password: admin123456

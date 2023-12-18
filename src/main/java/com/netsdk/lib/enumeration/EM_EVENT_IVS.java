@@ -425,7 +425,7 @@ public enum EM_EVENT_IVS {
     /**
      * 水位监测事件
      */
-    EVENT_IVS_WATER_STAGE_MONITOR(0x0000030A),
+    EVENT_IVS_WATER_STAGE_MONITOR(0x0000030D),
     /**
      * 暴力抛物检测(对应 DEV_EVENT_VIOLENT_THROW_DETECTION_INFO)
      */
@@ -447,7 +447,7 @@ public enum EM_EVENT_IVS {
      */
     EVENT_IVS_STAY_ALONE_DETECTION(0x00000270),
     /**
-     * 起身事件(对应 DEV_EVENT_PSRISEDETECTION_INFO)
+     * 囚犯起身事件(对应 DEV_EVENT_PSRISEDETECTION_INFO)
      */
     EVENT_IVS_PSRISEDETECTION(0x0000011E),
     /**
@@ -458,7 +458,18 @@ public enum EM_EVENT_IVS {
     /**
      * 特征提取事件(对应 DEV_EVENT_FEATURE_ABSTRACT_INFO)
      */
-    EVENT_IVS_FEATURE_ABSTRACT(0x00000276);
+    EVENT_IVS_FEATURE_ABSTRACT(0x00000276),
+	
+	/**
+	 * 非法运输事件(对应 NET_DEV_EVENT_ILLEGAL_CARRIAGE_INFO)
+	 */
+	EVENT_IVS_ILLEGAL_CARRIAGE( 0x0000042F), 
+	
+	/**
+	 * 打包垃圾检测事件(对应 NET_DEV_EVENT_GARBAGE_PLASTICBAG_INFO)
+	 */
+	EVENT_IVS_GARBAGE_PLASTICBAG( 0x00000459); 
+
 
     private final int id;
 

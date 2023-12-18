@@ -21,7 +21,7 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
      */
     public byte[] szPlateType = new byte[32];
     /**
-     * null
+     * 车牌颜色    "Blue","Yellow", "White","Black","YellowbottomBlackText","BluebottomWhiteText","BlackBottomWhiteText","ShadowGreen","YellowGreen"
      */
     public byte[] szPlateColor = new byte[32];
     /**
@@ -74,7 +74,7 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
      */
     public int nVehicleSize;
     /**
-     * null
+     * 车辆长度    单位米
      */
     public float fVehicleLength;
     /**
@@ -105,7 +105,7 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
      */
     public byte[] szDrivingDirection = new byte[3 * 256];
     /**
-     * null
+     * 设备地址,OSD叠加到图片上的,来源于配置TrafficSnapshot.DeviceAddress,'\0'结束
      */
     public Pointer szDeviceAddress;
     /**
@@ -158,11 +158,10 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
      * 记录编号
      */
     public int nRecNo;
-
     /**
      * 自定义车位号（停车场用）
      */
-    public byte[] szCustomParkNo = new byte[33];
+    public byte[] szCustomParkNo = new byte[33]; 
 
     public byte[] byReserved1 = new byte[3];
     /**
@@ -272,10 +271,19 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
      */
     public short nBrandYear;
     /**
-     * 保留字节,留待扩展.
+     * 交通灯类型,仅在EVENT_IVS_TRAFFIC_RUNREDLIGHT中有效, 0;未知, 1:箭头灯, 2:圆形灯
      */
-    public byte[] bReserved = new byte[140];
-
-    public DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO() {
-    }
+    public int nTrafficLightType;
+    /**
+     * 车牌属性 {@link com.netsdk.lib.enumeration.EM_PLATE_ATTRIBUTE}
+     */
+    public int emPlateAttribute;
+    /**
+     * 交通车辆信息扩展, refer to {@link com.netsdk.lib.structure.NET_TRAFFICCAR_INFO_EXTERN}
+     */
+    public Pointer pTrafficInfoExtern;
+    /**
+     * 保留字节,留待扩展
+     */
+    public byte[] bReserved = new byte[132 - NetSDKLib.POINTERSIZE];
 }

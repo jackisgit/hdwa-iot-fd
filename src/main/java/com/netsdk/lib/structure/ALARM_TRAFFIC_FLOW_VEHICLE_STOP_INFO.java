@@ -2,16 +2,16 @@ package com.netsdk.lib.structure;
 
 
 import com.netsdk.lib.NetSDKLib;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 /**
  * @author ： 260611
  * @description ： 交通路口停车事件 (对应 DH_ALARM_TRAFFIC_FLOW_VEHICLE_STOP)
  * @since ： Created in 2022/03/10 10:12
  */
-@Slf4j
+
 public class ALARM_TRAFFIC_FLOW_VEHICLE_STOP_INFO extends NetSDKLib.SdkStructure {
     /**
      * 事件动作 0:脉冲
@@ -52,15 +52,15 @@ public class ALARM_TRAFFIC_FLOW_VEHICLE_STOP_INFO extends NetSDKLib.SdkStructure
             return "ALARM_TRAFFIC_FLOW_VEHICLE_STOP_INFO{" +
                     "nAction=" + nAction +
                     ", nChannel=" + nChannel +
-                    ", szName UTF-8=" + new String(szName, "UTF-8").trim() +
-                    ", szName GBK=" + new String(szName, "GBK").trim() +
+                    ", szName UTF-8=" + new String(szName,"UTF-8").trim() +
+                    ", szName GBK=" + new String(szName,"GBK").trim() +
                     ", stuUTC=" + stuUTC.toStringTime() +
                     ", nUTCMS=" + nUTCMS +
                     ", nSequence=" + nSequence +
                     ", stuFlowVehicleStop=" + stuFlowVehicleStop.toString() +
                     '}';
         } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage(), e);
+            e.printStackTrace();
         }
         return null;
     }

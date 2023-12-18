@@ -3,6 +3,8 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
+import java.util.Arrays;
+
 /**
  * @author ： 260611
  * @description ： 区域路口排队信息
@@ -47,11 +49,11 @@ public class TRAFFIC_FLOW_QUEUE_INFO extends NetSDKLib.SdkStructure {
     public String toString() {
 
         String stuQueueInfos = "";
-        if (nQueueInfoNum > 0) {
+        if(nQueueInfoNum > 0){
             stuQueueInfos += "stuQueueInfo[0] = ";
             stuQueueInfos += stuQueueInfo[0].toString();
         }
-        for (int i = 1; i < nQueueInfoNum; i++) {
+        for(int i = 1; i < nQueueInfoNum; i ++){
             stuQueueInfos += ",stuQueueInfo[" + i + "] = ";
             stuQueueInfos += stuQueueInfo[i].toString();
         }

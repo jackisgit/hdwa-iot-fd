@@ -15,7 +15,7 @@ public class NET_OUT_RADAR_GETSTATUS extends NetSDKLib.SdkStructure {
      */
     public int dwSize;
     /**
-     * 雷达状态 {@link EM_RADAR_STATUS}
+     * 雷达状态 {@link com.netsdk.lib.enumeration.EM_RADAR_STATUS}
      */
     public int emRadarStatus;
 

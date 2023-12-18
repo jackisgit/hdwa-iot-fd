@@ -1,7 +1,7 @@
 package com.netsdk.lib.constant;
 
-import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.structure.ALARM_SOLARCELL_SYSTEM_INFO;
+import com.netsdk.lib.NetSDKLib;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 
@@ -17,7 +17,7 @@ import com.sun.jna.Pointer;
  */
 public class SDK_ALARM_Ex_TYPE {
     /**
-     * 太阳能系统信息上报(对应结构体 {@link ALARM_SOLARCELL_SYSTEM_INFO}),枚举值对应的回调接口{@link NetSDKLib.fMessCallBack#invoke(int, NetSDKLib.LLong, Pointer, int, String, NativeLong, Pointer)}
+     * 太阳能系统信息上报(对应结构体 {@link ALARM_SOLARCELL_SYSTEM_INFO}),枚举值对应的回调接口{@link com.netsdk.lib.NetSDKLib.fMessCallBack#invoke(int, NetSDKLib.LLong, Pointer, int, String, NativeLong, Pointer)}
      * 对应的接口{@link NetSDKLib#CLIENT_StartListenEx(NetSDKLib.LLong)}
      */
     public static final int SDK_ALARM_SOLARCELL_SYSTEM_INFO = 0x345F;

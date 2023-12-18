@@ -29,7 +29,14 @@ public class NET_IN_DEL_BY_CONDITION_FROM_VEHICLE_REG_DB extends NetSDKLib.SdkSt
      * 不删除的车辆列表
      */
     public byte[] szUIDList = new byte[1024 * 32];
-
+    /**
+     * 车牌唯一标识符列表有效个数
+     */
+    public int nUUIDNum;
+    /**
+     * 车牌唯一标识符列表,存在该字段时，字段szGroupID，stuDelCondition，szUIDList 不生效
+     */
+    public byte[] szUUID = new byte[512 * 64];
     public NET_IN_DEL_BY_CONDITION_FROM_VEHICLE_REG_DB() {
         this.dwSize = this.size();
     }

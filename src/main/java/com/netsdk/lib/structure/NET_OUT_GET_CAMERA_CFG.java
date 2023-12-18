@@ -1,7 +1,6 @@
 package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
-
 /**
  * @author 251823
  * @version 1.0
@@ -10,17 +9,17 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_OUT_GET_CAMERA_CFG extends NetSDKLib.SdkStructure {
 
-    // 结构体大小
-    public int dwSize;
+	// 结构体大小
+	public int dwSize;
 
-    // 相机编号
-    public int nCameraNo;
+	// 相机编号
+	public int nCameraNo;
 
-    // 相机的信息
-    public NET_CAMERA_CFG_INFO stuCameraInfo;
+	// 相机的信息
+	public NET_CAMERA_CFG_INFO stuCameraInfo;
 
-    public NET_OUT_GET_CAMERA_CFG() {
-        this.dwSize = this.size();
-    }
+	public NET_OUT_GET_CAMERA_CFG() {
+		this.dwSize = this.size();
+	}
 
 }

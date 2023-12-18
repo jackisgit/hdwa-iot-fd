@@ -1,6 +1,5 @@
 package com.netsdk.lib.structure;
 
-
 import com.netsdk.lib.NetSDKLib;
 
 /**
@@ -9,26 +8,26 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/07/04 14:04:51
  */
 public class NET_CHANNEL_STATE_INFO extends NetSDKLib.SdkStructure {
-    /**
-     * 通道号
-     */
-    public int nChannel;
-    /**
-     * 已开启的智能规则信息个数
-     */
-    public int nIntelliInfoNum;
-    /**
-     * 已开启的智能规则信息
-     */
-    public NET_INTELLI_INFO[] stuIntelliInfo = new NET_INTELLI_INFO[16];
-    /**
-     * 保留字节
-     */
-    public byte[] szReserved = new byte[512];
+	/**
+	 * 通道号
+	 */
+	public int nChannel;
+	/**
+	 * 已开启的智能规则信息个数
+	 */
+	public int nIntelliInfoNum;
+	/**
+	 * 已开启的智能规则信息
+	 */
+	public NET_INTELLI_INFO[] stuIntelliInfo = new NET_INTELLI_INFO[16];
+	/**
+	 * 保留字节
+	 */
+	public byte[] szReserved = new byte[512];
 
-    public NET_CHANNEL_STATE_INFO() {
-        for (int i = 0; i < stuIntelliInfo.length; i++) {
-            stuIntelliInfo[i] = new NET_INTELLI_INFO();
-        }
-    }
+	public NET_CHANNEL_STATE_INFO() {
+		for (int i = 0; i < stuIntelliInfo.length; i++) {
+			stuIntelliInfo[i] = new NET_INTELLI_INFO();
+		}
+	}
 }

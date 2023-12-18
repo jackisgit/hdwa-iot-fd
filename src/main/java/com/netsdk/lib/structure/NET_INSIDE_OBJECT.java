@@ -12,29 +12,36 @@ import com.netsdk.lib.NetSDKLib;
 public class NET_INSIDE_OBJECT extends NetSDKLib.SdkStructure {
 
     /**
-     * 物品危险等级
+     *  物品危险等级 {@link com.netsdk.lib.NetSDKLib.EM_DANGER_GRADE_TYPE }
      */
-    public int emDangerGrade;
+    public int					emDangerGrade;
 
     /**
-     * 物品类型
+     *  物品类型  {@link com.netsdk.lib.enumeration.EM_INSIDE_OBJECT_TYPE}
      */
-    public int emObjType;
+    public int					emObjType;
 
     /**
-     * 相似度
+     *  相似度
      */
-    public int nSimilarity;
+    public int					nSimilarity;
 
     /**
-     * 包围盒
+     *  包围盒
      */
     public NetSDKLib.NET_RECT stuBoundingBox = new NetSDKLib.NET_RECT();
 
     /**
-     * 保留字节,留待扩展
+     * 自定义物品类型，emObjType为 EM_INSIDE_OBJECT_UNKNOWN 时使用
      */
-    public byte byReserved[] = new byte[108];
+    public byte[]     szObjectType=new byte[32];
+
+    /**
+     *  保留字节,留待扩展
+     */
+    public byte					byReserved[] = new byte[76];
+
+
 
     @Override
     public String toString() {
@@ -43,6 +50,7 @@ public class NET_INSIDE_OBJECT extends NetSDKLib.SdkStructure {
                 ", emObjType=" + emObjType +
                 ", nSimilarity=" + nSimilarity +
                 ", stuBoundingBox=" + stuBoundingBox.toString() +
+                ", szObjectType=" + new String(szObjectType)+
                 '}';
     }
 }

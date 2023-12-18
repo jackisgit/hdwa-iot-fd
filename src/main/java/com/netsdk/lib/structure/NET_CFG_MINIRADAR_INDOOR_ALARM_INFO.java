@@ -33,6 +33,10 @@ public class NET_CFG_MINIRADAR_INDOOR_ALARM_INFO extends NetSDKLib.SdkStructure 
      * 人数异常报警
      */
     public NET_CFG_MINIRADAR_NUMALARM stuNumAlarm = new NET_CFG_MINIRADAR_NUMALARM();
+    /**
+     * 驻留报警
+     */
+    public NET_CFG_MINIRADAR_RESIDENTALARM stuResidentAlarm = new NET_CFG_MINIRADAR_RESIDENTALARM();
 
     public NET_CFG_MINIRADAR_INDOOR_ALARM_INFO() {
         this.dwSize = this.size();

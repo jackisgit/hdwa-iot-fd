@@ -28,6 +28,14 @@ public enum NET_EM_RECORD_MODE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (NET_EM_RECORD_MODE enumType : NET_EM_RECORD_MODE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -52,14 +60,6 @@ public enum NET_EM_RECORD_MODE {
                 return e;
         }
         return NET_EM_RECORD_MODE.NET_EM_RECORD_MODE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

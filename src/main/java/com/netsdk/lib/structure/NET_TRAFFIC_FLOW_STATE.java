@@ -265,10 +265,65 @@ public class NET_TRAFFIC_FLOW_STATE extends NetSDKLib.SdkStructure {
      */
     public int emOverflowState;
     /**
-     * 保留字节
+     * / 排队车辆数，单位：辆
      */
-    public byte[] reserved = new byte[712];
-
+    public int nQueueVehicleNum;
+    /**
+     * / 空间占有率统计个数
+     */
+    public int nSpaceOccupyRatioMultiCount;
+    /**
+     * / 空间占有率统计信息
+     */
+    public NET_SPACE_OCCUPY_RATIO_MULTI[] stuSpaceOccupyRatioMulti = new NET_SPACE_OCCUPY_RATIO_MULTI[32];
+    /**
+     * / 停车次数，周期内该车道内所有目标的总停车次数，单位:次
+     */
+    public int nTotalStopNum;
+    /**
+     * / 延误时间，周期内该车道内所有目标的总延误时间，单位：毫秒
+     */
+    public int nTotalDelayTime;
+    /**
+     * / 目标总数量，周期内进入该车道内所有目标总数量，单位 辆
+     */
+    public int nTotalNum;
+    /**
+     * / 平均停车次数，周期内该车道所有目标的平均停车次数。单位：次
+     */
+    public float fAverageStopNum;
+    /**
+     * / 平均延误时间，周期内该车道所有目标的平均延误时间。单位：毫秒
+     */
+    public float fAverageDelayTime;
+    /**
+     * / 流量饱和度，该车道内的流量饱和度
+     */
+    public float fFlowSaturationRatio;
+    /**
+     * / 最大排队长度，周期内最大排队长度，单位:米
+     */
+    public float fMaxQueueLen;
+    /**
+     * / 排队开始位置，排队时队首距设备的位置，以设备方向为正，负数表示队首在设备后方，单位：米
+     */
+    public float fQueueStartingPoint;
+    /**
+     * / 排队结束位置，排队时队尾距设备的位置，以设备方向为正，负数表示队尾在设备后方，单位：米
+     */
+    public float fQueueFinishingPoint;
+    /**
+     * / 空间占有目标个数，即区域车辆数，该车道内指定区域的车辆数目，支持车道内多区域统计，不同区域车辆数使用|符号分隔。
+     */
+    public byte[] szSpaceOccupyNum = new byte[64];
+    /**
+     * / 云台预置点,球机预置点必大于0
+     */
+    public int nPresetID;
+    /**
+     * / 保留字节
+     */
+    public byte[] reserved = new byte[92];
     @Override
     public String toString() {
         return "NET_TRAFFIC_FLOW_STATE{" +

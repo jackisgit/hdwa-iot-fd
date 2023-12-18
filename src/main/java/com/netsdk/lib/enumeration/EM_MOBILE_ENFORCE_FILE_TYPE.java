@@ -23,6 +23,14 @@ public enum EM_MOBILE_ENFORCE_FILE_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_MOBILE_ENFORCE_FILE_TYPE enumType : EM_MOBILE_ENFORCE_FILE_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -47,14 +55,6 @@ public enum EM_MOBILE_ENFORCE_FILE_TYPE {
                 return e;
         }
         return EM_MOBILE_ENFORCE_FILE_TYPE.EM_MOBILE_ENFORCE_FILE_TYPE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

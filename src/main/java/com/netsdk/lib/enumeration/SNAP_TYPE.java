@@ -20,6 +20,14 @@ public enum SNAP_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (SNAP_TYPE enumType : SNAP_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -44,13 +52,5 @@ public enum SNAP_TYPE {
                 return e;
         }
         return SNAP_TYPE.SNAP_TYP_TIMING;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

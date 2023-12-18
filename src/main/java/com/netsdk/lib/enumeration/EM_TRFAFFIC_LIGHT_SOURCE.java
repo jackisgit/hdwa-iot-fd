@@ -33,6 +33,14 @@ public enum EM_TRFAFFIC_LIGHT_SOURCE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_TRFAFFIC_LIGHT_SOURCE enumType : EM_TRFAFFIC_LIGHT_SOURCE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -49,13 +57,5 @@ public enum EM_TRFAFFIC_LIGHT_SOURCE {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

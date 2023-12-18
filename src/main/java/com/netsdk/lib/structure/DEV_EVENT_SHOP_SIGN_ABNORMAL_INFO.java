@@ -43,7 +43,7 @@ public class DEV_EVENT_SHOP_SIGN_ABNORMAL_INFO extends NetSDKLib.SdkStructure {
     public short nRuleID;
     /**
      * 智能事件所属大类,对应枚举
-     * {@link NetSDKLib.EM_CLASS_TYPE}
+     * {@link com.netsdk.lib.NetSDKLib.EM_CLASS_TYPE}
      */
     public int emClassType;
     /**

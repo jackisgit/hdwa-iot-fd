@@ -1,10 +1,9 @@
 package com.netsdk.lib.enumeration;
-
-/**
- * @author 251823
- * @description 热成像测温点报警条件
- * @date 2022/06/07 14:08:52
- */
+/** 
+* @author 251823
+* @description  热成像测温点报警条件 
+* @date 2022/06/07 14:08:52
+*/
 public enum NET_RADIOMETRY_ALARMCONTION {
 
     /**
@@ -32,6 +31,14 @@ public enum NET_RADIOMETRY_ALARMCONTION {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (NET_RADIOMETRY_ALARMCONTION enumType : NET_RADIOMETRY_ALARMCONTION.values()) {
             if (givenValue == enumType.getValue()) {
@@ -48,14 +55,6 @@ public enum NET_RADIOMETRY_ALARMCONTION {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

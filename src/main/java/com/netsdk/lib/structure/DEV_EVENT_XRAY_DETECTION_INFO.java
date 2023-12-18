@@ -1,6 +1,7 @@
 package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
+import com.sun.jna.Pointer;
 
 import static com.netsdk.lib.NetSDKLib.MAX_INSIDEOBJECT_NUM;
 
@@ -40,7 +41,7 @@ public class DEV_EVENT_XRAY_DETECTION_INFO extends NetSDKLib.SdkStructure {
      */
     public int nEventID;
     /**
-     * 所属大类
+     * 所属大类 {@link com.netsdk.lib.enumeration.EM_CLASS_TYPE}
      */
     public int emClassType;
 
@@ -86,7 +87,7 @@ public class DEV_EVENT_XRAY_DETECTION_INFO extends NetSDKLib.SdkStructure {
      */
     public int nViewCustomInfoNum;
     /**
-     * 客户自定义信息, X光机定制专用
+     * 客户自定义信息, X光机专用
      */
     public NetSDKLib.NET_XRAY_CUSTOM_INFO stuViewCustomInfo[] = (NetSDKLib.NET_XRAY_CUSTOM_INFO[]) new NetSDKLib.NET_XRAY_CUSTOM_INFO().toArray(4);
 
@@ -96,7 +97,7 @@ public class DEV_EVENT_XRAY_DETECTION_INFO extends NetSDKLib.SdkStructure {
     public byte szPackageTag[] = new byte[32];
 
     /**
-     * 包裹产生方式
+     * 包裹产生方式 {@link com.netsdk.lib.enumeration.EM_XRAY_PACKAGE_MODE}
      */
     public int emPackageMode;
 
@@ -107,7 +108,8 @@ public class DEV_EVENT_XRAY_DETECTION_INFO extends NetSDKLib.SdkStructure {
     /**
      * 关联图片
      */
-    public NET_XRAY_RELATED_IMAGE_INFO stuRelatedImageInfo[] = (NET_XRAY_RELATED_IMAGE_INFO[]) new NET_XRAY_RELATED_IMAGE_INFO().toArray(8);
+    public NET_XRAY_RELATED_IMAGE_INFO stuRelatedImageInfo[] = new NET_XRAY_RELATED_IMAGE_INFO[8];
+
     /**
      * 与包裹关联的单号的个数
      */
@@ -122,11 +124,33 @@ public class DEV_EVENT_XRAY_DETECTION_INFO extends NetSDKLib.SdkStructure {
     public NET_EVENT_INFO_EXTEND stuEventInfoEx = new NET_EVENT_INFO_EXTEND();
 
     /**
+     * 是否使用远程判图 {@link com.netsdk.lib.enumeration.EM_XRAY_DETECTION_JUDGE_REMOTELY}
+     */
+    public int emJudgeRemotely;
+
+    /**
+     * / 图片信息个数
+     */
+    public int nImageInfoNum;
+    /**
+     * / 图片信息数组, refer to {@link NET_IMAGE_INFO_EX3}
+     */
+    public Pointer pstuImageInfo;
+    /**
+     * / 切包信息
+     */
+    public NET_XRAY_CUT_INFO stuCutInfo = new NET_XRAY_CUT_INFO();
+
+    /**
      * 保留字节,留待扩展
      */
-    public byte byReserved[] = new byte[372];
+    public byte byReserved[] = new byte[300 - NetSDKLib.POINTERSIZE];
 
     public DEV_EVENT_XRAY_DETECTION_INFO() {
+        for (int i = 0; i < stuRelatedImageInfo.length; i++) {
+            stuRelatedImageInfo[i] = new NET_XRAY_RELATED_IMAGE_INFO();
+        }
+
         for (int i = 0; i < stuBarCodeInfo.length; i++) {
             stuBarCodeInfo[i] = new NET_BAR_CODE_INFO();
         }

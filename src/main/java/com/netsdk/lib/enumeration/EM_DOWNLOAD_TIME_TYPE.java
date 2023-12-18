@@ -19,6 +19,14 @@ public enum EM_DOWNLOAD_TIME_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_DOWNLOAD_TIME_TYPE enumType : EM_DOWNLOAD_TIME_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -43,14 +51,6 @@ public enum EM_DOWNLOAD_TIME_TYPE {
                 return e;
         }
         return EM_DOWNLOAD_TIME_TYPE.EM_DOWNLOAD_TIME_SNAP;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

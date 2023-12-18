@@ -1,12 +1,13 @@
 package com.netsdk.lib.structure;
 
+
 import com.netsdk.lib.NetSDKLib;
 import com.sun.jna.Pointer;
 
 /**
- * @author 291189
+ * @author 260611
  * @description 事件类型 EVENT_IVS_OBJECT_PLACEMENT_DETECTION(物品放置检测事件) 对应数据
- * @date 2022/04/07 19:18:24
+ * @date 2023/04/21 16:10:01
  */
 public class DEV_EVENT_OBJECT_PLACEMENT_DETECTION_INFO extends NetSDKLib.SdkStructure {
     /**
@@ -66,13 +67,11 @@ public class DEV_EVENT_OBJECT_PLACEMENT_DETECTION_INFO extends NetSDKLib.SdkStru
      */
     public int nObjectCount;
     /**
-     * 表示检测到的物体信息 有Objects, 以Objects为准，无Objects,
-     * 以Object为准，为兼容老的客户端，有Objects的，Object也要填数据
+     * 表示检测到的物体信息 有Objects, 以Objects为准，无Objects, 以Object为准，为兼容老的客户端，有Objects的，Object也要填数据
      */
-    public NetSDKLib.NET_MSG_OBJECT_EX2[] stuObjects = (NetSDKLib.NET_MSG_OBJECT_EX2[]) new NetSDKLib.NET_MSG_OBJECT_EX2()
-            .toArray(128);
+    public NetSDKLib.NET_MSG_OBJECT_EX2[] stuObjects = new NetSDKLib.NET_MSG_OBJECT_EX2[128];
     /**
-     * 图片信息数组 NET_IMAGE_INFO_EX2
+     * 图片信息数组,{@link NET_IMAGE_INFO_EX2}
      */
     public Pointer pstuImageInfo;
     /**
@@ -87,4 +86,10 @@ public class DEV_EVENT_OBJECT_PLACEMENT_DETECTION_INFO extends NetSDKLib.SdkStru
      * 保留字节
      */
     public byte[] Reserved = new byte[1012];
+
+    public DEV_EVENT_OBJECT_PLACEMENT_DETECTION_INFO() {
+        for (int i = 0; i < stuObjects.length; i++) {
+            stuObjects[i] = new NetSDKLib.NET_MSG_OBJECT_EX2();
+        }
+    }
 }

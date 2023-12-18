@@ -12,7 +12,7 @@ import com.sun.jna.ptr.IntByReference;
  * @author 47081
  * @version 1.0
  * @description 能力集命令枚举, 对应接口
- * {@link NetSDKLib#CLIENT_QueryNewSystemInfo(NetSDKLib.LLong, String, int, byte[], int, IntByReference, int)}
+ * {@link com.netsdk.lib.NetSDKLib#CLIENT_QueryNewSystemInfo(NetSDKLib.LLong, String, int, byte[], int, IntByReference, int)}
  * @date 2020/11/9
  */
 public enum EM_NEW_QUERY_SYSTEM_INFO {
@@ -206,11 +206,11 @@ public enum EM_NEW_QUERY_SYSTEM_INFO {
      */
     CFG_CAP_CMD_CUSTOM("OSDManager.getCustomCaps");
 
-    private String value;
-
     private EM_NEW_QUERY_SYSTEM_INFO(String value) {
         this.value = value;
     }
+
+    private String value;
 
     public String getValue() {
         return value;

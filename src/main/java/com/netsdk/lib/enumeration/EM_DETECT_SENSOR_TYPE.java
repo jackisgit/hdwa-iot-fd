@@ -40,6 +40,14 @@ public enum EM_DETECT_SENSOR_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_DETECT_SENSOR_TYPE enumType : EM_DETECT_SENSOR_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -64,13 +72,5 @@ public enum EM_DETECT_SENSOR_TYPE {
                 return e;
         }
         return EM_DETECT_SENSOR_TYPE.EM_DETECT_SENSOR_TYPE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

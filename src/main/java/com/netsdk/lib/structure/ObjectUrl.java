@@ -1,7 +1,6 @@
 package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
-
 import static com.netsdk.lib.NetSDKLib.MAX_PATH;
 
 /**
@@ -11,5 +10,5 @@ import static com.netsdk.lib.NetSDKLib.MAX_PATH;
  * @date 2021/2/22
  */
 public class ObjectUrl extends NetSDKLib.SdkStructure {
-    public byte[] objectUrl = new byte[MAX_PATH];
+    public byte[] objectUrl=new byte[MAX_PATH];
 }

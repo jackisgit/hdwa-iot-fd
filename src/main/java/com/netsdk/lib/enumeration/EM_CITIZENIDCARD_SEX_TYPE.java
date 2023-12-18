@@ -26,6 +26,14 @@ public enum EM_CITIZENIDCARD_SEX_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_CITIZENIDCARD_SEX_TYPE enumType : EM_CITIZENIDCARD_SEX_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -42,13 +50,5 @@ public enum EM_CITIZENIDCARD_SEX_TYPE {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

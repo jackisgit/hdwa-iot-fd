@@ -19,22 +19,13 @@ public enum NET_EM_MOSAIC_TYPE {
     NET_EM_MOSAIC_24(24, "[24x24大小] 马赛克"),
     NET_EM_MOSAIC_32(32, "[32x32大小] 马赛克");
 
-    private int type;
-    private String desc;
-
     private NET_EM_MOSAIC_TYPE(int type, String desc) {
         this.type = type;
         this.desc = desc;
     }
 
-    public static NET_EM_MOSAIC_TYPE getMosaicType(int type) {
-        for (NET_EM_MOSAIC_TYPE mosaic : NET_EM_MOSAIC_TYPE.values()) {
-            if (type == mosaic.getType()) {
-                return mosaic;
-            }
-        }
-        return null;
-    }
+    private int type;
+    private String desc;
 
     public int getType() {
         return type;
@@ -50,5 +41,14 @@ public enum NET_EM_MOSAIC_TYPE {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public static NET_EM_MOSAIC_TYPE getMosaicType(int type){
+        for (NET_EM_MOSAIC_TYPE mosaic:NET_EM_MOSAIC_TYPE.values()) {
+            if(type==mosaic.getType()){
+                return mosaic;
+            }
+        }
+        return null;
     }
 }

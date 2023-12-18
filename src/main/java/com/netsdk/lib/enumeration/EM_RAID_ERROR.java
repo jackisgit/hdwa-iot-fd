@@ -14,6 +14,14 @@ public enum EM_RAID_ERROR {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_RAID_ERROR enumType : EM_RAID_ERROR.values()) {
             if (givenValue == enumType.getValue()) {
@@ -30,13 +38,5 @@ public enum EM_RAID_ERROR {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

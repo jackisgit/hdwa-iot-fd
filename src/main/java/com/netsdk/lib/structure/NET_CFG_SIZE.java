@@ -11,8 +11,11 @@ public class NET_CFG_SIZE extends SdkStructure {
      * 使用哪种含义由配置的是宽高还是面积决定
      */
     public float nWide;
+
     /**
      * 高
      */
-    public float nHeight;
+    public float             nHeight;
+
+
 }

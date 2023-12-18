@@ -11,8 +11,7 @@ import com.netsdk.lib.NetSDKLib;
  * @version v1.0
  */
 public class NET_OUT_DELIVER_USER_PICTURE extends NetSDKLib.SdkStructure {
-    public int dwSize;                     // 结构体大小
-
+    public 	int                               dwSize;                     // 结构体大小
     public NET_OUT_DELIVER_USER_PICTURE() {
         dwSize = this.size();
     }

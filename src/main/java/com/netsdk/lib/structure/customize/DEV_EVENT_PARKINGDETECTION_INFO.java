@@ -99,27 +99,27 @@ public class DEV_EVENT_PARKINGDETECTION_INFO extends NetSDKLib.SdkStructure {
     public byte[] szCustomParkNo = new byte[64];
 
     /**
-     * 热成像横向视场角,单位度,实际角度乘以100 (ERR210428143 用)
+     * 热成像横向视场角,单位度,实际角度乘以100 (ERR210428143 专用)
      */
     public int nThermoHFOV;
     /**
-     * 热成像纵向视场角,单位度,实际角度乘以100 (ERR210428143 用)
+     * 热成像纵向视场角,单位度,实际角度乘以100 (ERR210428143 专用)
      */
     public int nThermoVFOV;
     /**
-     * 船高 (ERR210428143 用, 其他项目不要使用)
+     * 船高 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatHeight;
     /**
-     * 船长 (ERR210428143 用, 其他项目不要使用)
+     * 船长 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatLength;
     /**
-     * 船速 (ERR210428143 用, 其他项目不要使用)
+     * 船速 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatSpeed;
     /**
-     * 船距 (ERR210428143 用, 其他项目不要使用)
+     * 船距 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatDistance;
     /**

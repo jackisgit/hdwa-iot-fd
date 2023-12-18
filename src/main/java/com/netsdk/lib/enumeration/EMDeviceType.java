@@ -260,22 +260,13 @@ public enum EMDeviceType {
      */
     NET_VTS_SERIAL(62, "管理机");
 
-    private int type;
-    private String desc;
-
     private EMDeviceType(int type, String desc) {
         this.type = type;
         this.desc = desc;
     }
 
-    public static EMDeviceType getEMDeviceType(int type) {
-        for (EMDeviceType deviceType : EMDeviceType.values()) {
-            if (deviceType.getType() == type) {
-                return deviceType;
-            }
-        }
-        return null;
-    }
+    private int type;
+    private String desc;
 
     public int getType() {
         return type;
@@ -291,5 +282,14 @@ public enum EMDeviceType {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public static EMDeviceType getEMDeviceType(int type) {
+        for (EMDeviceType deviceType : EMDeviceType.values()) {
+            if (deviceType.getType() == type) {
+                return deviceType;
+            }
+        }
+        return null;
     }
 }

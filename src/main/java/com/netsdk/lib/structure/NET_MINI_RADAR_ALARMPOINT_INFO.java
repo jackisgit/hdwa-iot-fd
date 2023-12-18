@@ -3,6 +3,8 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
+import java.util.Arrays;
+
 /**
  * @author 260611
  * @description mini雷达报警点信息

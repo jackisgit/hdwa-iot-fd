@@ -17,8 +17,7 @@ public class NET_OUT_GET_VIDEOSTAT_HEATMAP extends NetSDKLib.SdkStructure {
      * 查询的Token
      */
     public int nToken;
-
-    public NET_OUT_GET_VIDEOSTAT_HEATMAP() {
-        this.dwSize = size();
+    public NET_OUT_GET_VIDEOSTAT_HEATMAP(){
+        this.dwSize=size();
     }
 }

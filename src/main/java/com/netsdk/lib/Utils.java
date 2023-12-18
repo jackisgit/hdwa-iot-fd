@@ -4,7 +4,6 @@ import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Structure;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,16 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 public class Utils {
-    private static boolean checking = false;
-
     public Utils() {
 
     }
 
     /**
      * 获取系统对应的编码
+     *
      */
     public static String getPlatformEncode() {
         String encode = "";
@@ -30,11 +27,11 @@ public class Utils {
             encode = "GBK";
         } else if (osPrefix.toLowerCase().startsWith("linux")) {
             encode = "UTF-8";
-        } else if (osPrefix.toLowerCase().startsWith("mac")) {
-            encode = "UTF-8";
+        }else if(osPrefix.toLowerCase().startsWith("mac")){
+            encode="UTF-8";
         }
-        if (encode.isEmpty()) {
-            encode = "UTF-8";
+        if(encode.isEmpty()){
+            encode="UTF-8";
         }
         return encode;
     }
@@ -113,9 +110,9 @@ public class Utils {
         String loadLibrary = "";
         String osPrefix = getOsPrefix();
         if (osPrefix.toLowerCase().startsWith("win32-x86")) {
-            loadLibrary = "./libs/win32/";
+            loadLibrary = "./resources/win32/";
         } else if (osPrefix.toLowerCase().startsWith("win32-amd64")) {
-            loadLibrary = "./libs/win64/";
+            loadLibrary = "./resources/win64/";
         } else if (osPrefix.toLowerCase().startsWith("linux-i386")) {
             loadLibrary = "";
         } else if (osPrefix.toLowerCase().startsWith("linux-amd64")) {
@@ -127,9 +124,11 @@ public class Utils {
 //			loadLibrary = "";
 //		}  32位mac版本基本没人用了，暂时不用
 
-        log.info("加载库[%s]\n", loadLibrary + library);
+        System.out.printf("加载库[%s]\n", loadLibrary + library);
         return loadLibrary + library;
     }
+
+    private static boolean checking = false;
 
     public static void setChecking() {
         checking = true;
@@ -141,13 +140,6 @@ public class Utils {
 
     public static boolean isChecking() {
         return checking;
-    }
-
-    // 获取当前时间
-    public static String getDate() {
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDate.format(new java.util.Date())
-                .replace(" ", "_").replace(":", "-");
     }
 
     public static class LLong extends IntegerType {
@@ -202,10 +194,17 @@ public class Utils {
                     fieldOrderList.add(field.getName());
                 }
             }
-            //            log.info(fieldOrderList);
+            //            System.out.println(fieldOrderList);
 
             return fieldOrderList;
         }
+    }
+
+    // 获取当前时间
+    public static String getDate() {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDate.format(new java.util.Date())
+                .replace(" ", "_").replace(":", "-");
     }
 
 }

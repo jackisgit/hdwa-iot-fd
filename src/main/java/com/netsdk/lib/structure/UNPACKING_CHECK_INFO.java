@@ -60,9 +60,9 @@ public class UNPACKING_CHECK_INFO extends NetSDKLib.SdkStructure {
      */
     public byte[] szAlarmLocation = new byte[256];
     /**
-     * com.netsdk.lib.NetSDKLib.EM_INSIDE_OBJECT_TYPE
+     * 违禁物品分类  {@link com.netsdk.lib.enumeration.EM_INSIDE_OBJECT_TYPE}
      */
-    public int[] emContrabandClass = new int[64];           // 违禁物品分类
+    public int[] emContrabandClass = new int[64];
     /**
      * 行程出发地
      */

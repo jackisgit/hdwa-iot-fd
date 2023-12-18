@@ -243,9 +243,9 @@ public enum EM_EVENT_TYPE {
      */
     EVENT_ALARM_LOCALALARM(0x0000011D, "外部报警事件"),
     /**
-     * 起身事件
+     * 囚犯起身事件
      */
-    EVENT_IVS_PSRISEDETECTION(0x0000011E, "起身事件"),
+    EVENT_IVS_PSRISEDETECTION(0x0000011E, "囚犯起身事件"),
     /**
      * 翻越围栏事件
      */
@@ -739,9 +739,9 @@ public enum EM_EVENT_TYPE {
      */
     EVENT_IVS_PASS_CHANGE(0x00000232, "预置点图片变化事件"),
     /**
-     * 违停相机定制单球车位检测规则事件
+     * 违停相机单球车位检测规则事件
      */
-    EVENT_IVS_TRAFFIC_PARKING_SPACEDETECTION(0x00000233, "违停相机定制单球车位检测规则事件"),
+    EVENT_IVS_TRAFFIC_PARKING_SPACEDETECTION(0x00000233, "违停相机单球车位检测规则事件"),
     /**
      * 违章进入待行区事件
      */
@@ -1438,6 +1438,14 @@ public enum EM_EVENT_TYPE {
      * 交通副驾驶未系安全带事件
      */
     EVENT_IVS_TRAFFIC_ASSISTANT_WITHOUT_SAFEBELT(0x0000034D, "交通副驾驶未系安全带事件"),
+    /**
+     * 通用姿态行为事件
+     */
+    EVENT_IVS_GENEAL_ATTITUDE(0x0000038C, "通用姿态行为事件"),
+    /**
+     * 行为自定义行为计数事件
+     */
+    EVENT_IVS_ACTION_COUNT(0x0000046E, "行为自定义行为计数事件"),
     /**
      * 读写组,原型为"ReadWrite*","ReadWrite*",代表读写组,
      */

@@ -1,6 +1,5 @@
 package com.netsdk.lib.structure;
 
-
 import com.netsdk.lib.NetSDKLib;
 
 /**
@@ -10,13 +9,13 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_IN_CTRL_LOWRATEWPAN_ACCESSORY_PARAM extends NetSDKLib.SdkStructure {
 
-    public int dwSize;
-    /**
-     * 配件信息
-     */
-    public NET_WPAN_ACCESSORY_INFO stuInfo = new NET_WPAN_ACCESSORY_INFO();
+	public int dwSize;
+	/**
+	 * 配件信息
+	 */
+	public NET_WPAN_ACCESSORY_INFO stuInfo = new NET_WPAN_ACCESSORY_INFO();
 
-    public NET_IN_CTRL_LOWRATEWPAN_ACCESSORY_PARAM() {
-        this.dwSize = this.size();
-    }
+	public NET_IN_CTRL_LOWRATEWPAN_ACCESSORY_PARAM() {
+		this.dwSize = this.size();
+	}
 }

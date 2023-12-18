@@ -52,11 +52,11 @@ public class NET_OUT_RADAR_GETCAPS extends NetSDKLib.SdkStructure {
      */
     public NET_RADAR_PROTOCAL_CAP stuProtocalCap = new NET_RADAR_PROTOCAL_CAP();
     /**
-     * 雷达探测范围形状 {@link EM_RADAR_GETCAPS_AREASUB_TYPE}
+     * 雷达探测范围形状 {@link com.netsdk.lib.enumeration.EM_RADAR_GETCAPS_AREASUB_TYPE}
      */
     public int emAreaSubType;
     /**
-     * 雷达类型 {@link EM_RADAR_GETCAPS_RADAR_TYPE}
+     * 雷达类型 {@link com.netsdk.lib.enumeration.EM_RADAR_GETCAPS_RADAR_TYPE}
      */
     public int emRadarType;
 

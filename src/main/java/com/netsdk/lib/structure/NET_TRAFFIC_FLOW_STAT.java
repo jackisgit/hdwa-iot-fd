@@ -55,7 +55,35 @@ public class NET_TRAFFIC_FLOW_STAT extends NetSDKLib.SdkStructure {
      */
     public double dbTimeHeadWay;
     /**
+     * 空间占有率，即按百分率计量的车辆长度总和除以时间间隔内车辆平均行驶距离
+     */
+    public double					dbSpaceOccRatio;
+    /**
+     * 车道中的所有车辆的数量，即车流量
+     */
+    public  int					nCarVehicles;
+
+    /**
      * 保留字节
      */
-    public byte[] byReserverd = new byte[240];
+    public byte[] byReserverd = new byte[228];
+
+    @Override
+    public String toString() {
+        return "NET_TRAFFIC_FLOW_STAT{" +
+                "nLane=" + nLane +
+                ", nRoadwayNumber=" + nRoadwayNumber +
+                ", emStatus=" + emStatus +
+                ", emHeadCoil=" + emHeadCoil +
+                ", emTailCoil=" + emTailCoil +
+                ", nSpeed=" + nSpeed +
+                ", nQueueLen=" + nQueueLen +
+                ", nCarsInQueue=" + nCarsInQueue +
+                ", emSensorType=" + emSensorType +
+                ", dbSpaceHeadway=" + dbSpaceHeadway +
+                ", dbTimeHeadWay=" + dbTimeHeadWay +
+                ", dbSpaceOccRatio=" + dbSpaceOccRatio +
+                ", nCarVehicles=" + nCarVehicles +
+                '}';
+    }
 }

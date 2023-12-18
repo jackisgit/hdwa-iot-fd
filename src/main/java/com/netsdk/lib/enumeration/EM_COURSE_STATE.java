@@ -32,6 +32,14 @@ public enum EM_COURSE_STATE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_COURSE_STATE enumType : EM_COURSE_STATE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -48,13 +56,5 @@ public enum EM_COURSE_STATE {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

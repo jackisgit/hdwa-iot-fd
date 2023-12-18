@@ -84,6 +84,14 @@ public enum EM_SOLARCELL_SYSTEM_FAULT_TYPE {
         this.info = info;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
     public static EM_SOLARCELL_SYSTEM_FAULT_TYPE getSolarcellFaultType(int type) {
         for (EM_SOLARCELL_SYSTEM_FAULT_TYPE faultType : EM_SOLARCELL_SYSTEM_FAULT_TYPE.values()) {
             if (faultType.getType() == type) {
@@ -91,13 +99,5 @@ public enum EM_SOLARCELL_SYSTEM_FAULT_TYPE {
             }
         }
         return null;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public String getInfo() {
-        return info;
     }
 }

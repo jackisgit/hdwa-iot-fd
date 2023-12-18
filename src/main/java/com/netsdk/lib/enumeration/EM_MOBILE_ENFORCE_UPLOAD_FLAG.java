@@ -21,6 +21,14 @@ public enum EM_MOBILE_ENFORCE_UPLOAD_FLAG {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_MOBILE_ENFORCE_UPLOAD_FLAG enumType : EM_MOBILE_ENFORCE_UPLOAD_FLAG.values()) {
             if (givenValue == enumType.getValue()) {
@@ -45,13 +53,5 @@ public enum EM_MOBILE_ENFORCE_UPLOAD_FLAG {
                 return e;
         }
         return EM_MOBILE_ENFORCE_UPLOAD_FLAG.EM_MOBILE_ENFORCE_UPLOAD_FLAG_UNKNWON;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

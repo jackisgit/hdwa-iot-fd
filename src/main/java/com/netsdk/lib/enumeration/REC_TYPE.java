@@ -20,6 +20,14 @@ public enum REC_TYPE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (REC_TYPE enumType : REC_TYPE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -44,13 +52,5 @@ public enum REC_TYPE {
                 return e;
         }
         return REC_TYPE.NET_REC_TYPE_TIM;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

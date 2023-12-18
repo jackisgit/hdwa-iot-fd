@@ -30,6 +30,14 @@ public enum CFG_EM_PREVIEW_MODE {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (CFG_EM_PREVIEW_MODE enumType : CFG_EM_PREVIEW_MODE.values()) {
             if (givenValue == enumType.getValue()) {
@@ -54,13 +62,5 @@ public enum CFG_EM_PREVIEW_MODE {
                 return e;
         }
         return CFG_EM_PREVIEW_MODE.CFG_EM_PREVIEW_MODE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

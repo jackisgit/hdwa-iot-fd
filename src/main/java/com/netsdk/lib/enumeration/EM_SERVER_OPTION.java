@@ -39,6 +39,14 @@ public enum EM_SERVER_OPTION {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     /**
      * 依据枚举值返回描述
      *
@@ -81,14 +89,6 @@ public enum EM_SERVER_OPTION {
                 return e;
         }
         return EM_SERVER_OPTION.EM_SERVER_OPTION_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

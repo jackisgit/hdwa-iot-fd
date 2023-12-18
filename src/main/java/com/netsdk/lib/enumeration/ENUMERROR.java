@@ -376,12 +376,12 @@ public enum ENUMERROR {
     NET_ERROR_DEVICE_STREAM_PACKINGFORMAT_UNSUPPORT(1102, "设备不支持该码流打包格式"),
     NET_ERROR_DEVICE_AUDIO_ENCODINGFORMAT_UNSUPPORT(1103, "设备不支持该语音编码格式"),
     NET_ERROR_SECURITY_ERROR_SUPPORT_GUI(1104, " 校验请求安全码失败,可使用本地GUI方式重置密码"),
-    NET_ERROR_SECURITY_ERROR_SUPPORT_MULT(1105, "校验请求安全码失败,可使用大华渠道APP、configtool工具重置密码"),
+    NET_ERROR_SECURITY_ERROR_SUPPORT_MULT(1105, "校验请求安全码失败,可使用DH渠道APP、configtool工具重置密码"),
     NET_ERROR_SECURITY_ERROR_SUPPORT_UNIQUE(1106, "校验请求安全码失败,可登陆Web页面重置密码"),
     NET_ERROR_STREAMCONVERTOR_DEFECT(1107, "转码库缺失"),
 
 
-    NET_ERROR_SECURITY_GENERATE_SAFE_CODE(1108, "调用大华加密库产生安全码失败"),
+    NET_ERROR_SECURITY_GENERATE_SAFE_CODE(1108, "调用DH加密库产生安全码失败"),
     NET_ERROR_SECURITY_GET_CONTACT(1109, "获取联系方式失败"),
     NET_ERROR_SECURITY_GET_QRCODE(1110, "获取重置密码的二维码信息失败"),
     NET_ERROR_SECURITY_CANNOT_RESET(1111, "设备未初始化,无法重置"),
@@ -525,6 +525,14 @@ public enum ENUMERROR {
         this.error = error;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public String getError() {
+        return error;
+    }
+
     public static ENUMERROR getENUMError() {
         int code = NetSDKLib.NETSDK_INSTANCE.CLIENT_GetLastError() & 0x7fffffff;
         for (ENUMERROR error : ENUMERROR.values()) {
@@ -555,13 +563,5 @@ public enum ENUMERROR {
     public static String getFullError() {
         ENUMERROR error = getENUMError();
         return error.getCode() + "," + error.getError();
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getError() {
-        return error;
     }
 }

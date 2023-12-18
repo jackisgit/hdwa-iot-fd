@@ -54,7 +54,22 @@ public class DEV_EVENT_BARELAND_DETECTION_INFO extends NetSDKLib.SdkStructure {
      */
     public NetSDKLib.SCENE_IMAGE_INFO stuSceneImage = new NetSDKLib.SCENE_IMAGE_INFO();
     /**
+     * 通道号
+     */
+    public int nChannelID;
+    /**
+     * 0:脉冲,1:开始, 2:停止
+     */
+    public int nAction;
+    /**
+     * 事件发生的时间
+     */
+    public NET_TIME_EX stuUTC = new NET_TIME_EX();
+    /**
      * 预留字节
      */
-    public byte[] szReserved = new byte[1024];
+    public byte[] szReserved = new byte[980];
+
+    public DEV_EVENT_BARELAND_DETECTION_INFO() {
+    }
 }

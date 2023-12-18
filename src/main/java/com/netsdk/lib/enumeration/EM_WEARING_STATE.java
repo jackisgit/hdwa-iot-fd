@@ -11,19 +11,27 @@ public enum EM_WEARING_STATE {
     /**
      * 未知
      */
-    EM_WEARING_STATE_UNKNOWN(0, "未知"),
+    EM_WEARING_STATE_UNKNOWN(0,"未知"),
     /**
      * 没有穿戴
      */
-    EM_WEARING_STATE_NOTWEAR(1, "没有穿戴"),
+    EM_WEARING_STATE_NOTWEAR(1,"没有穿戴"),
     /**
      * 有穿戴
      */
-    EM_WEARING_STATE_WEAR(2, "有穿戴");
+    EM_WEARING_STATE_WEAR(2,"有穿戴");
 
     private int value;
 
     private String note;
+
+    public String getNote() {
+             return note;
+         }
+
+    public int getValue() {
+             return value;
+         }
 
     EM_WEARING_STATE(int givenValue, String note) {
         this.value = givenValue;
@@ -54,14 +62,6 @@ public enum EM_WEARING_STATE {
                 return e;
         }
         return EM_WEARING_STATE.EM_WEARING_STATE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

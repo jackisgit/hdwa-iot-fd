@@ -28,6 +28,14 @@ public enum NET_ENUM_INPUT_CHANNEL_MEDIA {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (NET_ENUM_INPUT_CHANNEL_MEDIA enumType : NET_ENUM_INPUT_CHANNEL_MEDIA.values()) {
             if (givenValue == enumType.getValue()) {
@@ -52,13 +60,5 @@ public enum NET_ENUM_INPUT_CHANNEL_MEDIA {
                 return e;
         }
         return NET_ENUM_INPUT_CHANNEL_MEDIA.NET_ENUM_INPUT_MEDIA_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

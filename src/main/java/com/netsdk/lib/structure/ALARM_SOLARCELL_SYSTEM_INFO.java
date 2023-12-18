@@ -1,8 +1,8 @@
 package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.constant.SDK_ALARM_Ex_TYPE;
 import com.netsdk.lib.enumeration.EM_SOLARCELL_SYSTEM_FAULT_TYPE;
+import com.netsdk.lib.constant.SDK_ALARM_Ex_TYPE;
 
 /**
  * @author 47081

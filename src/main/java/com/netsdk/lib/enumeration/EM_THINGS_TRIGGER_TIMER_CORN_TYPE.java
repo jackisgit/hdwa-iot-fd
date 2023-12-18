@@ -24,6 +24,14 @@ public enum EM_THINGS_TRIGGER_TIMER_CORN_TYPE {
 
     private String note;
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     EM_THINGS_TRIGGER_TIMER_CORN_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -53,14 +61,6 @@ public enum EM_THINGS_TRIGGER_TIMER_CORN_TYPE {
                 return e;
         }
         return EM_THINGS_TRIGGER_TIMER_CORN_TYPE.EM_THINGS_TRIGGER_TIMER_CORN_TYPE_UNKNOWN;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 
 }

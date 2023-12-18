@@ -25,6 +25,14 @@ public enum CFG_VIDEO_COMPRESSION {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (CFG_VIDEO_COMPRESSION enumType : CFG_VIDEO_COMPRESSION.values()) {
             if (givenValue == enumType.getValue()) {
@@ -49,13 +57,5 @@ public enum CFG_VIDEO_COMPRESSION {
                 return e;
         }
         return CFG_VIDEO_COMPRESSION.VIDEO_FORMAT_H264;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

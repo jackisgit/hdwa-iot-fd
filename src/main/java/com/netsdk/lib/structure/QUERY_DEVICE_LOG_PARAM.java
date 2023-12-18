@@ -1,25 +1,26 @@
 package com.netsdk.lib.structure;
 
+
 import com.netsdk.lib.NetSDKLib;
 
 /**
- * 查询条件
- *
- * @author 47081
+ * @author 260611
+ * @description 查询记录数条件
+ * @date 2023/05/05 11:12:30
  */
 public class QUERY_DEVICE_LOG_PARAM extends NetSDKLib.SdkStructure {
     /**
-     * 查询日志类型,类型请参考DH_LOG_QUERY_TYPE
+     * 查询日志类型 {@link com.netsdk.lib.enumeration.DH_LOG_QUERY_TYPE}
      */
     public int emLogType;
     /**
      * 查询日志的开始时间
      */
-    public NET_TIME stuStartTime;
+    public NET_TIME stuStartTime = new NET_TIME();
     /**
      * 查询日志的结束时间
      */
-    public NET_TIME stuEndTime;
+    public NET_TIME stuEndTime = new NET_TIME();
     /**
      * 在时间段中从第几条日志开始查询,开始第一次查询可设为0
      */
@@ -29,9 +30,7 @@ public class QUERY_DEVICE_LOG_PARAM extends NetSDKLib.SdkStructure {
      */
     public int nEndNum;
     /**
-     * 日志数据结构体类型,
-     * 0:表示DH_DEVICE_LOG_ITEM；
-     * 1:表示DH_DEVICE_LOG_ITEM_EX
+     * 日志数据结构体类型,0:表示DH_DEVICE_LOG_ITEM；1:表示DH_DEVICE_LOG_ITEM_EX
      */
     public byte nLogStuType;
     /**
@@ -39,12 +38,12 @@ public class QUERY_DEVICE_LOG_PARAM extends NetSDKLib.SdkStructure {
      */
     public byte[] reserved = new byte[3];
     /**
-     * 通道号,
-     * 0:兼容之前表示所有通道号,
-     * 所以通道号从1开始;
-     * 1:第一个通道
+     * 通道号,0:兼容之前表示所有通道号,所以通道号从1开始; 1:第一个通道
      */
     public int nChannelID;
+
     public byte[] bReserved = new byte[40];
 
+    public QUERY_DEVICE_LOG_PARAM() {
+    }
 }

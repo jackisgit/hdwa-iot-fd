@@ -9,7 +9,7 @@ import static com.netsdk.lib.NetSDKLib.*;
 /**
  * 船只的绊线入侵事件信息
  * <p>
- * ERR210428143 重型云台 水面预警事件 专用结构体
+ * ERR210428143 水面预警事件 专用结构体
  * <p>
  * 注意: 其他项目不要使用, 通用的绊线入侵事件结构体见:
  * {@link NetSDKLib.DEV_EVENT_CROSSREGION_INFO}
@@ -114,27 +114,27 @@ public class DEV_EVENT_CROSSREGION_INFO extends SdkStructure {
      */
     public int nRuleID;
     /**
-     * 热成像横向视场角,单位度,实际角度乘以100 (ERR210428143 用, 其他项目不要使用)
+     * 热成像横向视场角,单位度,实际角度乘以100 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nThermoHFOV;
     /**
-     * 热成像纵向视场角,单位度,实际角度乘以100 (ERR210428143 用, 其他项目不要使用)
+     * 热成像纵向视场角,单位度,实际角度乘以100 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nThermoVFOV;
     /**
-     * 船高 (ERR210428143 用, 其他项目不要使用)
+     * 船高 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatHeight;
     /**
-     * 船长 (ERR210428143 用, 其他项目不要使用)
+     * 船长 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatLength;
     /**
-     * 船速 (ERR210428143 用, 其他项目不要使用)
+     * 船速 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatSpeed;
     /**
-     * 船距 (ERR210428143 用, 其他项目不要使用)
+     * 船距 (ERR210428143 专用, 其他项目不要使用)
      */
     public int nBoatDistance;
     /**

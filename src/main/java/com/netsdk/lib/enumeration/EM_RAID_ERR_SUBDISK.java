@@ -16,6 +16,14 @@ public enum EM_RAID_ERR_SUBDISK {
         this.note = note;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public static String getNoteByValue(int givenValue) {
         for (EM_RAID_ERR_SUBDISK enumType : EM_RAID_ERR_SUBDISK.values()) {
             if (givenValue == enumType.getValue()) {
@@ -32,13 +40,5 @@ public enum EM_RAID_ERR_SUBDISK {
             }
         }
         return -1;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
     }
 }
