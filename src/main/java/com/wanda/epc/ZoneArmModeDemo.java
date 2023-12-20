@@ -1,6 +1,7 @@
 package com.wanda.epc;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.netsdk.lib.callback.impl.DefaultDisconnectCallback;
@@ -10,7 +11,9 @@ import com.netsdk.lib.enumeration.*;
 import com.netsdk.lib.structure.*;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -27,7 +30,9 @@ import static com.netsdk.lib.Utils.getOsPrefix;
  * @date 2023/8/9 15:50
  */
 @Component
+@Slf4j
 public class ZoneArmModeDemo {
+
 
     // 编码格式
     public static String encode;
@@ -66,13 +71,6 @@ public class ZoneArmModeDemo {
     @Value("${password}")
     private String m_strPassword;
 
-    public static void main(String[] args) {
-        ZoneArmModeDemo demo = new ZoneArmModeDemo();
-        demo.initTest();
-        demo.runTest();
-        demo.endTest();
-    }
-
     /**
      * 按照指定格式，获取当前时间
      */
@@ -87,7 +85,7 @@ public class ZoneArmModeDemo {
     public boolean initSdk() {
         bInit = netsdk.CLIENT_Init(disConnectCB, null);// 进程启动时，初始化一次
         if (!bInit) {
-            System.out.println("Initialize SDK failed");
+            log.error("Initialize SDK failed");
             return false;
         }
         // 配置日志
@@ -140,9 +138,9 @@ public class ZoneArmModeDemo {
         // 打开日志功能
         bLogOpen = netsdk.CLIENT_LogOpen(setLog);
         if (!bLogOpen) {
-            System.err.println("Failed to open NetSDK log " + ToolKits.getErrorCode());
+            log.error("Failed to open NetSDK log " + ToolKits.getErrorCode());
         } else {
-            System.out.println("Success to open NetSDK log ");
+            log.info("Success to open NetSDK log ");
         }
     }
 
@@ -168,12 +166,12 @@ public class ZoneArmModeDemo {
         // 高安全级别登陆
         loginHandle = netsdk.CLIENT_LoginWithHighLevelSecurity(pstlnParam, pstOutParam);
         if (loginHandle.longValue() == 0) {  //登陆失败
-            System.err.printf("Login Device[%s] Port[%d]Failed. %s\n", m_strIpAddr, m_nPort, ToolKits.getErrorCode());
+            log.error("Login Device[{}] Port[{}]Failed. {}", m_strIpAddr, m_nPort, ToolKits.getErrorCode());
 
         } else { //登陆成功
             // 获取设备信息
             deviceInfo = pstOutParam.stuDeviceInfo;
-            System.out.printf("Login Success Device Address[%s] 设备包含[%d]个通道 \n", m_strIpAddr, deviceInfo.byChanNum);
+            log.info("Login Success Device Address[{}] 设备包含[{}]个通道 \n", m_strIpAddr, deviceInfo.byChanNum);
         }
     }
 
@@ -184,7 +182,7 @@ public class ZoneArmModeDemo {
         //判断是否已登录
         if (loginHandle.longValue() != 0) {
             netsdk.CLIENT_Logout(loginHandle);
-            System.out.println("LogOut Success");
+            log.info("LogOut Success");
         }
     }
 
@@ -231,8 +229,7 @@ public class ZoneArmModeDemo {
     /**
      * IO输入端状态
      */
-    public void channelsState() {
-
+    public NET_OUT_GET_CHANNELS_STATE channelsState() {
         // 入参
         NET_IN_GET_CHANNELS_STATE stuIn = new NET_IN_GET_CHANNELS_STATE();
         /**
@@ -240,44 +237,16 @@ public class ZoneArmModeDemo {
          */
         stuIn.stuCondition.emType = 1;
         stuIn.write();
-
         // 出参
         NET_OUT_GET_CHANNELS_STATE stuOut = new NET_OUT_GET_CHANNELS_STATE();
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_GetAlarmRegionInfo(loginHandle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_CHANNELSSTATE, stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("获取通道状态 失败：" + ToolKits.getErrorCode());
-            return;
+            log.error("获取通道状态 失败：" + ToolKits.getErrorCode());
+            return null;
         } else {
             stuOut.read();
-            System.out.println("获取通道状态 成功");
-            System.out.println("通道状态个数:" + stuOut.nChannelsStatesCount);
-            NET_CHANNELS_STATE[] stuChannelsStates = stuOut.stuChannelsStates;
-            for (int i = 0; i < stuOut.nChannelsStatesCount; i++) {
-                System.out.println("Area号:" + (i + 1));
-                System.out.println("通道类型:" + EM_CHANNELS_STATE_TYPE.getNoteByValue(stuChannelsStates[i].emType));
-                System.out.println("通道号:" + stuChannelsStates[i].nIndex);
-                System.out.println("在线状态:" + EM_DEV_STATUS.getNoteByValue(stuChannelsStates[i].emOnlineState));
-                System.out.println("报警状态:" + EM_ZONE_STATUS.getNoteByValue(stuChannelsStates[i].emAlarmState));
-                System.out.println("输出状态:" + EM_OUTPUT_STATE.getNoteByValue(stuChannelsStates[i].emOutputState));
-
-                try {
-                    System.out.println("通道对应名称:" + new String(stuChannelsStates[i].szName, encode));
-
-                    System.out.println("通道对应SN号:" + new String(stuChannelsStates[i].szSN, encode));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                //探测器状态信息
-                NET_SENSOR_STATE stuSensorState = stuChannelsStates[i].stuSensorState;
-                //外接电源连接状态 : 0:正常, 1:未连接
-                System.out.println("外接电源连接状态:" + stuSensorState.nExPowerState);
-                // 配件防拆状态 : 0:正常, 1:打开
-                System.out.println("配件防拆状态:" + stuSensorState.nTamper);
-                //  电池电量状态 : 0:正常, 1:低电量, 2:掉电
-                System.out.println("电池电量状态:" + stuSensorState.nLowPowerState);
-            }
-
+            return stuOut;
         }
     }
 
@@ -296,17 +265,17 @@ public class ZoneArmModeDemo {
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_GetAlarmRegionInfo(loginHandle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_OUTPUTSTATE, stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("获取输出状态 失败：" + ToolKits.getErrorCode());
+            log.error("获取输出状态 失败：" + ToolKits.getErrorCode());
             return;
         } else {
             stuOut.read();
-            System.out.println("获取输出状态 成功");
+            log.info("获取输出状态 成功");
             /**
              状态个数
              */
             int nStateRet = stuOut.nStateRet;
 
-            System.out.println("状态个数:" + nStateRet);
+            log.info("状态个数:" + nStateRet);
             /**
              状态false (0):关闭true(1)打开
              */
@@ -323,12 +292,12 @@ public class ZoneArmModeDemo {
                 int[] arrStatesEx = stuOut.arrStatesEx;
 
                 for (int i = 0; i < nStateRetEx; i++) {
-                    System.out.println("[" + i + "]" + (arrStatesEx[i] == 0 ? false : true));
+                    log.info("[" + i + "]" + (arrStatesEx[i] == 0 ? false : true));
                 }
 
             } else {
                 for (int i = 0; i < nStateRet; i++) {
-                    System.out.println("[" + i + "]" + (arrStates[i] == 0 ? false : true));
+                    log.info("[" + i + "]" + (arrStates[i] == 0 ? false : true));
                 }
 
             }
@@ -360,11 +329,11 @@ public class ZoneArmModeDemo {
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_SetAlarmRegionInfo(loginHandle, NET_EM_SET_ALARMREGION_INFO.NET_EM_SET_ALARMREGION_INFO_OUTPUTSTATE.getValue(), stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("下发输出状态 失败，错误码：" + ToolKits.getErrorCode());
+            log.error("下发输出状态 失败，错误码：" + ToolKits.getErrorCode());
             return;
         } else {
             stuOut.read();
-            System.out.println("下发输出状态 成功");
+            log.info("下发输出状态 成功");
         }
     }
 
@@ -389,17 +358,17 @@ public class ZoneArmModeDemo {
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_GetAlarmRegionInfo(loginHandle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_BYPASSMODE, stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("获取旁路状态 失败：" + ToolKits.getErrorCode());
+            log.error("获取旁路状态 失败：" + ToolKits.getErrorCode());
             return;
         } else {
             stuOut.read();
-            System.out.println("获取旁路状态 成功");
+            log.info("获取旁路状态 成功");
             /**
              防区个数
              */
             int nZoneRet = stuOut.nZoneRet;
 
-            System.out.println("防区个数:" + nZoneRet);
+            log.info("防区个数:" + nZoneRet);
 
             /**
              防区工作模式     {@link EM_BYPASSMODE_TYPE}
@@ -418,11 +387,11 @@ public class ZoneArmModeDemo {
 
             if (nZoneRetEx > 72) {
                 for (int i = 0; i < nZoneRetEx; i++) {
-                    System.out.println("[" + i + "]" + (EM_BYPASSMODE_TYPE.getNoteByValue(arrModesEx[i])));
+                    log.info("[" + i + "]" + (EM_BYPASSMODE_TYPE.getNoteByValue(arrModesEx[i])));
                 }
             } else {
                 for (int i = 0; i < nZoneRet; i++) {
-                    System.out.println("[" + i + "]" + (EM_BYPASSMODE_TYPE.getNoteByValue(arrModes[i])));
+                    log.info("[" + i + "]" + (EM_BYPASSMODE_TYPE.getNoteByValue(arrModes[i])));
                 }
             }
         }
@@ -458,9 +427,9 @@ public class ZoneArmModeDemo {
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_SetAlarmRegionInfo(loginHandle, NET_EM_SET_ALARMREGION_INFO.NET_EM_SET_ALARMREGION_INFO_BYPASSMODE.getValue(), stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("下发旁路状态 失败：" + ToolKits.getErrorCode());
+            log.error("下发旁路状态 失败：" + ToolKits.getErrorCode());
         } else {
-            System.out.println("下发旁路状态 成功");
+            log.info("下发旁路状态 成功");
         }
     }
 
@@ -477,16 +446,16 @@ public class ZoneArmModeDemo {
         stuOut.write();
         Boolean bRet = netsdk.CLIENT_GetAlarmRegionInfo(loginHandle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_ARMMODE, stuIn.getPointer(), stuOut.getPointer(), 3000);
         if (!bRet) {
-            System.err.println("获取布防状态失败：" + ToolKits.getErrorCode());
+            log.error("获取布防状态失败：" + ToolKits.getErrorCode());
             return;
         } else {
             stuOut.read();
-            System.out.println("获取布防状态成功");
-            System.out.println("布撤防状态个数:" + stuOut.nArmModeRetEx);
+            log.info("获取布防状态成功");
+            log.info("布撤防状态个数:" + stuOut.nArmModeRetEx);
             NET_ARMMODE_INFO[] stuArmModeEx = stuOut.stuArmModeEx;
             for (int i = 0; i < stuOut.nArmModeRetEx; i++) {
-                System.out.println("Area号:" + (i + 1));
-                System.out.println("布撤防状态:" + EM_ARM_STATE.getNoteByValue(stuArmModeEx[i].emArmState));
+                log.info("Area号:" + (i + 1));
+                log.info("布撤防状态:" + EM_ARM_STATE.getNoteByValue(stuArmModeEx[i].emArmState));
             }
 
         }
@@ -521,56 +490,88 @@ public class ZoneArmModeDemo {
                 NET_EM_SET_ALARMREGION_INFO.NET_EM_SET_ALARMREGION_INFO_ARMMODE.getValue(), stuInParam.getPointer(),
                 stOutParam.getPointer(), 5000);
         if (bRet1) {
-            System.out.println("下发布防状态成功\n");
+            log.info("下发布防状态成功");
             stOutParam.read();
-            System.out.println(" 布防结果（ 0:成功 1:失败 ）：" + stOutParam.nArmResult);
+            log.info(" 布防结果（ 0:成功 1:失败 ）：" + stOutParam.nArmResult);
         } else {
-            System.err.printf("下发布防状态失败，错误码:" + ToolKits.getErrorCode());
+            log.error("下发布防状态失败，错误码:" + ToolKits.getErrorCode());
         }
     }
 
     // 获取单防区布撤防状态
-    public void getZoneArmMode() {
-
+    public NET_OUT_GET_ZONE_ARMODE_INFO getZoneArmMode() {
         NET_IN_GET_ZONE_ARMODE_INFO input = new NET_IN_GET_ZONE_ARMODE_INFO();
-
-        /**
-         要操作的防区号列表个数
-         */
+        //要操作的防区号列表个数
         input.nZoneNum = 1;
-        /**
-         防区号，数组中第一个元素为-1表示获取所有通道的布撤防状态
-         */
+        // 防区号，数组中第一个元素为-1表示获取所有通道的布撤防状态
         input.nZones[0] = -1;
-
         input.write();
-
         NET_OUT_GET_ZONE_ARMODE_INFO outPut = new NET_OUT_GET_ZONE_ARMODE_INFO();
-
         outPut.write();
-
-        boolean b
-                = netsdk.CLIENT_GetZoneArmMode(loginHandle, input.getPointer(), outPut.getPointer(), 3000);
-
+        boolean b = netsdk.CLIENT_GetZoneArmMode(loginHandle, input.getPointer(), outPut.getPointer(), 3000);
         if (!b) {
-            System.err.println("获取单防区布撤防状态 fail：" + ToolKits.getErrorCode());
-
+            log.error("获取单防区布撤防状态 fail：" + ToolKits.getErrorCode());
+            return null;
         } else {
-            System.out.println("获取单防区布撤防状态 success");
+            log.info("获取单防区布撤防状态 success");
             outPut.read();
-
-            int nStateNum = outPut.nStateNum;
-            System.out.println("nStateNum :" + nStateNum);
-            byte[] szState = outPut.szState;
-
-            for (int i = 0; i < nStateNum; i++) {
-                byte[] tmp = new byte[32];
-                System.arraycopy(szState, i * 32, tmp, 0, 32);
-                String text = new String(tmp).trim();
-                System.out.println("[" + i + "] = " + text);
-            }
+            return outPut;
         }
+    }
 
+    /**
+     * 设置单防区布撤防状态
+     *
+     * @param zoneNo  防区号
+     * @param armMode D是撤防，T是布防
+     */
+    public void setZoneArmMode(int zoneNo, String armMode) {
+        NET_IN_SET_ZONE_ARMODE_INFO input = new NET_IN_SET_ZONE_ARMODE_INFO();
+        input.nZoneNum = 1;
+        input.nZones[0] = zoneNo;//17
+        byte[] szPwd = input.szPwd;
+        String pwd = "admin123456";// admin123456
+        StringToByteArr(pwd, szPwd, encode);
+        byte[] szArmMode = input.szArmMode;
+        StringToByteArr(armMode, szArmMode, encode);
+        NET_ARM_DETAIL_OPTIONS stuArmDetailOptions
+                = input.stuArmDetailOptions;
+        stuArmDetailOptions.emProfile = NET_EM_SCENE_MODE.NET_EM_SCENE_MODE_WHOLE.getValue();
+        stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_USER.getValue();
+        byte[] szName = stuArmDetailOptions.szName;
+        String name = "admin";//admin
+        StringToByteArr(name, szName, encode);
+        byte[] szClientAddress = stuArmDetailOptions.szClientAddress;
+        String clientAddress = "192.168.1.3";//实际客户端ip，慧云服务器ip
+        StringToByteArr(clientAddress, szClientAddress, encode);
+        input.stuArmDetailOptions.nID = 1;
+        input.write();
+        NET_OUT_SET_ZONE_ARMODE_INFO outPut = new NET_OUT_SET_ZONE_ARMODE_INFO();
+        outPut.nAreaAbnormalNum = input.nZoneNum;
+        NET_AREA_ABNORMAL_INFO[] stuAbnormalInfo = new NET_AREA_ABNORMAL_INFO[input.nZoneNum];
+        for (int i = 0; i < input.nZoneNum; i++) {
+            stuAbnormalInfo[i] = new NET_AREA_ABNORMAL_INFO();
+        }
+        long MemorySize = new NET_AREA_ABNORMAL_INFO().size() * input.nZoneNum;
+        outPut.pstuAreaAbnormal = new Memory(MemorySize);
+        outPut.pstuAreaAbnormal.clear(MemorySize);
+        ToolKits.SetStructArrToPointerData(stuAbnormalInfo, outPut.pstuAreaAbnormal);
+        outPut.write();
+        boolean b = netsdk.CLIENT_SetZoneArmMode(loginHandle, input.getPointer(), outPut.getPointer(), 3000);
+        if (!b) {
+            log.error("设置单防区布撤防状态 fail：" + ToolKits.getErrorCode());
+            outPut.read();
+            if (outPut.nAreaAbnormalRetNum > 0) {
+                ToolKits.GetPointerDataToStructArr(outPut.pstuAreaAbnormal, stuAbnormalInfo);
+                for (int i = 0; i < outPut.nAreaAbnormalRetNum; i++) {
+                    //此处打印各类错误信息
+                    log.error(stuAbnormalInfo[i].toString());
+                }
+            }
+        } else {
+            log.info("设置单防区布撤防状态 success");
+
+        }
     }
 
     //设置单防区布撤防状态
@@ -581,18 +582,18 @@ public class ZoneArmModeDemo {
         /**
          要操作的防区号列表个数
          */
-        input.nZoneNum = 2;
+        input.nZoneNum = 1;
         /**
          要操作的防区号列表，从1开始。
          */
-        input.nZones[0] = 1;
-        input.nZones[1] = 2;
+        input.nZones[0] = 17;//17
+//        input.nZones[1] = 2;
         /**
          密码明文
          */
         byte[] szPwd = input.szPwd;
 
-        String pwd = "123pwd";
+        String pwd = "123pwd";// admin123456
 
         StringToByteArr(pwd, szPwd, encode);
 
@@ -617,14 +618,14 @@ public class ZoneArmModeDemo {
         byte[] szName
                 = stuArmDetailOptions.szName;
 
-        String name = "user1";
+        String name = "user1";//admin
 
         StringToByteArr(name, szName, encode);
 
         byte[] szClientAddress
                 = stuArmDetailOptions.szClientAddress;
 
-        String clientAddress = "10.33.121.74";
+        String clientAddress = "10.33.121.74";//实际客户端ip，慧云服务器ip
 
         StringToByteArr(clientAddress, szClientAddress, encode);
 
@@ -653,18 +654,18 @@ public class ZoneArmModeDemo {
         boolean b
                 = netsdk.CLIENT_SetZoneArmMode(loginHandle, input.getPointer(), outPut.getPointer(), 3000);
         if (!b) {
-            System.err.println("设置单防区布撤防状态 fail：" + ToolKits.getErrorCode());
+            log.error("设置单防区布撤防状态 fail：" + ToolKits.getErrorCode());
             outPut.read();
             if (outPut.nAreaAbnormalRetNum > 0) {
                 ToolKits.GetPointerDataToStructArr(outPut.pstuAreaAbnormal, stuAbnormalInfo);
                 for (int i = 0; i < outPut.nAreaAbnormalRetNum; i++) {
                     //此处打印各类错误信息
-                    System.out.println(stuAbnormalInfo[i].toString());
+                    log.error(stuAbnormalInfo[i].toString());
                 }
             }
 
         } else {
-            System.out.println("设置单防区布撤防状态 success");
+            log.info("设置单防区布撤防状态 success");
 
         }
     }
@@ -676,7 +677,7 @@ public class ZoneArmModeDemo {
         boolean b
                 = netsdk.CLIENT_StartListenEx(loginHandle);
         if (!b) {
-            System.err.println("CLIENT_StartListenEx Failed." + ToolKits.getErrorCode());
+            log.error("CLIENT_StartListenEx Failed." + ToolKits.getErrorCode());
         }
     }
 
@@ -688,7 +689,7 @@ public class ZoneArmModeDemo {
         boolean b
                 = netsdk.CLIENT_StopListen(loginHandle);
         if (!b) {
-            System.err.println("CLIENT_StopListen Failed." + ToolKits.getErrorCode());
+            log.error("CLIENT_StopListen Failed." + ToolKits.getErrorCode());
         }
     }
 
@@ -706,9 +707,9 @@ public class ZoneArmModeDemo {
                 info.getPointer(), 3000);
         info.read();
         if (!success) {
-            System.err.println("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
+            log.error("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
         } else {
-            System.out.println("Alarm clean successfully");
+            log.info("Alarm clean successfully");
         }
     }
 
@@ -733,9 +734,9 @@ public class ZoneArmModeDemo {
                 info.getPointer(), 3000);
         info.read();
         if (!success) {
-            System.err.println("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
+            log.error("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
         } else {
-            System.out.println("Alarm clean successfully");
+            log.info("Alarm clean successfully");
         }
     }
 
@@ -754,14 +755,14 @@ public class ZoneArmModeDemo {
                 info.getPointer(), 3000);
         info.read();
         if (!success) {
-            System.err.println("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
+            log.error("Failed to clean alarm " + netsdk.CLIENT_GetLastError() + info);
         } else {
-            System.out.println("Alarm clean successfully");
+            log.info("Alarm clean successfully");
         }
     }
 
     public void runTest() {
-        System.out.println("Run Test");
+        log.info("Run Test");
         CaseMenu menu = new CaseMenu();
         menu.addItem(new CaseMenu.Item(this, "IO输入端状态", "channelsState"));
 
@@ -800,9 +801,9 @@ public class ZoneArmModeDemo {
      * 结束测试
      */
     public void endTest() {
-        System.out.println("End Test");
+        log.info("End Test");
         this.logOut(); // 登出设备
-        System.out.println("See You...");
+        log.info("See You...");
         cleanAndExit(); // 清理资源并退出
     }
 }

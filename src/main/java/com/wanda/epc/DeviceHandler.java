@@ -1,22 +1,24 @@
 package com.wanda.epc;
 
 import com.alibaba.fastjson.JSON;
-import com.netsdk.lib.NetSDKLib;
+import com.alibaba.fastjson.JSONObject;
+import com.netsdk.lib.enumeration.EM_DEV_STATUS;
+import com.netsdk.lib.enumeration.EM_ZONE_STATUS;
+import com.netsdk.lib.structure.NET_CHANNELS_STATE;
+import com.netsdk.lib.structure.NET_OUT_GET_CHANNELS_STATE;
+import com.netsdk.lib.structure.NET_OUT_GET_ZONE_ARMODE_INFO;
 import com.wanda.epc.device.BaseDevice;
 import com.wanda.epc.device.CommonDevice;
 import com.wanda.epc.param.DeviceMessage;
-import com.wanda.epc.util.PingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
 
 /**
  * @author LianYanFei
@@ -29,7 +31,6 @@ import java.util.*;
 @Service
 public class DeviceHandler extends BaseDevice {
 
-    HashMap<String, NetSDKLib.LLong> userMap = new HashMap<>();
     @Resource
     ZoneArmModeDemo zoneArmModeDemo;
     @Resource
@@ -41,8 +42,9 @@ public class DeviceHandler extends BaseDevice {
     @PostConstruct
     public void init() {
         zoneArmModeDemo.initTest();
-        zoneArmModeDemo.runTest();
+//        zoneArmModeDemo.runTest();
     }
+
     /**
      * 销毁
      */
@@ -61,19 +63,58 @@ public class DeviceHandler extends BaseDevice {
 
     @Override
     public boolean processData() throws Exception {
-        Queue<String> allIp = new LinkedList();
-        deviceParamListMap.entrySet().forEach(entry -> {
-            List<String> ipList = Arrays.asList(entry.getKey().split("_"));
-            if (ipList.size() == 2) {
-                String online = ipList.get(1);
-                if ("onlineStatus".equals(online)) {
-                    allIp.offer(ipList.get(0));
-                }
-            }
-        });
-        ping(allIp);
-//        getArmMode();
+        getArmMode();
+        getChannelsState();
         return true;
+    }
+
+    /**
+     * 获取撤布防状态
+     */
+    private void getArmMode() {
+        NET_OUT_GET_ZONE_ARMODE_INFO outPut = zoneArmModeDemo.getZoneArmMode();
+        int nStateNum = outPut.nStateNum;
+        log.info("nStateNum :" + nStateNum);
+        byte[] szState = outPut.szState;
+
+        for (int i = 0; i < nStateNum; i++) {
+            byte[] tmp = new byte[32];
+            System.arraycopy(szState, i * 32, tmp, 0, 32);
+            String text = new String(tmp).trim();
+            log.info("[" + i + "] = " + text);
+            String value = "0";
+            if ("T".equalsIgnoreCase(text)) {
+                value = "1";
+            }
+            sendMsg((i + 1) + "_deployWithdrawAlarmStatus", value);
+        }
+    }
+
+    /**
+     * 获取在离线/报警
+     */
+    private void getChannelsState() {
+        NET_OUT_GET_CHANNELS_STATE stuOut = zoneArmModeDemo.channelsState();
+        if (ObjectUtils.isEmpty(stuOut)) {
+            return;
+        }
+        log.info("通道状态个数:" + stuOut.nChannelsStatesCount);
+        NET_CHANNELS_STATE[] stuChannelsStates = stuOut.stuChannelsStates;
+        for (int i = 0; i < stuOut.nChannelsStatesCount; i++) {
+            String onlineStatus = "1";
+            if (EM_DEV_STATUS.EM_DEV_STATUS_OFFLINE.getValue() == stuChannelsStates[i].emOnlineState) {
+                onlineStatus = "0";
+            }
+            sendMsg((i + 1) + "_onlineStatus", onlineStatus);
+            String alarmStatus = "0";
+            if (EM_ZONE_STATUS.EM_ZONE_STATUS_ALARM.getValue() == stuChannelsStates[i].emAlarmState) {
+                alarmStatus = "1";
+            }
+            sendMsg((i + 1) + "_alarmStatus", alarmStatus);
+            log.info("Area号:" + (i + 1));
+            log.info("在线状态:" + EM_DEV_STATUS.getNoteByValue(stuChannelsStates[i].emOnlineState));
+            log.info("报警状态:" + EM_ZONE_STATUS.getNoteByValue(stuChannelsStates[i].emAlarmState));
+        }
     }
 
     @Override
@@ -86,47 +127,17 @@ public class DeviceHandler extends BaseDevice {
         }
         String outParamId = deviceMessage.getOutParamId();
         String[] param = outParamId.split("_");
-        String ip = param[0];
-        NetSDKLib.LLong userIp = userMap.get(ip);
-        int order = 1;
+        Integer zoneNo = Integer.valueOf(param[0]);
+        String armMode = "D";
         if (!value.equals("1.0")) {
-            order = 0;
+            armMode = "T";
         }
+        zoneArmModeDemo.setZoneArmMode(zoneNo, armMode);
     }
-
 
     @Override
     public boolean processData(String... obj) throws Exception {
         return false;
-    }
-
-    /**
-     * ping
-     *
-     * @param allIp
-     */
-    private void ping(Queue<String> allIp) {
-        log.info("开始采集在线离线状态,ip数量{}", allIp.size());
-        PingUtil pingUtil = new PingUtil(allIp);
-        pingUtil.setIpsOK("");
-        pingUtil.setIpsNO("");
-        pingUtil.startPing();
-        String ipsOK = pingUtil.getIpsOK();
-        String ipsNo = pingUtil.getIpsNO();
-        if (StringUtils.isNotBlank(ipsOK)) {
-            List<String> ipList = Arrays.asList(ipsOK.split(","));
-            log.info("在线数量：{}", ipList.size());
-            ipList.forEach(ip -> {
-                sendMsg(ip.concat("_onlineStatus"), "1");
-            });
-        }
-        if (StringUtils.isNotBlank(ipsNo)) {
-            List<String> ipList = Arrays.asList(ipsNo.split(","));
-            log.info("离线数量：{}", ipList.size());
-            ipList.forEach(ip -> {
-                sendMsg(ip.concat("_onlineStatus"), "0");
-            });
-        }
     }
 
     /**
@@ -135,7 +146,7 @@ public class DeviceHandler extends BaseDevice {
      * @param outParamId
      * @param value
      */
-    private void sendMsg(String outParamId, String value) {
+    public void sendMsg(String outParamId, String value) {
         List<DeviceMessage> deviceMessageList = deviceParamListMap.get(outParamId);
         if (!CollectionUtils.isEmpty(deviceMessageList)) {
             deviceMessageList.forEach(deviceMessage -> {
