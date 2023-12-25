@@ -12,13 +12,13 @@ import javax.annotation.Resource;
 public class TestController {
 
     @Resource
-    private ZoneArmModeDemo zoneArmModeDemo;
+    private ZoneArmMode zoneArmMode;
     @Resource
     private DeviceHandler deviceHandler;
 
     @RequestMapping("control/{zoneNo}/{armMode}")
     public void control(@PathVariable int zoneNo, @PathVariable String armMode) {
-        zoneArmModeDemo.setZoneArmMode(zoneNo, armMode);
+        zoneArmMode.setZoneArmMode(zoneNo, armMode);
     }
 
     @RequestMapping("collect")

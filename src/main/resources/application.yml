@@ -12,8 +12,6 @@ mqtt:
   qos: 1
 
 spring:
-  profiles:
-    active: maoming_huazhou
   redis:
     host: 127.0.0.1
     port: 6379
@@ -24,11 +22,13 @@ beanName: deviceHandler
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 3501040080
+  #需修改
+  gcId: 4409820010
   subsystem: fdxt/
   threadNum: 1
-  #广场所属设备id
-  DeviceId: 1000012
-  #广场所属设备下的单元类型
-  UnitNodesType: 3
-
+  cron: 0/30 * * * * ?
+#以下需修改，防盗主机
+ip: 192.168.1.134
+port: 37777
+user: admin
+password: admin123456

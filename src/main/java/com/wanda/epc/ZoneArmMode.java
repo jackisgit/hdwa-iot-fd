@@ -1,7 +1,6 @@
 package com.wanda.epc;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.ToolKits;
 import com.netsdk.lib.callback.impl.DefaultDisconnectCallback;
@@ -13,7 +12,6 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -31,7 +29,7 @@ import static com.netsdk.lib.Utils.getOsPrefix;
  */
 @Component
 @Slf4j
-public class ZoneArmModeDemo {
+public class ZoneArmMode {
 
 
     // 编码格式
@@ -534,10 +532,10 @@ public class ZoneArmModeDemo {
         StringToByteArr(pwd, szPwd, encode);
         byte[] szArmMode = input.szArmMode;
         StringToByteArr(armMode, szArmMode, encode);
-        NET_ARM_DETAIL_OPTIONS stuArmDetailOptions
-                = input.stuArmDetailOptions;
+        NET_ARM_DETAIL_OPTIONS stuArmDetailOptions = input.stuArmDetailOptions;
         stuArmDetailOptions.emProfile = NET_EM_SCENE_MODE.NET_EM_SCENE_MODE_WHOLE.getValue();
-        stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_USER.getValue();
+//        stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_USER.getValue();
+        stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_REMOTE.getValue();
         byte[] szName = stuArmDetailOptions.szName;
         String name = "admin";//admin
         StringToByteArr(name, szName, encode);

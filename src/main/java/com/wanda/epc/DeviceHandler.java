@@ -1,7 +1,6 @@
 package com.wanda.epc;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.netsdk.lib.enumeration.EM_DEV_STATUS;
 import com.netsdk.lib.enumeration.EM_ZONE_STATUS;
 import com.netsdk.lib.structure.NET_CHANNELS_STATE;
@@ -32,7 +31,7 @@ import java.util.List;
 public class DeviceHandler extends BaseDevice {
 
     @Resource
-    ZoneArmModeDemo zoneArmModeDemo;
+    ZoneArmMode zoneArmMode;
     @Resource
     private CommonDevice commonDevice;
 
@@ -41,8 +40,7 @@ public class DeviceHandler extends BaseDevice {
      */
     @PostConstruct
     public void init() {
-        zoneArmModeDemo.initTest();
-//        zoneArmModeDemo.runTest();
+        zoneArmMode.initTest();
     }
 
     /**
@@ -51,7 +49,7 @@ public class DeviceHandler extends BaseDevice {
     @PreDestroy
     public void destroy() {
         log.info("SDK实例销毁!");
-        zoneArmModeDemo.endTest();
+        zoneArmMode.endTest();
     }
 
     @Override
@@ -65,6 +63,7 @@ public class DeviceHandler extends BaseDevice {
     public boolean processData() throws Exception {
         getArmMode();
         getChannelsState();
+        zoneArmMode.startListenAlarm();
         return true;
     }
 
@@ -72,7 +71,7 @@ public class DeviceHandler extends BaseDevice {
      * 获取撤布防状态
      */
     private void getArmMode() {
-        NET_OUT_GET_ZONE_ARMODE_INFO outPut = zoneArmModeDemo.getZoneArmMode();
+        NET_OUT_GET_ZONE_ARMODE_INFO outPut = zoneArmMode.getZoneArmMode();
         int nStateNum = outPut.nStateNum;
         log.info("nStateNum :" + nStateNum);
         byte[] szState = outPut.szState;
@@ -94,7 +93,7 @@ public class DeviceHandler extends BaseDevice {
      * 获取在离线/报警
      */
     private void getChannelsState() {
-        NET_OUT_GET_CHANNELS_STATE stuOut = zoneArmModeDemo.channelsState();
+        NET_OUT_GET_CHANNELS_STATE stuOut = zoneArmMode.channelsState();
         if (ObjectUtils.isEmpty(stuOut)) {
             return;
         }
@@ -132,7 +131,7 @@ public class DeviceHandler extends BaseDevice {
         if (!value.equals("1.0")) {
             armMode = "T";
         }
-        zoneArmModeDemo.setZoneArmMode(zoneNo, armMode);
+        zoneArmMode.setZoneArmMode(zoneNo, armMode);
     }
 
     @Override
