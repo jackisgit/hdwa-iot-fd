@@ -9,25 +9,29 @@ import com.wanda.epc.device.CommonDevice;
 import com.wanda.epc.param.DeviceMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * @author LianYanFei
- * @version 1.0
- * @project iot-epc-module
- * @description 大华设备
- * @date 2023/4/11 09:55:13
+ * @author 孙率众
  */
 @Slf4j
 @Service
 public class DeviceHandler extends BaseDevice {
-
+    public static final String FAULT_STATUS = "_faultStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_STATUS = "_deployWithdrawAlarmStatus";
+    public static final String ONLINE_STATUS = "_onlineStatus";
+    public static final String ALARM_STATUS = "_alarmStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET = "_deployWithdrawAlarmSet";
     @Resource
     ZoneArmMode zoneArmMode;
     @Resource
@@ -61,11 +65,17 @@ public class DeviceHandler extends BaseDevice {
         getArmMode();
         getChannelsState();
         getAlarmregionInfoChannelsstate();
-        zoneArmMode.startListenAlarm();
         return true;
     }
 
     private void getAlarmregionInfoChannelsstate() {
+        //正常防区
+        Set<String> set = new HashSet<>();
+        for (Map.Entry<String, List<DeviceMessage>> entry : deviceParamListMap.entrySet()) {
+            if (entry.getKey().contains(FAULT_STATUS)) {
+                set.add(entry.getKey());
+            }
+        }
         log.info("查询防区故障状态");
         NET_OUT_GET_AREAS_STATUS stuOut = zoneArmMode.getAlarmregionInfoChannelsstate();
         if (ObjectUtils.isEmpty(stuOut)) {
@@ -83,7 +93,9 @@ public class DeviceHandler extends BaseDevice {
                 for (int j = 0; j < nZoneRet; j++) {
                     NET_ZONE_STATUS stuZoneStatus1 = stuZoneStatus[j];
                     log.info("防区" + "[" + i + "]" + "[" + j + "]:" + stuZoneStatus1.nIndex + "," + EM_ZONE_STATUS.getNoteByValue(stuZoneStatus1.emStatus));
-                    handleFaultStatus(stuZoneStatus1.nIndex, stuZoneStatus1);
+                    String key = i + FAULT_STATUS;
+                    sendMsg(key, "1");
+                    set.remove(key);
                 }
             }
         } else {
@@ -95,22 +107,15 @@ public class DeviceHandler extends BaseDevice {
                 for (int j = 0; j < nZoneRetEx; j++) {
                     NET_ZONE_STATUS stuZoneStatus1 = stuZoneStatus[j];
                     log.info("防区[" + "[" + i + "]" + "[" + j + "]" + "]:" + stuZoneStatus1.nIndex + "," + EM_ZONE_STATUS.getNoteByValue(stuZoneStatus1.emStatus));
-                    handleFaultStatus(i, stuZoneStatus1);
+                    String key = i + FAULT_STATUS;
+                    sendMsg(key, "1");
+                    set.remove(key);
                 }
             }
         }
-    }
-
-    private void handleFaultStatus(int i, NET_ZONE_STATUS stuZoneStatus1) {
-        String gzzt = "0";
-        if (EM_ZONE_STATUS.EM_ZONE_STATUS_ALARM.getValue() == stuZoneStatus1.emStatus
-                || EM_ZONE_STATUS.EM_ZONE_STATUS_TAMPER.getValue() == stuZoneStatus1.emStatus
-                || EM_ZONE_STATUS.EM_ZONE_STATUS_MASK.getValue() == stuZoneStatus1.emStatus
-                || EM_ZONE_STATUS.EM_ZONE_STATUS_SHORT.getValue() == stuZoneStatus1.emStatus
-        ) {
-            gzzt = "1";
+        for (String str : set) {
+            sendMsg(str, "0");
         }
-        sendMsg(i + "_faultStatus", gzzt);
     }
 
     /**
@@ -129,7 +134,7 @@ public class DeviceHandler extends BaseDevice {
             if ("T".equalsIgnoreCase(text)) {
                 value = "1";
             }
-            sendMsg((i + 1) + "_deployWithdrawAlarmStatus", value);
+            sendMsg((i + 1) + DEPLOY_WITHDRAW_ALARM_STATUS, value);
         }
     }
 
@@ -148,12 +153,12 @@ public class DeviceHandler extends BaseDevice {
             if (EM_DEV_STATUS.EM_DEV_STATUS_OFFLINE.getValue() == stuChannelsStates[i].emOnlineState) {
                 onlineStatus = "0";
             }
-            sendMsg((i + 1) + "_onlineStatus", onlineStatus);
+            sendMsg((i + 1) + ONLINE_STATUS, onlineStatus);
             String alarmStatus = "0";
             if (EM_ZONE_STATUS.EM_ZONE_STATUS_ALARM.getValue() == stuChannelsStates[i].emAlarmState) {
                 alarmStatus = "1";
             }
-            sendMsg((i + 1) + "_alarmStatus", alarmStatus);
+            sendMsg((i + 1) + ALARM_STATUS, alarmStatus);
         }
     }
 
@@ -162,7 +167,7 @@ public class DeviceHandler extends BaseDevice {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         log.info("接收到指令下发：{},状态：{}", JSON.toJSONString(deviceMessage), value);
-        if (ObjectUtils.isEmpty(deviceMessage) || !deviceMessage.getOutParamId().contains("_deployWithdrawAlarmSet")) {
+        if (ObjectUtils.isEmpty(deviceMessage) || !deviceMessage.getOutParamId().contains(DEPLOY_WITHDRAW_ALARM_SET)) {
             return;
         }
         String outParamId = deviceMessage.getOutParamId();

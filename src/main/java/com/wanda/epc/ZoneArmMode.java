@@ -807,8 +807,9 @@ public class ZoneArmMode {
      */
     public void initTest() {
         initSdk();
-
-        this.loginWithHighLevel();
+        loginWithHighLevel();
+        //开启回调会使日志过多
+//        startListenAlarm();
     }
 
     /**
