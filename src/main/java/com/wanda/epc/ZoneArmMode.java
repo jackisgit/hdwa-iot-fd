@@ -9,6 +9,7 @@ import com.netsdk.lib.callback.impl.MessCallBack;
 import com.netsdk.lib.enumeration.*;
 import com.netsdk.lib.structure.*;
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -252,10 +253,7 @@ public class ZoneArmMode {
     public void getOutPutState() {
         // 入参
         NET_IN_GET_OUTPUT_STATE stuIn = new NET_IN_GET_OUTPUT_STATE();
-
-        /**
-         通道类型 {@link EM_OUTPUT_TYPE}
-         */
+        //通道类型 {@link EM_OUTPUT_TYPE}
         stuIn.emType = 1;
         stuIn.write();
         // 出参
@@ -268,39 +266,23 @@ public class ZoneArmMode {
         } else {
             stuOut.read();
             log.info("获取输出状态 成功");
-            /**
-             状态个数
-             */
+            //状态个数
             int nStateRet = stuOut.nStateRet;
-
             log.info("状态个数:" + nStateRet);
-            /**
-             状态false (0):关闭true(1)打开
-             */
+            //状态false (0):关闭true(1)打开
             byte[] arrStates = stuOut.arrStates;
-
-            /**
-             状态个数扩展 超过82个使用这个字段
-             */
+            //状态个数扩展 超过82个使用这个字段
             int nStateRetEx = stuOut.nStateRetEx;
-
             if (nStateRetEx > 82) {
-
-
                 int[] arrStatesEx = stuOut.arrStatesEx;
-
                 for (int i = 0; i < nStateRetEx; i++) {
                     log.info("[" + i + "]" + (arrStatesEx[i] == 0 ? false : true));
                 }
-
             } else {
                 for (int i = 0; i < nStateRet; i++) {
                     log.info("[" + i + "]" + (arrStates[i] == 0 ? false : true));
                 }
-
             }
-
-
         }
     }
 
@@ -360,7 +342,6 @@ public class ZoneArmMode {
             return;
         } else {
             stuOut.read();
-            log.info("获取旁路状态 成功");
             /**
              防区个数
              */
@@ -786,6 +767,41 @@ public class ZoneArmMode {
         menu.run();
     }
 
+    public NET_OUT_GET_AREAS_STATUS getAlarmregionInfoChannelsstate() {
+        Pointer inputPointer = null;
+        Pointer outPutPointer = null;
+        try {
+            // 入参
+            NET_IN_GET_AREAS_STATUS stuIn = new NET_IN_GET_AREAS_STATUS();
+            /**
+             * 获取异常防区类型,参见枚举定义 {@link com.netsdk.lib.enumeration.EM_GET_AREASSTATUS_TYPE}
+             */
+            stuIn.emType = 2;
+            // 出参
+            NET_OUT_GET_AREAS_STATUS stuOut = new NET_OUT_GET_AREAS_STATUS();
+            inputPointer = new Memory(stuIn.size());
+            inputPointer.clear(stuIn.size());
+            ToolKits.SetStructDataToPointer(stuIn, inputPointer, 0);
+            outPutPointer = new Memory(stuOut.size());
+            outPutPointer.clear(stuOut.size());
+            ToolKits.SetStructDataToPointer(stuOut, outPutPointer, 0);
+            Boolean bRet = netsdk.CLIENT_GetAlarmRegionInfo(loginHandle, NET_EM_GET_ALARMREGION_INFO.NET_EM_GET_ALARMREGION_INFO_AREASTATUS, inputPointer, outPutPointer, 3000);
+            if (!bRet) {
+                log.error("获取区域状态 失败：" + ToolKits.getLastError());
+                return null;
+            } else {
+                ToolKits.GetPointerData(outPutPointer, stuOut);
+                return stuOut;
+            }
+        } finally {
+            Native.free(Pointer.nativeValue(inputPointer));//清理内存
+            Pointer.nativeValue(inputPointer, 0); //防止重复回收
+            Native.free(Pointer.nativeValue(outPutPointer));//清理内存
+            Pointer.nativeValue(outPutPointer, 0);
+        }
+
+    }
+
     /**
      * 初始化测试
      */
@@ -799,9 +815,7 @@ public class ZoneArmMode {
      * 结束测试
      */
     public void endTest() {
-        log.info("End Test");
         this.logOut(); // 登出设备
-        log.info("See You...");
         cleanAndExit(); // 清理资源并退出
     }
 }
