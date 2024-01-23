@@ -207,43 +207,26 @@ public class DhFD extends BaseDevice {
         for (ChannelInfo info : channelList) {
             int alarmStatus = info.getAlarmStatus();
             Boolean defendStatus = info.getBDefend();
-            List<DeviceMessage> alarmMessages = deviceParamListMap.get(info.getId().concat("_alarmStatus"));
-            if (!CollectionUtils.isEmpty(alarmMessages) && ObjectUtil.isNotEmpty(alarmStatus)) {
-                alarmMessages.forEach(deviceMessage -> {
-                    //0表示未报警
-                    if (0 == alarmStatus) {
-                        deviceMessage.setValue("0");
-                    } else {
-                        deviceMessage.setValue("1");
-                    }
-                    sendMessage(deviceMessage);
-                });
-
+            String value;
+            if (0 == alarmStatus) {
+                value="0";
+            } else {
+                value="1";
             }
-            List<DeviceMessage> defendMessages = deviceParamListMap.get(info.getId().concat("_deployWithdrawAlarmStatus"));
-            if (!CollectionUtils.isEmpty(defendMessages) && ObjectUtil.isNotEmpty(defendStatus)) {
-                defendMessages.forEach(deviceMessage -> {
-                    //1表示布防，0表示撤防
-                    if (defendStatus) {
-                        deviceMessage.setValue("1");
-                    } else {
-                        deviceMessage.setValue("0");
-                    }
-                    sendMessage(deviceMessage);
-                });
-
+            sendMsg(info.getId().concat("_alarmStatus"),value);
+            String status;
+            //1表示布防，0表示撤防
+            if (defendStatus) {
+                status="1";
+            } else {
+                status="0";
             }
-            List<DeviceMessage> onlineMessages = deviceParamListMap.get(info.getId().concat("_onlineStatus"));
+            sendMsg(info.getId().concat("_deployWithdrawAlarmStatus"),status);
             String channleId = DeviceId + "$" + UnitNodesType + "$" + info.getId();
             byte[] cameraId = getChannelByte(channleId);
             Return_Value_Info_t nStatus = new Return_Value_Info_t();
-            int nRet = IDpsdkCore.DPSDK_GetChannelStatus(m_nDLLHandle, cameraId, nStatus);
-            if (!CollectionUtils.isEmpty(onlineMessages)) {
-                onlineMessages.forEach(deviceMessage -> {
-                    deviceMessage.setValue(Integer.toString(nStatus.nReturnValue));
-                    sendMessage(deviceMessage);
-                });
-            }
+            IDpsdkCore.DPSDK_GetChannelStatus(m_nDLLHandle, cameraId, nStatus);
+            sendMsg(info.getId().concat("_onlineStatus"), Integer.toString(nStatus.nReturnValue));
         }
         return true;
     }
