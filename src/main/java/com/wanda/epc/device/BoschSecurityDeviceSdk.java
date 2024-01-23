@@ -13,18 +13,18 @@ import java.util.List;
 
 @Service("boschSecurityDeviceSdk")
 @Slf4j
-public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArriveListener {
+public class BoschSecurityDeviceSdk extends BaseDevice implements BostFdDataArriveListener {
 
+    public static final String IS_ALARM = "_isAlarm";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK = "_deployWithdrawAlarmSetFeedback";
     @Autowired
     CommonDevice commonDevice;
 
     @Autowired
     RedisUtil redisUtil;
-
+    Thread thread;
     @Autowired
     private BosFdCommunicator bosFdCommunicator;
-
-    Thread thread;
 
     @Override
     public void sendMessage(DeviceMessage dm) {
@@ -115,51 +115,23 @@ public class BoschSecurityDevice_SDK extends BaseDevice implements BostFdDataArr
                     }*/
                     log.info("防盗报警 分区防区号:" + fenqu + "_" + fangqu + "强拆报警恢复");
                 } else if (eventCode.startsWith("11")) {
-                    String outParamId = fangqu + "_isAlarm";
-                    List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
-                    if (deviceMessageList != null) {
-                        for (DeviceMessage deviceMessage : deviceMessageList) {
-                            deviceMessage.setValue("1");
-                            sendMessage(deviceMessage);
-                        }
-                        super.deviceParamListMap.put(outParamId, deviceMessageList);
-                    }
+                    String outParamId = fangqu + IS_ALARM;
+                    sendMsg(outParamId, "1");
                     log.info("防盗报警 分区防区号" + fenqu + "_" + fangqu + "  报警码：" + eventCode + "  报警信息：" + Alarm(eventCode));
                 } else if ("1615,1465,3465,3642,3654,3344".contains(eventCode) || eventCode.startsWith("313") || eventCode
                         .startsWith("314") || eventCode.startsWith("315") || eventCode.startsWith("316")) {
-                    String outParamId = fangqu + "_isAlarm";
-                    List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
-                    if (deviceMessageList != null) {
-                        for (DeviceMessage deviceMessage : deviceMessageList) {
-                            deviceMessage.setValue("0");
-                            sendMessage(deviceMessage);
-                        }
-                        super.deviceParamListMap.put(outParamId, deviceMessageList);
-                    }
+                    String outParamId = fangqu + IS_ALARM;
+                    sendMsg(outParamId, "0");
                     log.info("防盗报警 分区防区号" + fenqu + "_" + fangqu + "报警恢复");
                 } else if (eventCode.equals("3400") || eventCode.equals("3401") || eventCode.equals("3456") || eventCode
                         .equals("1408") || eventCode.equals("1456") || eventCode.equals("1441") || eventCode
                         .startsWith("34")) {
-                    String outParamId = fenqu + "_deployWithdrawAlarmSetFeedback";
-                    List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
-                    if (deviceMessageList != null) {
-                        for (DeviceMessage deviceMessage : deviceMessageList) {
-                            deviceMessage.setValue("1");
-                            sendMessage(deviceMessage);
-                        }
-                        super.deviceParamListMap.put(outParamId, deviceMessageList);
-                    }
+                    String outParamId = fenqu + DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK;
+                    sendMsg(outParamId, "1");
                     log.info("防盗报警 分区号:" + fenqu + "布防");
                 } else if (eventCode.startsWith("140") && !eventCode.equals("1405") && !eventCode.equals("1406")) {
-                    String outParamId = fenqu + "_deployWithdrawAlarmSetFeedback";
-                    List<DeviceMessage> deviceMessageList = super.deviceParamListMap.get(outParamId);
-                    if (deviceMessageList != null) {
-                        for (DeviceMessage deviceMessage : deviceMessageList) {
-                            deviceMessage.setValue("0");
-                            sendMessage(deviceMessage);
-                        }
-                        super.deviceParamListMap.put(outParamId, deviceMessageList);
-                    }
+                    String outParamId = fenqu + DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK;
+                    sendMsg(outParamId, "0");
                     log.info("防盗报警 分区号：" + fenqu + "撤防");
                 } else {
                     log.warn("未处理事件，中心IP：" + serviceIP + "，事件：" + time + "，账号：" + access + "，事件代码：" + eventCode + "，分区：" + fenqu + "，防区：" + fangqu);
