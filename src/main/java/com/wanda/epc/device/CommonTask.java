@@ -13,7 +13,7 @@ public class CommonTask {
     @Resource
     private DhFD dhFD;
 
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "${epc.cron:0/30 * * * * ?}")
     public boolean processData() throws Exception {
         return dhFD.processData();
     }

@@ -31,4 +31,5 @@ epc:
   DeviceId: 1000012
   #广场所属设备下的单元类型
   UnitNodesType: 3
+  cron: 0/30 * * * * ?
 
