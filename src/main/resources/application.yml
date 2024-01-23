@@ -27,7 +27,6 @@ epc:
   subsystem: fdxt/
   threadNum: 1
   cron: 0/30 * * * * ?
-  maxArea: 256
 #以下需修改，防盗主机
 ip: 192.168.1.134
 port: 37777

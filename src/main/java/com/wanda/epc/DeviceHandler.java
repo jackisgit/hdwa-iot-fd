@@ -9,9 +9,7 @@ import com.wanda.epc.device.CommonDevice;
 import com.wanda.epc.param.DeviceMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -183,22 +181,6 @@ public class DeviceHandler extends BaseDevice {
     @Override
     public boolean processData(String... obj) throws Exception {
         return false;
-    }
-
-    /**
-     * 发送消息
-     *
-     * @param outParamId
-     * @param value
-     */
-    public void sendMsg(String outParamId, String value) {
-        List<DeviceMessage> deviceMessageList = deviceParamListMap.get(outParamId);
-        if (!CollectionUtils.isEmpty(deviceMessageList)) {
-            deviceMessageList.forEach(deviceMessage -> {
-                deviceMessage.setValue(value);
-                sendMessage(deviceMessage);
-            });
-        }
     }
 
 }
