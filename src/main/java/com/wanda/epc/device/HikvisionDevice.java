@@ -30,6 +30,12 @@ import java.util.stream.Collectors;
 @Service
 public class HikvisionDevice extends BaseDevice {
 
+    public static final String DEFENCE_STATUS = "_defenceStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK = "_deployWithdrawAlarmSetFeedback";
+    public static final String ON_LINE_STATUS = "_onLineStatus";
+    public static final String ALARM_STATUS = "_alarmStatus";
+    public static final String FAULT_STATUS = "_faultStatus";
+    public static final String PANGLU_STATUS = "_pangluStatus";
     @Value("${appKey}")
     private String appKey;
 
@@ -105,11 +111,11 @@ public class HikvisionDevice extends BaseDevice {
         log.info("防盗报警撤布防指令结束：{}", JSON.toJSONString(hikvisionSubSystemRspVo));
         if (Objects.nonNull(hikvisionSubSystemRspVo) && hikvisionSubSystemRspVo.isSuccess()) {
             if (command == 1) {
-                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat("_defenceStatus"), "1");
-                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat("_deployWithdrawAlarmSetFeedback"), "1");
+                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat(DEFENCE_STATUS), "1");
+                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat(DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK), "1");
             } else {
-                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat("_defenceStatus"), "0");
-                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat("_deployWithdrawAlarmSetFeedback"), "0");
+                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat(DEFENCE_STATUS), "0");
+                sendMsg(hikvisionSubSystemRspVo.getIndexCode().concat(DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK), "0");
             }
         }
     }
@@ -129,27 +135,27 @@ public class HikvisionDevice extends BaseDevice {
             defenceStatus.forEach(defence -> {
                 //1.离线状态
                 if (defence.getStatus() == 0) {
-                    sendMsg(defence.getDefenceIndexCode().concat("_onLineStatus"), "0");
+                    sendMsg(defence.getDefenceIndexCode().concat(ON_LINE_STATUS), "0");
                 } else {
-                    sendMsg(defence.getDefenceIndexCode().concat("_onLineStatus"), "1");
+                    sendMsg(defence.getDefenceIndexCode().concat(ON_LINE_STATUS), "1");
                 }
                 //2.报警状态
                 if (defence.getStatus() == 3) {
-                    sendMsg(defence.getDefenceIndexCode().concat("_alarmStatus"), "1");
+                    sendMsg(defence.getDefenceIndexCode().concat(ALARM_STATUS), "1");
                 } else {
-                    sendMsg(defence.getDefenceIndexCode().concat("_alarmStatus"), "0");
+                    sendMsg(defence.getDefenceIndexCode().concat(ALARM_STATUS), "0");
                 }
                 //3.故障状态
                 if (defence.getStatus() == 2) {
-                    sendMsg(defence.getDefenceIndexCode().concat("_faultStatus"), "1");
+                    sendMsg(defence.getDefenceIndexCode().concat(FAULT_STATUS), "1");
                 } else {
-                    sendMsg(defence.getDefenceIndexCode().concat("_faultStatus"), "0");
+                    sendMsg(defence.getDefenceIndexCode().concat(FAULT_STATUS), "0");
                 }
                 //3.旁路状态
                 if (defence.getStatus() == 4) {
-                    sendMsg(defence.getDefenceIndexCode().concat("_pangluStatus"), "1");
+                    sendMsg(defence.getDefenceIndexCode().concat(PANGLU_STATUS), "1");
                 } else {
-                    sendMsg(defence.getDefenceIndexCode().concat("_pangluStatus"), "0");
+                    sendMsg(defence.getDefenceIndexCode().concat(PANGLU_STATUS), "0");
                 }
             });
         }
@@ -160,35 +166,21 @@ public class HikvisionDevice extends BaseDevice {
             subSysStatus.forEach(subSys -> {
                 //1.撤防状态
                 if (subSys.getStatus() == 0) {
-                    sendMsg(subSys.getSubSystemIndexCode().concat("_defenceStatus"), "0");
+                    sendMsg(subSys.getSubSystemIndexCode().concat(DEFENCE_STATUS), "0");
                 } else {
-                    sendMsg(subSys.getSubSystemIndexCode().concat("_deployWithdrawAlarmSetFeedback"), "0");
+                    sendMsg(subSys.getSubSystemIndexCode().concat(DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK), "0");
                 }
                 //1：布防状态
                 if (subSys.getStatus() == 1) {
-                    sendMsg(subSys.getSubSystemIndexCode().concat("_defenceStatus"), "1");
+                    sendMsg(subSys.getSubSystemIndexCode().concat(DEFENCE_STATUS), "1");
                 } else {
-                    sendMsg(subSys.getSubSystemIndexCode().concat("_deployWithdrawAlarmSetFeedback"), "1");
+                    sendMsg(subSys.getSubSystemIndexCode().concat(DEPLOY_WITHDRAW_ALARM_SET_FEEDBACK), "1");
                 }
 
             });
         }
         return true;
     }
-
-
-    public void sendMsg(String point, String value) {
-        List<DeviceMessage> deviceMessageList = deviceParamListMap.get(point);
-        if (!CollectionUtils.isEmpty(deviceMessageList)) {
-            deviceMessageList.forEach(deviceMessage -> {
-                if (Objects.nonNull(deviceMessage)) {
-                    deviceMessage.setValue(value);
-                    sendMessage(deviceMessage);
-                }
-            });
-        }
-    }
-
 
     /**
      * @description 查询入侵报警主机通道列表v2获取indexCode
