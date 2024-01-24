@@ -23,18 +23,17 @@ import java.util.Map;
 @Component
 public class CommonTask {
 
+    public static final String IS_ALARM = "_isAlarm";
     @Autowired
     CommonDevice commonDevice;
-    @Autowired
-    private BaseDevice baseDevice;
 
-    @Scheduled(cron = "0/60 * * * * ?")
+    @Scheduled(cron = "${epc.cron:0/60 * * * * ?}")
     public boolean processData() throws Exception {
         log.info("子系统不返回报警恢复指令，自动处理");
-        Iterator<Map.Entry<String, List<DeviceMessage>>> iterator = baseDevice.deviceParamListMap.entrySet().iterator();
+        Iterator<Map.Entry<String, List<DeviceMessage>>> iterator = BaseDevice.deviceParamListMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, List<DeviceMessage>> next = iterator.next();
-            if (next.getKey().endsWith("_isAlarm")) {
+            if (next.getKey().endsWith(IS_ALARM)) {
                 for (DeviceMessage deviceMessage : next.getValue()) {
                     deviceMessage.setValue("0");
                     commonDevice.sendMessage(deviceMessage);

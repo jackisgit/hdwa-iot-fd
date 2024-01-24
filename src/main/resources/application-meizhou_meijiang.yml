@@ -1,9 +1,0 @@
-#广场ID及GatewayId
-epc:
-  gatewayId: FD
-  gcId: 4414020040
-  subsystem: fdxt/
-  rcvAddress: 192.168.67.15|7700
-  pCtlAddress: 192.168.67.16|7700
-  serviceIp: 192.168.69.7|7700
-  threadNum: 1
