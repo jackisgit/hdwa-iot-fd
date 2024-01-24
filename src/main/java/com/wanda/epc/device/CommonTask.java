@@ -28,7 +28,7 @@ public class CommonTask {
     @Autowired
     private BaseDevice baseDevice;
 
-    @Scheduled(cron = "${zhf.cron: 0/60 * * * * ?}")
+    @Scheduled(cron = "${epc.cron: 0/60 * * * * ?}")
     public boolean processData() throws Exception {
         log.info("子系统不返回报警恢复指令，自动处理");
         Iterator<Map.Entry<String, List<DeviceMessage>>> iterator = baseDevice.deviceParamListMap.entrySet().iterator();

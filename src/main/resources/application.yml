@@ -27,7 +27,6 @@ epc:
   pCtlAddress: 10.10.49.131|7700
   serviceIp: 10.10.49.61|7700
   threadNum: 1
-zhf:
   cron: 0 0/30 * * * ?
 
 
