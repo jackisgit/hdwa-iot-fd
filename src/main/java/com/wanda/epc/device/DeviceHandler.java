@@ -49,6 +49,10 @@ public class DeviceHandler extends BaseDevice {
      * 子系统/防区状态查询URI（获取在离线、报警、撤布防、开关状态） Get请求 拼接防区号
      */
     private static final String statusURI = "/evo-apigw/evo-alarm/{0}/alarmhosts/one/";
+    public static final String ALARM_STATUS = "_alarmStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET = "_deployWithdrawAlarmSet";
+    public static final String ONLINE_STATUS = "_onlineStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_STATUS = "_deployWithdrawAlarmStatus";
     /**
      * 报警主机操作控制URI（获取在离线、报警、撤布防、开关状态） Get请求 fangqu(防区) operate(1布防2撤防)
      */
@@ -146,23 +150,6 @@ public class DeviceHandler extends BaseDevice {
     }
 
     /**
-     * 发送点位信息
-     *
-     * @param key
-     * @param value
-     */
-    private void sendMsg(String key, String value) {
-        final List<DeviceMessage> deviceMessages = deviceParamListMap.get(key);
-        if (!CollectionUtils.isEmpty(deviceMessages)) {
-            deviceMessages.forEach(deviceMessage -> {
-                deviceMessage.setValue(value);
-                sendMessage(deviceMessage);
-            });
-        }
-    }
-
-
-    /**
      * 采集
      *
      * @throws Exception
@@ -180,19 +167,19 @@ public class DeviceHandler extends BaseDevice {
                 String status = statusDTO.getStatus();
                 String defenceAreaId = statusDTO.getDefenceAreaId();
                 String isOnline = statusDTO.getIsOnline();
-                sendMsg(defenceAreaId + "_onlineStatus", isOnline);
+                sendMsg(defenceAreaId + ONLINE_STATUS, isOnline);
                 if ("5".equals(status)) {
-                    sendMsg(defenceAreaId + "_alarmStatus", "1");
+                    sendMsg(defenceAreaId + ALARM_STATUS, "1");
                 } else {
-                    sendMsg(defenceAreaId + "_alarmStatus", "0");
+                    sendMsg(defenceAreaId + ALARM_STATUS, "0");
                     if ("1".equals(status)) {
-                        sendMsg(defenceAreaId + "_deployWithdrawAlarmStatus", "1");
+                        sendMsg(defenceAreaId + DEPLOY_WITHDRAW_ALARM_STATUS, "1");
                     } else if ("2".equals(status)) {
-                        sendMsg(defenceAreaId + "_deployWithdrawAlarmStatus", "0");
+                        sendMsg(defenceAreaId + DEPLOY_WITHDRAW_ALARM_STATUS, "0");
                     } else if ("6".equals(status)) {
-                        sendMsg(defenceAreaId + "_onlineStatus", "1");
+                        sendMsg(defenceAreaId + ONLINE_STATUS, "1");
                     } else if ("7".equals(status)) {
-                        sendMsg(defenceAreaId + "_onlineStatus", "0");
+                        sendMsg(defenceAreaId + ONLINE_STATUS, "0");
                     }
                 }
             }
@@ -210,7 +197,7 @@ public class DeviceHandler extends BaseDevice {
         if (!"1".equals(alarmStat)) {
             alarmStat = "0";
         }
-        sendMsg(nodeCode + "_alarmStatus", alarmStat);
+        sendMsg(nodeCode + ALARM_STATUS, alarmStat);
     }
 
 
@@ -228,7 +215,7 @@ public class DeviceHandler extends BaseDevice {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         if (ObjectUtils.isNotEmpty(deviceMessage) && StringUtils.isNotBlank(deviceMessage.getOutParamId())
-                && deviceMessage.getOutParamId().endsWith("_deployWithdrawAlarmSet")) {
+                && deviceMessage.getOutParamId().endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             String outParamId = deviceMessage.getOutParamId();
             if (redisUtil.hasKey(outParamId)) {
                 return;
@@ -247,7 +234,7 @@ public class DeviceHandler extends BaseDevice {
             log.info("接口:{},返回值:{}", url, result);
             Object read = JSONPath.read(result, "$.success");
             if (ObjectUtils.isNotEmpty(read) && !"false".equals(String.valueOf(read))) {
-                sendMsg(strings[0] + "_deployWithdrawAlarmStatus", value);
+                sendMsg(strings[0] + DEPLOY_WITHDRAW_ALARM_STATUS, value);
             }
         }
     }
