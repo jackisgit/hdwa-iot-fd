@@ -15,7 +15,7 @@ public class CommonTask {
     @Autowired
     private DeviceHandler deviceHandler;
 
-    @Scheduled(cron = "${jobs.cron:0/30 * * * * ?}")
+    @Scheduled(cron = "${epc.cron:0/30 * * * * ?}")
     public void collect() throws Exception {
         deviceHandler.collect();
     }

@@ -33,5 +33,4 @@ epc:
   service: ThirdParty
   localhost: 10.107.192.21
   machineId: 1002202
-jobs:
   cron: 0/30 * * * * ?
