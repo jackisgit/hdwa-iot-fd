@@ -2,8 +2,6 @@
 package com.wanda.epc.device;
 
 import com.sun.jna.Pointer;
-import com.wanda.epc.device.NetSDKDemo.HCNetSDK;
-
 
 
 public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {

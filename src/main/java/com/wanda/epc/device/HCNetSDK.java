@@ -1,4 +1,4 @@
-package com.wanda.epc.device.NetSDKDemo;
+package com.wanda.epc.device;
 
 import com.sun.jna.*;
 import com.sun.jna.examples.win32.W32API;

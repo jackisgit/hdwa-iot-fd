@@ -2,7 +2,6 @@ package com.wanda.epc.device;
 
 
 import com.sun.jna.Pointer;
-import com.wanda.epc.device.NetSDKDemo.HCNetSDK;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileNotFoundException;

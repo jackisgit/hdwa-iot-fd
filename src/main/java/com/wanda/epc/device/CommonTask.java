@@ -17,7 +17,7 @@ public class CommonTask {
     @Autowired
     private HikVisionEasDevice hikVisionEasDevice;
 
-    @Scheduled(cron = "0/60 * * * * ?")
+    @Scheduled(cron = "${epc.cron:0/60 * * * * ?}")
     public boolean processData() throws Exception {
         return hikVisionEasDevice.processData();
     }

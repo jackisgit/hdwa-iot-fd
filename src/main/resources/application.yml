@@ -12,11 +12,22 @@ mqtt:
   qos: 1
 
 spring:
-  profiles:
-    active: chifeng_hongshan
   redis:
     host: 127.0.0.1
     port: 16379
     password:
 
 beanName: hikVisionEasDevice
+
+#广场ID及GatewayId
+epc:
+  gatewayId: FD
+  gcId: 1504020100
+  subsystem: fdxt/
+  threadNum: 5
+  cron: 0/60 * * * * ?
+hikVision:
+  ip: 10.86.16.188
+  port: 8000
+  user: admin
+  pwd: bj123456

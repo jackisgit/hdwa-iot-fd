@@ -4,14 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import com.wanda.epc.device.NetSDKDemo.HCNetSDK;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.util.PingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,6 +20,11 @@ import java.util.*;
 @Component
 public class HikVisionEasDevice extends BaseDevice {
 
+    public static final String DEPLOY_WITHDRAW_ALARM_STATUS = "_deployWithdrawAlarmStatus";
+    public static final String ALARM_STATUS = "_alarmStatus";
+    public static final String FAULT_STATUS = "_faultStatus";
+    public static final String FANGCHAI_STATUS = "_fangchaiStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET = "deployWithdrawAlarmSet";
     static HCNetSDK hCNetSDK;
     static int lUserID = -1;//用户句柄 实现对设备登录
     static int lAlarmHandle = -1;//报警布防句柄
@@ -32,11 +35,6 @@ public class HikVisionEasDevice extends BaseDevice {
     static FMSGCallBack fMSFCallBack = null;
 
     static HCNetSDK.FMSGCallBack_V31 fMSFCallBack_V31 = null;
-
-
-    static List<Integer> userId = new ArrayList<>();
-    static List<Integer> listen = new ArrayList<>();
-    static List<Integer> nativeL = new ArrayList<>();
 
 
     @Value("${hikVision.ip}")
@@ -340,26 +338,10 @@ public class HikVisionEasDevice extends BaseDevice {
             String ipsOK = pingUtil.getIpsOK();
             String ipsNo = pingUtil.getIpsNO();
             if (StringUtils.isNotBlank(ipsOK)) {
-                List<DeviceMessage> deviceMessageList = deviceParamListMap.get(ip.concat("_onlineStatus"));
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    deviceMessageList.forEach(deviceMessage -> {
-                        if (deviceMessage != null) {
-                            deviceMessage.setValue("1");
-                            sendMessage(deviceMessage);
-                        }
-                    });
-                }
+                sendMsg(ip.concat("_onlineStatus"), "1");
             }
             if (StringUtils.isNotBlank(ipsNo)) {
-                List<DeviceMessage> deviceMessageList = deviceParamListMap.get(ip.concat("_onlineStatus"));
-                if (!CollectionUtils.isEmpty(deviceMessageList)) {
-                    deviceMessageList.forEach(deviceMessage -> {
-                        if (deviceMessage != null) {
-                            deviceMessage.setValue("0");
-                            sendMessage(deviceMessage);
-                        }
-                    });
-                }
+                sendMsg(ip.concat("_onlineStatus"), "0");
             }
         });
         alarmStatus();
@@ -419,7 +401,7 @@ public class HikVisionEasDevice extends BaseDevice {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         log.info("接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
-        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
+        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             try {
                 if ("1.0".equals(value)) {
                     alarmHostSubSystemSetupAlarmChan(1);
@@ -459,56 +441,28 @@ public class HikVisionEasDevice extends BaseDevice {
         for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
             byte b = acsWorkStatus.bySetupAlarmStatus[i];
             //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
-            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_deployWithdrawAlarmStatus");
-            if (!CollectionUtils.isEmpty(deviceMessages)) {
-                for (DeviceMessage deviceMessage : deviceMessages) {
-                    log.info("撤布防状态：{}=={}", i, b);
-                    deviceMessage.setValue(String.valueOf(b));
-                    sendMessage(deviceMessage);
-                }
-            }
+            sendMsg(i + 1 + DEPLOY_WITHDRAW_ALARM_STATUS, String.valueOf(b));
         }
         //防区报警状态
         log.info("byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInStatus[i];
             //0- 对应防区当前无报警，1- 对应防区当前有报警
-            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_alarmStatus");
-            if (!CollectionUtils.isEmpty(deviceMessages)) {
-                for (DeviceMessage deviceMessage : deviceMessages) {
-                    log.info("防区报警状态：{}=={}", i, b);
-                    deviceMessage.setValue(String.valueOf(b));
-                    sendMessage(deviceMessage);
-                }
-            }
+            sendMsg(i + 1 + ALARM_STATUS, String.valueOf(b));
         }
         //防区故障状态
         log.info("byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInFaultStatus[i];
             //0-对应防区处于正常状态，1-对应防区处于故障状态
-            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_faultStatus");
-            if (!CollectionUtils.isEmpty(deviceMessages)) {
-                for (DeviceMessage deviceMessage : deviceMessages) {
-                    log.info("防区故障状态：{}=={}", i, b);
-                    deviceMessage.setValue(String.valueOf(b));
-                    sendMessage(deviceMessage);
-                }
-            }
+            sendMsg(i + 1 + FAULT_STATUS, String.valueOf(b));
         }
         //防区防拆状态
         log.info("byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInTamperStatus[i];
             //0-对应防区当前无报警，1-对应防区当前有报警
-            List<DeviceMessage> deviceMessages = deviceParamListMap.get(i + 1 + "_fangchaiStatus");
-            if (!CollectionUtils.isEmpty(deviceMessages)) {
-                for (DeviceMessage deviceMessage : deviceMessages) {
-                    log.info("防区防拆状态：{}=={}", i, b);
-                    deviceMessage.setValue(String.valueOf(b));
-                    sendMessage(deviceMessage);
-                }
-            }
+            sendMsg(i + 1 + FANGCHAI_STATUS, String.valueOf(b));
         }
     }
 
