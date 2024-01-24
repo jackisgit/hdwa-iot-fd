@@ -38,6 +38,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class DhFD extends BaseDevice {
 
+    public static final String ALARM_STATUS = "_alarmStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_STATUS = "_deployWithdrawAlarmStatus";
+    public static final String ONLINE_STATUS = "_onlineStatus";
+    public static final String DEPLOY_WITHDRAW_ALARM_SET = "deployWithdrawAlarmSet";
     public static int m_nDLLHandle = 1;
     //通道布撤防
     public static int operateChannel = dpsdk_netalarmhost_operator_e.AHOST_OPERATE_CHANNEL;
@@ -213,7 +217,7 @@ public class DhFD extends BaseDevice {
             } else {
                 value="1";
             }
-            sendMsg(info.getId().concat("_alarmStatus"),value);
+            sendMsg(info.getId().concat(ALARM_STATUS),value);
             String status;
             //1表示布防，0表示撤防
             if (defendStatus) {
@@ -221,12 +225,12 @@ public class DhFD extends BaseDevice {
             } else {
                 status="0";
             }
-            sendMsg(info.getId().concat("_deployWithdrawAlarmStatus"),status);
+            sendMsg(info.getId().concat(DEPLOY_WITHDRAW_ALARM_STATUS),status);
             String channleId = DeviceId + "$" + UnitNodesType + "$" + info.getId();
             byte[] cameraId = getChannelByte(channleId);
             Return_Value_Info_t nStatus = new Return_Value_Info_t();
             IDpsdkCore.DPSDK_GetChannelStatus(m_nDLLHandle, cameraId, nStatus);
-            sendMsg(info.getId().concat("_onlineStatus"), Integer.toString(nStatus.nReturnValue));
+            sendMsg(info.getId().concat(ONLINE_STATUS), Integer.toString(nStatus.nReturnValue));
         }
         return true;
     }
@@ -242,7 +246,7 @@ public class DhFD extends BaseDevice {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         log.info("接收到防盗报警撤布防指令：meter:{},funcId：{},value:{},deviceMessage:{}", meter, funcid, value, message);
-        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith("deployWithdrawAlarmSet")) {
+        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             if (redisUtil.hasKey(deviceMessage.getOutParamId())) {
                 commonDevice.feedback(message);
                 return;
