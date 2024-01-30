@@ -25,6 +25,7 @@ public class HikVisionEasDevice extends BaseDevice {
     public static final String FAULT_STATUS = "_faultStatus";
     public static final String FANGCHAI_STATUS = "_fangchaiStatus";
     public static final String DEPLOY_WITHDRAW_ALARM_SET = "deployWithdrawAlarmSet";
+    public static final String ONLINE_STATUS = "_onlineStatus";
     static HCNetSDK hCNetSDK;
     static int lUserID = -1;//用户句柄 实现对设备登录
     static int lAlarmHandle = -1;//报警布防句柄
@@ -338,10 +339,10 @@ public class HikVisionEasDevice extends BaseDevice {
             String ipsOK = pingUtil.getIpsOK();
             String ipsNo = pingUtil.getIpsNO();
             if (StringUtils.isNotBlank(ipsOK)) {
-                sendMsg(ip.concat("_onlineStatus"), "1");
+                sendMsg(ip.concat(ONLINE_STATUS), "1");
             }
             if (StringUtils.isNotBlank(ipsNo)) {
-                sendMsg(ip.concat("_onlineStatus"), "0");
+                sendMsg(ip.concat(ONLINE_STATUS), "0");
             }
         });
         alarmStatus();
