@@ -28,5 +28,6 @@ epc:
   serviceIp: 10.10.49.61|7700
   threadNum: 1
   cron: 0 0/30 * * * ?
+  onlineStatusCheckTime: 600
 
 

@@ -13,30 +13,22 @@ import java.util.Vector;
 @Component
 public class BosFdCommunicator implements Runnable {
 
+    public static Long sysTime = 0l;
     private Vector<BostFdDataArriveListener> eventRepository = new Vector<>();
-
     private Pointer pObject;
-
     @Value("${epc.rcvAddress}")
     private String rcvAddress;
-
     @Value("${epc.pCtlAddress}")
     private String pCtlAddress;
-
     @Value("${epc.serviceIp}")
     private String serviceIp;
-
     private boolean interrupted = false;
-
-    public static Long sysTime = 0l;
-
     private boolean isRevice = true;
 
     public void openReceived() {
         // 实例化panel
         pObject = BoschSecurity.BS7400CtlDLL.instance.New_Object();
         BoschSecurity.BS7400CtlDLL.instance.ArrangeRcvAddress(pObject, rcvAddress, pCtlAddress);
-
         int dwResult = BoschSecurity.BS7400CtlDLL.instance.OpenReceiver(pObject,
                 (pPara, sRcvData, iDataLen) -> {
                     // 将监听读取到的数据放入监听类，返回给BGM
@@ -45,7 +37,7 @@ public class BosFdCommunicator implements Runnable {
                         listener.dataArrive(sRcvData);
                     }
                     //事件数据
-                    log.info("事件数据:{},时间数据长度:{}" + sRcvData, iDataLen);
+                    log.info("事件数据:{},时间数据长度:{}", sRcvData, iDataLen);
                 }, pObject);
         if (dwResult == 0) {
             log.info("打开接收事件/发送控制功能的IP地址成功打开");
