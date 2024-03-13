@@ -4,7 +4,7 @@ package com.wanda.epc.DTO;
 import lombok.Data;
 
 @Data
-public class StatusDTO {
+public class defenceAreaDTO {
 
     private String defenceAreaType;
     private String byPass;
