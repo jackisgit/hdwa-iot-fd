@@ -273,7 +273,7 @@ public class AlarmDataParse {
                     String sCIDDescribe = new String(strCIDalarm.sCIDDescribe, "GBK"); //CID事件名
                     byte bySubSysNo = strCIDalarm.bySubSysNo; //子系统号
                     if (strCIDalarm.wDefenceNo != 0xff) {
-                       log.info("防区号：" + Integer.sum(strCIDalarm.wDefenceNo, 1));
+                        log.info("防区号：" + Integer.sum(strCIDalarm.wDefenceNo, 1));
                     }
                     log.info("【CID事件】" + "触发时间：" + TriggerTime + "CID事件号：" + sCIDCode + "CID事件名：" + sCIDDescribe + "子系统号：" +
                             bySubSysNo);

@@ -28,16 +28,11 @@ public class HikVisionEasDevice extends BaseDevice {
     public static final String ONLINE_STATUS = "_onlineStatus";
     static HCNetSDK hCNetSDK;
     static int lUserID = -1;//用户句柄 实现对设备登录
-    static int lAlarmHandle = -1;//报警布防句柄
-
-
     static int lListenHandle = -1;//报警监听句柄
-
     static FMSGCallBack fMSFCallBack = null;
-
     static HCNetSDK.FMSGCallBack_V31 fMSFCallBack_V31 = null;
-
-
+    @Value("${epc.group}")
+    private String epcGroup;
     @Value("${hikVision.ip}")
     private String ip;
 
@@ -404,12 +399,16 @@ public class HikVisionEasDevice extends BaseDevice {
         log.info("接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
         if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             try {
-                if ("1.0".equals(value)) {
-                    alarmHostSubSystemSetupAlarmChan(1);
-                    alarmHostSubSystemSetupAlarmChan(2);
-                } else {
-                    alarmHostSubSystemCloseAlarmChan(1);
-                    alarmHostSubSystemCloseAlarmChan(2);
+                String[] groups = epcGroup.split(",");
+                if (groups.length == 0) {
+                    return;
+                }
+                for (String group : groups) {
+                    if ("1.0".equals(value)) {
+                        alarmHostSubSystemSetupAlarmChan(Integer.valueOf(group));
+                    } else {
+                        alarmHostSubSystemCloseAlarmChan(Integer.valueOf(group));
+                    }
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());

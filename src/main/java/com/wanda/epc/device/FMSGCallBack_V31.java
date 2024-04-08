@@ -1,4 +1,3 @@
-
 package com.wanda.epc.device;
 
 import com.sun.jna.Pointer;

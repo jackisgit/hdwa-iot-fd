@@ -14,15 +14,15 @@ public class IotEpaFDApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(IotEpaFDApplication.class, args);
-        String group = context.getEnvironment().getProperty("epc.group");
-        String[] groups = group.split(",");
+        String epcGroup = context.getEnvironment().getProperty("epc.group");
+        String[] groups = epcGroup.split(",");
         if (groups.length == 0) {
             return;
         }
-        for (String arg : groups) {
-            log.info("使能开始，子系统号：{}", arg);
-            HikVisionEasDevice.subsystemParamEx(Integer.valueOf(arg));
-            log.info("使能结束，子系统号：{}", arg);
+        for (String group : groups) {
+            log.info("使能开始，子系统号：{}", group);
+            HikVisionEasDevice.subsystemParamEx(Integer.valueOf(group));
+            log.info("使能结束，子系统号：{}", group);
         }
     }
 
