@@ -396,8 +396,7 @@ public class ZoneArmMode {
         /**
          * 密码
          */
-        String szPwd = "admin123";
-        System.arraycopy(szPwd.getBytes(), 0, stuIn.szPwd, 0, szPwd.getBytes().length);
+        System.arraycopy(m_strPassword.getBytes(), 0, stuIn.szPwd, 0, m_strPassword.getBytes().length);
 
 
         stuIn.write();
@@ -445,8 +444,7 @@ public class ZoneArmMode {
     public void setArmMode() throws UnsupportedEncodingException {
         NET_IN_SET_ALARMMODE stuInParam = new NET_IN_SET_ALARMMODE();
         stuInParam.emArmType = EM_ARM_TYPE.EM_ARM_TYPE_DISARMING.getValue();
-        String szPwd = "admin123";
-        System.arraycopy(szPwd.getBytes(), 0, stuInParam.szPwd, 0, szPwd.getBytes().length);
+        System.arraycopy(m_strPassword.getBytes(), 0, stuInParam.szPwd, 0, m_strPassword.getBytes().length);
 
         stuInParam.nAreaNum = 1;
         stuInParam.arrAreas[0] = 1;
@@ -509,17 +507,14 @@ public class ZoneArmMode {
         input.nZoneNum = 1;
         input.nZones[0] = zoneNo;//17
         byte[] szPwd = input.szPwd;
-        String pwd = "admin123456";// admin123456
-        StringToByteArr(pwd, szPwd, encode);
+        StringToByteArr(m_strPassword, szPwd, encode);
         byte[] szArmMode = input.szArmMode;
         StringToByteArr(armMode, szArmMode, encode);
         NET_ARM_DETAIL_OPTIONS stuArmDetailOptions = input.stuArmDetailOptions;
         stuArmDetailOptions.emProfile = NET_EM_SCENE_MODE.NET_EM_SCENE_MODE_WHOLE.getValue();
-//        stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_USER.getValue();
         stuArmDetailOptions.emTriggerMode = EM_AREAARM_TRIGGERMODE.EM_AREAARM_TRIGGERMODE_REMOTE.getValue();
         byte[] szName = stuArmDetailOptions.szName;
-        String name = "admin";//admin
-        StringToByteArr(name, szName, encode);
+        StringToByteArr(m_strUser, szName, encode);
         byte[] szClientAddress = stuArmDetailOptions.szClientAddress;
         String clientAddress = "192.168.1.3";//实际客户端ip，慧云服务器ip
         StringToByteArr(clientAddress, szClientAddress, encode);
@@ -572,9 +567,7 @@ public class ZoneArmMode {
          */
         byte[] szPwd = input.szPwd;
 
-        String pwd = "123pwd";// admin123456
-
-        StringToByteArr(pwd, szPwd, encode);
+        StringToByteArr(m_strPassword, szPwd, encode);
 
         byte[] szArmMode = input.szArmMode;
 
@@ -597,9 +590,7 @@ public class ZoneArmMode {
         byte[] szName
                 = stuArmDetailOptions.szName;
 
-        String name = "user1";//admin
-
-        StringToByteArr(name, szName, encode);
+        StringToByteArr(m_strUser, szName, encode);
 
         byte[] szClientAddress
                 = stuArmDetailOptions.szClientAddress;
