@@ -28,14 +28,6 @@ public enum EM_DETECT_OBJECT_TYPE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_DETECT_OBJECT_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -65,6 +57,14 @@ public enum EM_DETECT_OBJECT_TYPE {
                 return e;
         }
         return EM_DETECT_OBJECT_TYPE.EM_DETECT_OBJECT_TYPE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

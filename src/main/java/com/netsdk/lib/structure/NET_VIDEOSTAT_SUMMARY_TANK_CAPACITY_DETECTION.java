@@ -8,27 +8,27 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/10/28 11:34:32
  */
 public class NET_VIDEOSTAT_SUMMARY_TANK_CAPACITY_DETECTION extends NetSDKLib.SdkStructure {
-	/**
-	 * 通道号
-	 */
-	public int nChannelID;
-	/**
-	 * 贮柜当前状态 {@link com.netsdk.lib.enumeration.EM_TANK_STATUS}
-	 */
-	public int emTankStatus;
-	/**
-	 * 时间
-	 */
-	public NET_TIME_EX stuUTC = new NET_TIME_EX();
-	/**
-	 * 用料当前占比（百分比）
-	 */
-	public int nCurrentRatio;
-	/**
-	 * 保留字节
-	 */
-	public byte[] szReserved = new byte[1024];
+    /**
+     * 通道号
+     */
+    public int nChannelID;
+    /**
+     * 贮柜当前状态 {@link com.netsdk.lib.enumeration.EM_TANK_STATUS}
+     */
+    public int emTankStatus;
+    /**
+     * 时间
+     */
+    public NET_TIME_EX stuUTC = new NET_TIME_EX();
+    /**
+     * 用料当前占比（百分比）
+     */
+    public int nCurrentRatio;
+    /**
+     * 保留字节
+     */
+    public byte[] szReserved = new byte[1024];
 
-	public NET_VIDEOSTAT_SUMMARY_TANK_CAPACITY_DETECTION() {
-	}
+    public NET_VIDEOSTAT_SUMMARY_TANK_CAPACITY_DETECTION() {
+    }
 }

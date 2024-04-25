@@ -2,8 +2,6 @@ package com.netsdk.lib.structure;
 
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.enumeration.EM_RADAR_GETCAPS_AREASUB_TYPE;
-import com.netsdk.lib.enumeration.EM_RADAR_GETCAPS_RADAR_TYPE;
 
 /**
  * @author 260611

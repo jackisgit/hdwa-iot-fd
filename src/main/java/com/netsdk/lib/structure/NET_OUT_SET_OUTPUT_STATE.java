@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 16:49:41
  */
 public class NET_OUT_SET_OUTPUT_STATE extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_SET_OUTPUT_STATE() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_SET_OUTPUT_STATE() {
+        this.dwSize = this.size();
+    }
 }

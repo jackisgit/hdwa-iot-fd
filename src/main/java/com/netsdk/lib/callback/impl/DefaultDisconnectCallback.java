@@ -12,12 +12,13 @@ import com.sun.jna.Pointer;
 public class DefaultDisconnectCallback implements NetSDKLib.fDisConnect {
     private static volatile DefaultDisconnectCallback INSTANCE;
 
-    private DefaultDisconnectCallback() {}
+    private DefaultDisconnectCallback() {
+    }
 
     public static DefaultDisconnectCallback getINSTANCE() {
         if (INSTANCE == null) {
-            synchronized (DefaultDisconnectCallback.class){
-                if (INSTANCE == null){
+            synchronized (DefaultDisconnectCallback.class) {
+                if (INSTANCE == null) {
                     INSTANCE = new DefaultDisconnectCallback();
                 }
             }

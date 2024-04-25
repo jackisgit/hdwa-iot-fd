@@ -9,13 +9,13 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_CTRL_LOWRATEWPAN_ADD extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 对码数据
-	 */
-	public NetSDKLib.NET_CODEID_INFO stuCodeIDInfo = new NetSDKLib.NET_CODEID_INFO();
+    public int dwSize;
+    /**
+     * 对码数据
+     */
+    public NetSDKLib.NET_CODEID_INFO stuCodeIDInfo = new NetSDKLib.NET_CODEID_INFO();
 
-	public NET_CTRL_LOWRATEWPAN_ADD() {
-		this.dwSize = this.size();
-	}
+    public NET_CTRL_LOWRATEWPAN_ADD() {
+        this.dwSize = this.size();
+    }
 }

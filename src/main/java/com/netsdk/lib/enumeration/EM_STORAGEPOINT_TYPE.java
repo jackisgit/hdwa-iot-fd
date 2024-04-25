@@ -65,14 +65,6 @@ public enum EM_STORAGEPOINT_TYPE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_STORAGEPOINT_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -94,6 +86,14 @@ public enum EM_STORAGEPOINT_TYPE {
             }
         }
         return -1;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/04/20 14:04:30
  */
 public class NET_OUT_FACERSERVER_GETDETEVTTOKEN extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 获取到的查询令牌
-	 */
-	public int nToken;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 获取到的查询令牌
+     */
+    public int nToken;
 
-	public NET_OUT_FACERSERVER_GETDETEVTTOKEN() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_FACERSERVER_GETDETEVTTOKEN() {
+        this.dwSize = this.size();
+    }
 }

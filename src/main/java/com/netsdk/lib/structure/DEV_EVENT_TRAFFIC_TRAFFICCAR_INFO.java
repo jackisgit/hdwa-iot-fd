@@ -161,7 +161,7 @@ public class DEV_EVENT_TRAFFIC_TRAFFICCAR_INFO extends NetSDKLib.SdkStructure {
     /**
      * 自定义车位号（停车场用）
      */
-    public byte[] szCustomParkNo = new byte[33]; 
+    public byte[] szCustomParkNo = new byte[33];
 
     public byte[] byReserved1 = new byte[3];
     /**

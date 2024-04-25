@@ -4,7 +4,6 @@ import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.enumeration.EM_DETECT_SENSOR_TYPE;
 import com.netsdk.lib.enumeration.EM_VEHICLEINOUT_CAR_TYPE;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -101,27 +100,27 @@ public class NET_VEHICLE_OBJECT extends NetSDKLib.SdkStructure {
     /**
      * 物体是否在视频车道内, 0:未知, 1:物体不在视频车道内, 2:物体在视频车道内
      */
-    public  int		nObjectInVideoLane;
+    public int nObjectInVideoLane;
     /**
      * 目标物体实际行驶方向 0-未知，1-直行，2-左转，3-右转，4-掉头
      */
-    public int						nDirection;
+    public int nDirection;
     /**
      * 目标横向运动速度
      */
-    public  float					fSpeedX;
+    public float fSpeedX;
     /**
      * 目标纵向运动速度
      */
-    public float					fSpeedY;
+    public float fSpeedY;
     /**
      * 航向角
      */
-    public double					dbHeadingAngle;
+    public double dbHeadingAngle;
     /**
-     *车身坐标，包围盒0~8191相对坐标
+     * 车身坐标，包围盒0~8191相对坐标
      */
-    public  NET_RECT				stuCarBoundingBox=new NET_RECT();
+    public NET_RECT stuCarBoundingBox = new NET_RECT();
     /**
      * 保留字节
      */

@@ -2,7 +2,8 @@ package com.netsdk.lib.structure;
 
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.NetSDKLib.*;
+import com.netsdk.lib.NetSDKLib.CFG_ALARM_MSG_HANDLE;
+import com.netsdk.lib.NetSDKLib.CFG_TIME_SECTION;
 
 
 /**

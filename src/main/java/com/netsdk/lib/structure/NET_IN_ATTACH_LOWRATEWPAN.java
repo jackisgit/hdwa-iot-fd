@@ -10,17 +10,17 @@ import com.sun.jna.Pointer;
  */
 public class NET_IN_ATTACH_LOWRATEWPAN extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 对码数据回调
-	 */
-	public NetSDKLib.fAttachLowRateWPANCB cbAttachLowRateWPANCB;
-	/**
-	 * 用户数据
-	 */
-	public Pointer dwUser;
+    public int dwSize;
+    /**
+     * 对码数据回调
+     */
+    public NetSDKLib.fAttachLowRateWPANCB cbAttachLowRateWPANCB;
+    /**
+     * 用户数据
+     */
+    public Pointer dwUser;
 
-	public NET_IN_ATTACH_LOWRATEWPAN() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_ATTACH_LOWRATEWPAN() {
+        this.dwSize = this.size();
+    }
 }

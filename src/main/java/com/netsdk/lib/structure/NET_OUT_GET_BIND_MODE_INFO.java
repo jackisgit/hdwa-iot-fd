@@ -9,16 +9,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/09/15 10:59:48
  */
 public class NET_OUT_GET_BIND_MODE_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * / 此结构体大小,必须赋值
-	 */
-	public int dwSize;
-	/**
-	 * / 绑定模式 {@link com.netsdk.lib.enumeration.EM_BIND_MODE}
-	 */
-	public int emBindMode;
+    /**
+     * / 此结构体大小,必须赋值
+     */
+    public int dwSize;
+    /**
+     * / 绑定模式 {@link com.netsdk.lib.enumeration.EM_BIND_MODE}
+     */
+    public int emBindMode;
 
-	public NET_OUT_GET_BIND_MODE_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_GET_BIND_MODE_INFO() {
+        this.dwSize = this.size();
+    }
 }

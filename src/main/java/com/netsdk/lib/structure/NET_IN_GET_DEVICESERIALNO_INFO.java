@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 20:18:02
  */
 public class NET_IN_GET_DEVICESERIALNO_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_IN_GET_DEVICESERIALNO_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_GET_DEVICESERIALNO_INFO() {
+        this.dwSize = this.size();
+    }
 }

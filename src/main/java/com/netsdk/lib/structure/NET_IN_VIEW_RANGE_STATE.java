@@ -11,21 +11,21 @@ import com.sun.jna.Pointer;
  */
 public class NET_IN_VIEW_RANGE_STATE extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 云台通道
-	 */
-	public int nChannel;
-	/**
-	 * 状态回调函数
-	 */
-	public NetSDKLib.fViewRangeStateCallBack cbViewRange;
-	/**
-	 * 用户数据
-	 */
-	public Pointer dwUser;
+    public int dwSize;
+    /**
+     * 云台通道
+     */
+    public int nChannel;
+    /**
+     * 状态回调函数
+     */
+    public NetSDKLib.fViewRangeStateCallBack cbViewRange;
+    /**
+     * 用户数据
+     */
+    public Pointer dwUser;
 
-	public NET_IN_VIEW_RANGE_STATE() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_VIEW_RANGE_STATE() {
+        this.dwSize = this.size();
+    }
 }

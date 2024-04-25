@@ -15,17 +15,6 @@ import static com.netsdk.lib.Utils.getOsPrefix;
 
 public class MessCallBack implements NetSDKLib.fMessCallBack {
 
-    private MessCallBack() {
-    }
-
-    private static class CallBackHolder {
-        private static final MessCallBack cb = new MessCallBack();
-    }
-
-    public static final MessCallBack getInstance() {
-        return CallBackHolder.cb;
-    }
-
     public static String encode;
 
     static {
@@ -35,6 +24,13 @@ public class MessCallBack implements NetSDKLib.fMessCallBack {
         } else if (osPrefix.toLowerCase().startsWith("linux-amd64")) {
             encode = "UTF-8";
         }
+    }
+
+    private MessCallBack() {
+    }
+
+    public static final MessCallBack getInstance() {
+        return CallBackHolder.cb;
     }
 
     @Override
@@ -493,5 +489,9 @@ public class MessCallBack implements NetSDKLib.fMessCallBack {
         }
 
         return true;
+    }
+
+    private static class CallBackHolder {
+        private static final MessCallBack cb = new MessCallBack();
     }
 }

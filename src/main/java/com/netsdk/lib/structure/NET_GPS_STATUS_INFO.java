@@ -3,8 +3,6 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
-import java.util.Arrays;
-
 /**
  * @author 291189
  * @description GPS状态信息

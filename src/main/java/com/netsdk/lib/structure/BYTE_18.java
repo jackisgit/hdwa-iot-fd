@@ -10,5 +10,5 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class BYTE_18 extends NetSDKLib.SdkStructure {
 
-	public byte[] str_18 = new byte[18];
+    public byte[] str_18 = new byte[18];
 }

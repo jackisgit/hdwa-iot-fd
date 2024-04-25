@@ -15,7 +15,7 @@ public class NET_CFG_SIZE extends SdkStructure {
     /**
      * 高
      */
-    public float             nHeight;
+    public float nHeight;
 
 
 }

@@ -18,54 +18,53 @@ public class SecurityGateAttachAlarmStatisticsCallBack implements fSecurityGateA
     private SecurityGateAttachAlarmStatisticsCallBack() {
     }
 
-    private static class CallBackHolder {
-        private static SecurityGateAttachAlarmStatisticsCallBack instance = new SecurityGateAttachAlarmStatisticsCallBack();
-    }
-
     public static SecurityGateAttachAlarmStatisticsCallBack getInstance() {
         return CallBackHolder.instance;
     }
 
-
     @Override
     public void invoke(NetSDKLib.LLong lAttachHandle, Pointer pInfo, Pointer dwUser) {
 
-        NET_SECURITYGATE_ALARM_STATISTICS_INFO net_securitygate_alarm_statistics_info=new NET_SECURITYGATE_ALARM_STATISTICS_INFO();
+        NET_SECURITYGATE_ALARM_STATISTICS_INFO net_securitygate_alarm_statistics_info = new NET_SECURITYGATE_ALARM_STATISTICS_INFO();
 
         ToolKits.GetPointerData(pInfo, net_securitygate_alarm_statistics_info);
 
         byte[] szUUID = net_securitygate_alarm_statistics_info.szUUID;
 
-        System.out.println("uuid:"+new String(szUUID));
+        System.out.println("uuid:" + new String(szUUID));
 
         int nAlarmIn = net_securitygate_alarm_statistics_info.nAlarmIn;
 
-        System.out.println("nAlarmIn:"+nAlarmIn);
+        System.out.println("nAlarmIn:" + nAlarmIn);
 
         int nAlarmOut = net_securitygate_alarm_statistics_info.nAlarmOut;
 
-        System.out.println("nAlarmOut:"+nAlarmOut);
+        System.out.println("nAlarmOut:" + nAlarmOut);
 
         int nPassIn = net_securitygate_alarm_statistics_info.nPassIn;
 
-        System.out.println("nPassIn:"+nPassIn);
+        System.out.println("nPassIn:" + nPassIn);
 
         NET_TIME_EX stuBeginTime = net_securitygate_alarm_statistics_info.stuBeginTime;
 
-        System.out.println("stuBeginTime:"+stuBeginTime);
+        System.out.println("stuBeginTime:" + stuBeginTime);
 
         NET_TIME_EX stuEndTime = net_securitygate_alarm_statistics_info.stuEndTime;
 
-        System.out.println("stuEndTime:"+stuEndTime);
+        System.out.println("stuEndTime:" + stuEndTime);
 
         int nPassOut = net_securitygate_alarm_statistics_info.nPassOut;
 
-        System.out.println("nPassOut:"+nPassOut);
+        System.out.println("nPassOut:" + nPassOut);
 
         int nStatisticsInfoID = net_securitygate_alarm_statistics_info.nStatisticsInfoID;
 
-        System.out.println("nStatisticsInfoID:"+nStatisticsInfoID);
+        System.out.println("nStatisticsInfoID:" + nStatisticsInfoID);
 
 
+    }
+
+    private static class CallBackHolder {
+        private static SecurityGateAttachAlarmStatisticsCallBack instance = new SecurityGateAttachAlarmStatisticsCallBack();
     }
 }

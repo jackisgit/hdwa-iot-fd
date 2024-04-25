@@ -33,14 +33,6 @@ public enum EM_CTRL_ENABLE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_CTRL_ENABLE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -71,6 +63,14 @@ public enum EM_CTRL_ENABLE {
             }
         }
         return EM_CTRL_ENABLE.EM_CTRL_NORMAL;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

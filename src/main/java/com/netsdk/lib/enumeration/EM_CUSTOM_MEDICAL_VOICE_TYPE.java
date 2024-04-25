@@ -44,14 +44,6 @@ public enum EM_CUSTOM_MEDICAL_VOICE_TYPE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_CUSTOM_MEDICAL_VOICE_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -81,6 +73,14 @@ public enum EM_CUSTOM_MEDICAL_VOICE_TYPE {
                 return e;
         }
         return EM_CUSTOM_MEDICAL_VOICE_TYPE.EM_CUSTOM_MEDICAL_VOICE_TYPE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

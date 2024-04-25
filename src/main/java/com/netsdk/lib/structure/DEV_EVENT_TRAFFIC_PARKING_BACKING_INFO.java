@@ -5,7 +5,7 @@ import com.netsdk.lib.NetSDKLib;
 
 /**
  * @author 421657
- * @description  事件类型EVENT_IVS_TRAFFIC_PARKING_BACKING (出入口倒车驶离事件)对应的数据块描述信息
+ * @description 事件类型EVENT_IVS_TRAFFIC_PARKING_BACKING (出入口倒车驶离事件)对应的数据块描述信息
  * @origin autoTool
  * @date 2023/11/21 08:54:17
  */

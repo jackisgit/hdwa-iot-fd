@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/05/24 10:24:52
  */
 public class NET_IN_SET_CALIBRATEINFO_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 标定点信息
-	 */
-	public NET_GET_CALIBRATEINFO_POINT_INFO stuPointInfo = new NET_GET_CALIBRATEINFO_POINT_INFO();
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 标定点信息
+     */
+    public NET_GET_CALIBRATEINFO_POINT_INFO stuPointInfo = new NET_GET_CALIBRATEINFO_POINT_INFO();
 
-	public NET_IN_SET_CALIBRATEINFO_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_SET_CALIBRATEINFO_INFO() {
+        this.dwSize = this.size();
+    }
 }

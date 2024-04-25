@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/16 11:04:51
  */
 public class NET_OUT_DELETE_ALARM_USER extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_DELETE_ALARM_USER() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_DELETE_ALARM_USER() {
+        this.dwSize = this.size();
+    }
 }

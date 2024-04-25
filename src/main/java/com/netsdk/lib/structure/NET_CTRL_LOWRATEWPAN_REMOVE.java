@@ -9,17 +9,17 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_CTRL_LOWRATEWPAN_REMOVE extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 无线设备ID
-	 */
-	public long nWirelessId;
-	/**
-	 * 无线设备序列号 无线对码后续采用序列号的方式
-	 */
-	public byte[] szSerialNumber = new byte[32];
+    public int dwSize;
+    /**
+     * 无线设备ID
+     */
+    public long nWirelessId;
+    /**
+     * 无线设备序列号 无线对码后续采用序列号的方式
+     */
+    public byte[] szSerialNumber = new byte[32];
 
-	public NET_CTRL_LOWRATEWPAN_REMOVE() {
-		this.dwSize = this.size();
-	}
+    public NET_CTRL_LOWRATEWPAN_REMOVE() {
+        this.dwSize = this.size();
+    }
 }

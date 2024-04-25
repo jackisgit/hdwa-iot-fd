@@ -25,14 +25,6 @@ public enum EM_LC_CONFIG_VERSION {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_LC_CONFIG_VERSION(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -63,6 +55,14 @@ public enum EM_LC_CONFIG_VERSION {
             }
         }
         return EM_LC_CONFIG_VERSION.EM_LC_CONFIG_VERSION_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

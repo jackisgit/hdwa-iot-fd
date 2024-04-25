@@ -9,15 +9,15 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/08/24 14:01:18
  */
 public class CFG_AUTO_REMOTE_CHECK_INFO_EX extends NetSDKLib.SdkStructure {
-	/**
-	 * 远程验证假日计划, 需要远程验证的假日计划, 值为AccessHolidaySchedule索引
-	 */
-	public int nHolidayScheduleID;
-	/**
-	 * 保留字节
-	 */
-	public byte[] szResvered = new byte[60];
+    /**
+     * 远程验证假日计划, 需要远程验证的假日计划, 值为AccessHolidaySchedule索引
+     */
+    public int nHolidayScheduleID;
+    /**
+     * 保留字节
+     */
+    public byte[] szResvered = new byte[60];
 
-	public CFG_AUTO_REMOTE_CHECK_INFO_EX() {
-	}
+    public CFG_AUTO_REMOTE_CHECK_INFO_EX() {
+    }
 }

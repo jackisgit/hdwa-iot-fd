@@ -8,20 +8,20 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/05/24 10:24:50
  */
 public class NET_IN_GET_CALIBRATEINFO_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 标定点编号
-	 */
-	public int nID;
-	/**
-	 * 通道号
-	 */
-	public int nChannel;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 标定点编号
+     */
+    public int nID;
+    /**
+     * 通道号
+     */
+    public int nChannel;
 
-	public NET_IN_GET_CALIBRATEINFO_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_GET_CALIBRATEINFO_INFO() {
+        this.dwSize = this.size();
+    }
 }

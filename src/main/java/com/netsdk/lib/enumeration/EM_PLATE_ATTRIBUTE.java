@@ -32,14 +32,6 @@ public enum EM_PLATE_ATTRIBUTE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_PLATE_ATTRIBUTE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -69,6 +61,14 @@ public enum EM_PLATE_ATTRIBUTE {
                 return e;
         }
         return EM_PLATE_ATTRIBUTE.EM_PLATE_ATTRIBUTE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

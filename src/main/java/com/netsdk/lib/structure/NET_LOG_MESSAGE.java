@@ -9,13 +9,13 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_LOG_MESSAGE extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 日志内容
-	 */
-	public byte[] szLogMessage = new byte[1024];
+    public int dwSize;
+    /**
+     * 日志内容
+     */
+    public byte[] szLogMessage = new byte[1024];
 
-	public NET_LOG_MESSAGE() {
-		this.dwSize = this.size();
-	}
+    public NET_LOG_MESSAGE() {
+        this.dwSize = this.size();
+    }
 }

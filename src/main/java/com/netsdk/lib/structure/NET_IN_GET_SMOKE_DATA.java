@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/10/17 13:45:09
  */
 public class NET_IN_GET_SMOKE_DATA extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 通道号
-	 */
-	public int nChannel;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 通道号
+     */
+    public int nChannel;
 
-	public NET_IN_GET_SMOKE_DATA() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_GET_SMOKE_DATA() {
+        this.dwSize = this.size();
+    }
 }

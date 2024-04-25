@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/05/11 14:18:32
  */
 public class NET_IN_GET_STATEMANAGER_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 状态枚举 {@link com.netsdk.lib.enumeration.EM_STATEMANAGER_STATE}
-	 */
-	public int emState;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 状态枚举 {@link com.netsdk.lib.enumeration.EM_STATEMANAGER_STATE}
+     */
+    public int emState;
 
-	public NET_IN_GET_STATEMANAGER_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_GET_STATEMANAGER_INFO() {
+        this.dwSize = this.size();
+    }
 }

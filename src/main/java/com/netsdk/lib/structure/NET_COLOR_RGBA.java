@@ -33,6 +33,7 @@ public class NET_COLOR_RGBA extends NetSDKLib.SdkStructure {
         nBlue = B;
         nAlpha = A;
     }
+
     @Override
     public String toString() {
         return String.format("RGBN ( %03d, %03d, %03d, %03d )", nRed, nGreen, nBlue, nAlpha);

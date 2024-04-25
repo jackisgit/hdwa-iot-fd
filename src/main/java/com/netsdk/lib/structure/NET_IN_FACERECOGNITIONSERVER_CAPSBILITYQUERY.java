@@ -9,12 +9,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/07/31 09:25:32
  */
 public class NET_IN_FACERECOGNITIONSERVER_CAPSBILITYQUERY extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_IN_FACERECOGNITIONSERVER_CAPSBILITYQUERY() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_FACERECOGNITIONSERVER_CAPSBILITYQUERY() {
+        this.dwSize = this.size();
+    }
 }

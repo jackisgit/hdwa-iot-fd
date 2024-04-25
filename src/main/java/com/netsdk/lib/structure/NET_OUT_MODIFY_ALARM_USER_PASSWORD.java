@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/16 11:01:56
  */
 public class NET_OUT_MODIFY_ALARM_USER_PASSWORD extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_MODIFY_ALARM_USER_PASSWORD() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_MODIFY_ALARM_USER_PASSWORD() {
+        this.dwSize = this.size();
+    }
 }

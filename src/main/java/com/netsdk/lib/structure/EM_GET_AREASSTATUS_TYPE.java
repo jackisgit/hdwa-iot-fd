@@ -2,32 +2,23 @@ package com.netsdk.lib.structure;
 
 /**
  * 获取异常防区类型
-*/
-public enum EM_GET_AREASSTATUS_TYPE
-{
+ */
+public enum EM_GET_AREASSTATUS_TYPE {
     /**
      * 未知
-    */
+     */
     EM_GET_AREASSTATUS_TYPE_UNKNOWN(0, "未知"),
     /**
      * 激活
-    */
+     */
     EM_GET_AREASSTATUS_TYPE_ACTIVE(1, "激活"),
     /**
      * 打开
-    */
+     */
     EM_GET_AREASSTATUS_TYPE_OPEN(2, "打开");
 
     private int value;
     private String note;
-
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
 
     EM_GET_AREASSTATUS_TYPE(int givenValue, String note) {
         this.value = givenValue;
@@ -50,6 +41,14 @@ public enum EM_GET_AREASSTATUS_TYPE
             }
         }
         return -1;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 }
 

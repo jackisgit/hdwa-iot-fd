@@ -33,14 +33,6 @@ public enum EM_LC_SUPPORT_EVENTS {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_LC_SUPPORT_EVENTS(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -71,6 +63,14 @@ public enum EM_LC_SUPPORT_EVENTS {
             }
         }
         return EM_LC_SUPPORT_EVENTS.EM_LC_SUPPORT_EVENTS_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

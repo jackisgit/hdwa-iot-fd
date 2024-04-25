@@ -6,52 +6,52 @@ package com.netsdk.lib.enumeration;
  * @date 2023/04/19 18:56:54
  */
 public enum EM_DEVICE_ATTRIBUTE {
-	/**
-	 * 未知
-	 */
-	EM_DEVICE_ATTRIBUTE_UNKNOWN(0, "未知"),
-	/**
-	 * 主属性
-	 */
-	EM_DEVICE_ATTRIBUTE_MASTER(1, "主属性"),
-	/**
-	 * 辅属性
-	 */
-	EM_DEVICE_ATTRIBUTE_ASSISTANT(2, "辅属性");
+    /**
+     * 未知
+     */
+    EM_DEVICE_ATTRIBUTE_UNKNOWN(0, "未知"),
+    /**
+     * 主属性
+     */
+    EM_DEVICE_ATTRIBUTE_MASTER(1, "主属性"),
+    /**
+     * 辅属性
+     */
+    EM_DEVICE_ATTRIBUTE_ASSISTANT(2, "辅属性");
 
-	private int value;
+    private int value;
 
-	private String note;
+    private String note;
 
-	public String getNote() {
-		return note;
-	}
+    EM_DEVICE_ATTRIBUTE(int givenValue, String note) {
+        this.value = givenValue;
+        this.note = note;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public static String getNoteByValue(int givenValue) {
+        for (EM_DEVICE_ATTRIBUTE enumType : EM_DEVICE_ATTRIBUTE.values()) {
+            if (givenValue == enumType.getValue()) {
+                return enumType.getNote();
+            }
+        }
+        return null;
+    }
 
-	EM_DEVICE_ATTRIBUTE(int givenValue, String note) {
-		this.value = givenValue;
-		this.note = note;
-	}
+    public static int getValueByNote(String givenNote) {
+        for (EM_DEVICE_ATTRIBUTE enumType : EM_DEVICE_ATTRIBUTE.values()) {
+            if (givenNote.equals(enumType.getNote())) {
+                return enumType.getValue();
+            }
+        }
+        return -1;
+    }
 
-	public static String getNoteByValue(int givenValue) {
-		for (EM_DEVICE_ATTRIBUTE enumType : EM_DEVICE_ATTRIBUTE.values()) {
-			if (givenValue == enumType.getValue()) {
-				return enumType.getNote();
-			}
-		}
-		return null;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public static int getValueByNote(String givenNote) {
-		for (EM_DEVICE_ATTRIBUTE enumType : EM_DEVICE_ATTRIBUTE.values()) {
-			if (givenNote.equals(enumType.getNote())) {
-				return enumType.getValue();
-			}
-		}
-		return -1;
-	}
+    public int getValue() {
+        return value;
+    }
 
 }

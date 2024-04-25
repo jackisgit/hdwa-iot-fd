@@ -9,9 +9,9 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DH_OUT_SPLIT_SET_RECT extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
+    public int dwSize;
 
-	public DH_OUT_SPLIT_SET_RECT() {
-		this.dwSize = this.size();
-	}
+    public DH_OUT_SPLIT_SET_RECT() {
+        this.dwSize = this.size();
+    }
 }

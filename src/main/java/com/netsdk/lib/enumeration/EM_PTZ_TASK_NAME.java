@@ -41,14 +41,6 @@ public enum EM_PTZ_TASK_NAME {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_PTZ_TASK_NAME(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -79,6 +71,14 @@ public enum EM_PTZ_TASK_NAME {
             }
         }
         return EM_PTZ_TASK_NAME.NET_EM_PTZ_TASK_NAME_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

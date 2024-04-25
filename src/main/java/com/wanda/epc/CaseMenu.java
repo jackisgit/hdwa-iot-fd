@@ -7,31 +7,6 @@ import java.util.Vector;
 
 public class CaseMenu {
 
-    public static class Item {
-        private Object object;
-        private String itemName;
-        private String methodName;
-
-        public Item(Object object, String itemName, String methodName) {
-            super();
-            this.object = object;
-            this.itemName = itemName;
-            this.methodName = methodName;
-        }
-
-        public Object getObject() {
-            return object;
-        }
-
-        public String getItemName() {
-            return itemName;
-        }
-
-        public String getMethodName() {
-            return methodName;
-        }
-    }
-
     protected Vector<Item> items;
 
     public CaseMenu() {
@@ -84,6 +59,31 @@ public class CaseMenu {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static class Item {
+        private Object object;
+        private String itemName;
+        private String methodName;
+
+        public Item(Object object, String itemName, String methodName) {
+            super();
+            this.object = object;
+            this.itemName = itemName;
+            this.methodName = methodName;
+        }
+
+        public Object getObject() {
+            return object;
+        }
+
+        public String getItemName() {
+            return itemName;
+        }
+
+        public String getMethodName() {
+            return methodName;
         }
     }
 }

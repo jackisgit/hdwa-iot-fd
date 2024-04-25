@@ -9,13 +9,13 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DH_OUT_SPLIT_GET_RECT extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 窗口位置, 0~8191
-	 */
-	public NetSDKLib.DH_RECT stuRect = new NetSDKLib.DH_RECT();
+    public int dwSize;
+    /**
+     * 窗口位置, 0~8191
+     */
+    public NetSDKLib.DH_RECT stuRect = new NetSDKLib.DH_RECT();
 
-	public DH_OUT_SPLIT_GET_RECT() {
-		this.dwSize = this.size();
-	}
+    public DH_OUT_SPLIT_GET_RECT() {
+        this.dwSize = this.size();
+    }
 }

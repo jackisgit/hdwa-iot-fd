@@ -9,65 +9,65 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DEV_EVENT_VEHICLE_DISTANCE_NEAR_INFO extends NetSDKLib.SdkStructure {
     /**
-     事件动作, 0表示脉冲事件, 1表示持续性事件开始, 2表示持续性事件结束;
+     * 事件动作, 0表示脉冲事件, 1表示持续性事件开始, 2表示持续性事件结束;
      */
-    public			int					nAction;
+    public int nAction;
     /**
-     事件发生的时间
+     * 事件发生的时间
      */
-    public			NET_TIME_EX					UTC=new NET_TIME_EX();
+    public NET_TIME_EX UTC = new NET_TIME_EX();
     /**
-     GPS信息
+     * GPS信息
      */
-    public			NET_GPS_STATUS_INFO					stuGPSStatusInfo=new NET_GPS_STATUS_INFO();
+    public NET_GPS_STATUS_INFO stuGPSStatusInfo = new NET_GPS_STATUS_INFO();
     /**
-     司机ID
+     * 司机ID
      */
-    public			byte[]					szDriverID=new byte[32];
+    public byte[] szDriverID = new byte[32];
     /**
-     违章关联视频FTP上传路径
+     * 违章关联视频FTP上传路径
      */
-    public			byte[]					szVideoPath=new byte[256];
+    public byte[] szVideoPath = new byte[256];
     /**
-     违章关联的多个视频信息个数
+     * 违章关联的多个视频信息个数
      */
-    public			int					nRelatingVideoInfoNum;
+    public int nRelatingVideoInfoNum;
     /**
-     违章关联的多个视频信息数组，最多支持16个视频
+     * 违章关联的多个视频信息数组，最多支持16个视频
      */
-    public			NET_RELATING_VIDEO_INFO[]					stuRelatingVideoInfo=new NET_RELATING_VIDEO_INFO[16];
+    public NET_RELATING_VIDEO_INFO[] stuRelatingVideoInfo = new NET_RELATING_VIDEO_INFO[16];
     /**
-     横向距离, 单位米
+     * 横向距离, 单位米
      */
-    public			float					fHorizontalDistance;
+    public float fHorizontalDistance;
     /**
-     纵向距离, 单位米
+     * 纵向距离, 单位米
      */
-    public			float					fParallelDistance;
+    public float fParallelDistance;
     /**
-     报警目标左上角坐标X
+     * 报警目标左上角坐标X
      */
-    public			int					nTargetCoordsX;
+    public int nTargetCoordsX;
     /**
-     报警目标左上角坐标Y
+     * 报警目标左上角坐标Y
      */
-    public			int					nTargetCoordsY;
+    public int nTargetCoordsY;
     /**
-     报警目标坐标, 高
+     * 报警目标坐标, 高
      */
-    public			int					nTargetCoordsHeight;
+    public int nTargetCoordsHeight;
     /**
-     报警目标坐标, 宽
+     * 报警目标坐标, 宽
      */
-    public			int					nTargetCoordsWidth;
+    public int nTargetCoordsWidth;
     /**
-     预留字节
+     * 预留字节
      */
-    public			byte[]					bReserved=new byte[712];
+    public byte[] bReserved = new byte[712];
 
-    public			DEV_EVENT_VEHICLE_DISTANCE_NEAR_INFO(){
-        for(int i=0;i<stuRelatingVideoInfo.length;i++){
-            stuRelatingVideoInfo[i]=new NET_RELATING_VIDEO_INFO();
+    public DEV_EVENT_VEHICLE_DISTANCE_NEAR_INFO() {
+        for (int i = 0; i < stuRelatingVideoInfo.length; i++) {
+            stuRelatingVideoInfo[i] = new NET_RELATING_VIDEO_INFO();
         }
     }
 }

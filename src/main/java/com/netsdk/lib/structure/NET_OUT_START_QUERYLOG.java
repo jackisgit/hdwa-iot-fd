@@ -9,9 +9,9 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_OUT_START_QUERYLOG extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
+    public int dwSize;
 
-	public NET_OUT_START_QUERYLOG() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_START_QUERYLOG() {
+        this.dwSize = this.size();
+    }
 }

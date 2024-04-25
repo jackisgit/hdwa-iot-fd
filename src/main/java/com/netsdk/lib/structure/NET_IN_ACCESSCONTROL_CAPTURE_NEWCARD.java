@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/12/30 10:55:15
  */
 public class NET_IN_ACCESSCONTROL_CAPTURE_NEWCARD extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 授权时间,单位秒,0表示由服务端控制时间
-	 */
-	public int nAllowTime;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 授权时间,单位秒,0表示由服务端控制时间
+     */
+    public int nAllowTime;
 
-	public NET_IN_ACCESSCONTROL_CAPTURE_NEWCARD() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_ACCESSCONTROL_CAPTURE_NEWCARD() {
+        this.dwSize = this.size();
+    }
 }

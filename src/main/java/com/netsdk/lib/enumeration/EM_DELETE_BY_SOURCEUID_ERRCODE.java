@@ -6,64 +6,64 @@ package com.netsdk.lib.enumeration;
  * @date 2022/10/08 20:13:32
  */
 public enum EM_DELETE_BY_SOURCEUID_ERRCODE {
-	/**
-	 * 未知
-	 */
-	EM_DELETE_BY_SOURCEUID_ERRCODE_UNKNWON(-1, "未知"),
-	/**
-	 * 成功
-	 */
-	EM_DELETE_BY_SOURCEUID_ERRCODE_SUCCESS(0, "成功"),
-	/**
-	 * 工装不存在
-	 */
-	EM_DELETE_BY_SOURCEUID_ERRCODE_NOT_EXIST(1, "工装不存在"),
-	/**
-	 * 数据库操作失败
-	 */
-	EM_DELETE_BY_SOURCEUID_ERRCODE_DB_ERROR(2, "数据库操作失败");
+    /**
+     * 未知
+     */
+    EM_DELETE_BY_SOURCEUID_ERRCODE_UNKNWON(-1, "未知"),
+    /**
+     * 成功
+     */
+    EM_DELETE_BY_SOURCEUID_ERRCODE_SUCCESS(0, "成功"),
+    /**
+     * 工装不存在
+     */
+    EM_DELETE_BY_SOURCEUID_ERRCODE_NOT_EXIST(1, "工装不存在"),
+    /**
+     * 数据库操作失败
+     */
+    EM_DELETE_BY_SOURCEUID_ERRCODE_DB_ERROR(2, "数据库操作失败");
 
-	private int value;
+    private int value;
 
-	private String note;
+    private String note;
 
-	public String getNote() {
-		return note;
-	}
+    EM_DELETE_BY_SOURCEUID_ERRCODE(int givenValue, String note) {
+        this.value = givenValue;
+        this.note = note;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public static String getNoteByValue(int givenValue) {
+        for (EM_DELETE_BY_SOURCEUID_ERRCODE enumType : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
+            if (givenValue == enumType.getValue()) {
+                return enumType.getNote();
+            }
+        }
+        return null;
+    }
 
-	EM_DELETE_BY_SOURCEUID_ERRCODE(int givenValue, String note) {
-		this.value = givenValue;
-		this.note = note;
-	}
+    public static int getValueByNote(String givenNote) {
+        for (EM_DELETE_BY_SOURCEUID_ERRCODE enumType : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
+            if (givenNote.equals(enumType.getNote())) {
+                return enumType.getValue();
+            }
+        }
+        return -2;
+    }
 
-	public static String getNoteByValue(int givenValue) {
-		for (EM_DELETE_BY_SOURCEUID_ERRCODE enumType : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
-			if (givenValue == enumType.getValue()) {
-				return enumType.getNote();
-			}
-		}
-		return null;
-	}
+    public static EM_DELETE_BY_SOURCEUID_ERRCODE getEnum(int value) {
+        for (EM_DELETE_BY_SOURCEUID_ERRCODE e : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
+            if (e.getValue() == value)
+                return e;
+        }
+        return EM_DELETE_BY_SOURCEUID_ERRCODE.EM_DELETE_BY_SOURCEUID_ERRCODE_UNKNWON;
+    }
 
-	public static int getValueByNote(String givenNote) {
-		for (EM_DELETE_BY_SOURCEUID_ERRCODE enumType : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
-			if (givenNote.equals(enumType.getNote())) {
-				return enumType.getValue();
-			}
-		}
-		return -2;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public static EM_DELETE_BY_SOURCEUID_ERRCODE getEnum(int value) {
-		for (EM_DELETE_BY_SOURCEUID_ERRCODE e : EM_DELETE_BY_SOURCEUID_ERRCODE.values()) {
-			if (e.getValue() == value)
-				return e;
-		}
-		return EM_DELETE_BY_SOURCEUID_ERRCODE.EM_DELETE_BY_SOURCEUID_ERRCODE_UNKNWON;
-	}
+    public int getValue() {
+        return value;
+    }
 
 }

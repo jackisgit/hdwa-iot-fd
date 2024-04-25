@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/10/08 17:14:26
  */
 public class NET_OUT_DELETE_WORKSUIT_COMPARE_GROUP extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_DELETE_WORKSUIT_COMPARE_GROUP() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_DELETE_WORKSUIT_COMPARE_GROUP() {
+        this.dwSize = this.size();
+    }
 }

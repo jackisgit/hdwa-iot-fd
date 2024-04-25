@@ -13,23 +13,22 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author 291189
  * @version 1.0
- * @description    智能分析数据回调;nSequence表示上传的相同图片情况,为0时表示是第一次出现,为2表示最后一次出现或仅出现一次,为1表示此次之后还有
+ * @description 智能分析数据回调;nSequence表示上传的相同图片情况,为0时表示是第一次出现,为2表示最后一次出现或仅出现一次,为1表示此次之后还有
  * @date 2021/7/6
  */
 public class AnalyzerDataCallBack implements NetSDKLib.fAnalyzerDataCallBack {
+    public static AnalyzerDataCallBack singleton;
     private final File picturePath;
 
-    public static AnalyzerDataCallBack singleton;
-
-    private AnalyzerDataCallBack(){
+    private AnalyzerDataCallBack() {
         picturePath = new File("./AnalyzerPicture/");
     }
 
-    public static AnalyzerDataCallBack getInstance(){
-        if(singleton==null){
-            singleton=new AnalyzerDataCallBack();
+    public static AnalyzerDataCallBack getInstance() {
+        if (singleton == null) {
+            singleton = new AnalyzerDataCallBack();
 
-         return singleton;
+            return singleton;
         }
         return singleton;
     }
@@ -44,8 +43,7 @@ public class AnalyzerDataCallBack implements NetSDKLib.fAnalyzerDataCallBack {
             path.mkdir();
         }
 
-        switch(dwAlarmType)
-        {
+        switch (dwAlarmType) {
             case NetSDKLib.EVENT_IVS_SECURITYGATE_PERSONALARM:  //安检门人员报警事件
             {
 

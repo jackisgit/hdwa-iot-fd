@@ -8,15 +8,15 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 21:57:49
  */
 public class CFG_CHASSISINTRUSION_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 使能开关
-	 */
-	public int bEnable;
-	/**
-	 * 报警联动
-	 */
-	public NetSDKLib.CFG_ALARM_MSG_HANDLE stuEventHandler = new NetSDKLib.CFG_ALARM_MSG_HANDLE();
+    /**
+     * 使能开关
+     */
+    public int bEnable;
+    /**
+     * 报警联动
+     */
+    public NetSDKLib.CFG_ALARM_MSG_HANDLE stuEventHandler = new NetSDKLib.CFG_ALARM_MSG_HANDLE();
 
-	public CFG_CHASSISINTRUSION_INFO() {
-	}
+    public CFG_CHASSISINTRUSION_INFO() {
+    }
 }

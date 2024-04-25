@@ -9,23 +9,23 @@ import com.netsdk.lib.NetSDKLib.DEVICE_ID;
  * @date 2023/04/19 15:36:29
  */
 public class NET_IN_GET_DEVICE_INFO_EX extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 设备个数
-	 */
-	public int nCount;
-	/**
-	 * 设备信息列表
-	 */	
-	public DEVICE_ID[]	szDeviceIDs = (DEVICE_ID[])new DEVICE_ID().toArray(32); // 设备列表
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 设备个数
+     */
+    public int nCount;
+    /**
+     * 设备信息列表
+     */
+    public DEVICE_ID[] szDeviceIDs = (DEVICE_ID[]) new DEVICE_ID().toArray(32); // 设备列表
 
-	public NET_IN_GET_DEVICE_INFO_EX() {
-		for (int i = 0; i < szDeviceIDs.length; i++) {
-			szDeviceIDs[0] = new DEVICE_ID();
-		}
-		this.dwSize = this.size();
-	}
+    public NET_IN_GET_DEVICE_INFO_EX() {
+        for (int i = 0; i < szDeviceIDs.length; i++) {
+            szDeviceIDs[0] = new DEVICE_ID();
+        }
+        this.dwSize = this.size();
+    }
 }

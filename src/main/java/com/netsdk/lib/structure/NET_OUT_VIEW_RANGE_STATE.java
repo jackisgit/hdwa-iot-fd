@@ -10,9 +10,9 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_OUT_VIEW_RANGE_STATE extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
+    public int dwSize;
 
-	public NET_OUT_VIEW_RANGE_STATE() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_VIEW_RANGE_STATE() {
+        this.dwSize = this.size();
+    }
 }

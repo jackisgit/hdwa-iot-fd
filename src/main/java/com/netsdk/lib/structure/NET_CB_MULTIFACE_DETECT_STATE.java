@@ -8,19 +8,19 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/04/20 15:11:18
  */
 public class NET_CB_MULTIFACE_DETECT_STATE extends NetSDKLib.SdkStructure {
-	/**
-	 * 检测进度
-	 */
-	public int nProgress;
-	/**
-	 * 大图检测小图的检测结果
-	 */
-	public NET_IMAGE_RELATION stuImageRelation = new NET_IMAGE_RELATION();
-	/**
-	 * 保留字节
-	 */
-	public byte[] byReserved = new byte[512];
+    /**
+     * 检测进度
+     */
+    public int nProgress;
+    /**
+     * 大图检测小图的检测结果
+     */
+    public NET_IMAGE_RELATION stuImageRelation = new NET_IMAGE_RELATION();
+    /**
+     * 保留字节
+     */
+    public byte[] byReserved = new byte[512];
 
-	public NET_CB_MULTIFACE_DETECT_STATE() {
-	}
+    public NET_CB_MULTIFACE_DETECT_STATE() {
+    }
 }

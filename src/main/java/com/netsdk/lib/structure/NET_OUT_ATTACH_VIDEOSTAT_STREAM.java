@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/12/12 11:39:32
  */
 public class NET_OUT_ATTACH_VIDEOSTAT_STREAM extends NetSDKLib.SdkStructure {
-	/**
-	 * 此结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 此结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_ATTACH_VIDEOSTAT_STREAM() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_ATTACH_VIDEOSTAT_STREAM() {
+        this.dwSize = this.size();
+    }
 }

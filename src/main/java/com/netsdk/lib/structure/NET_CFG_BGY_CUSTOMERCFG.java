@@ -1,8 +1,8 @@
 package com.netsdk.lib.structure;
 
+import com.netsdk.lib.NetSDKLib;
 import com.netsdk.lib.enumeration.EM_PLAY_WITH_MODE;
 import com.netsdk.lib.enumeration.NET_EM_CFG_OPERATE_TYPE;
-import com.netsdk.lib.NetSDKLib;
 
 /**
  * @author 47081

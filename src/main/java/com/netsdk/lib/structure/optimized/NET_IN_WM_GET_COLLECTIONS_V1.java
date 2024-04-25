@@ -8,10 +8,11 @@ import com.netsdk.lib.NetSDKLib;
  * @description CLIENT_GetMonitorWallCollectionsV1接口输入参数(获取电视墙预案信息)
  * @date 2022/12/21 14:01
  */
-public class NET_IN_WM_GET_COLLECTIONS_V1 extends NetSDKLib.SdkStructure{
-    public int                 dwSize;
-    public  int                  nMonitorWallID;                // 电视墙ID
-    public NET_IN_WM_GET_COLLECTIONS_V1(){
-        this.dwSize=this.size();
+public class NET_IN_WM_GET_COLLECTIONS_V1 extends NetSDKLib.SdkStructure {
+    public int dwSize;
+    public int nMonitorWallID;                // 电视墙ID
+
+    public NET_IN_WM_GET_COLLECTIONS_V1() {
+        this.dwSize = this.size();
     }
 }

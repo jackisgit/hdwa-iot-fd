@@ -4,7 +4,6 @@ package com.netsdk.lib.structure;
 import com.netsdk.lib.NetSDKLib;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 /**
  * @author ： 260611
@@ -65,11 +64,11 @@ public class ALARM_TRAFFIC_FLOW_STAT_INFO extends NetSDKLib.SdkStructure {
     @Override
     public String toString() {
         String stuStatesStr = "";
-        if(stuStates.length > 0){
+        if (stuStates.length > 0) {
             stuStatesStr += "stuStates[0] = ";
             stuStatesStr += stuStates[0].toString();
         }
-        for(int i = 1; i < stuStates.length; i ++){
+        for (int i = 1; i < stuStates.length; i++) {
             stuStatesStr += ",stuStates[" + i + "] = ";
             stuStatesStr += stuStates[i].toString();
         }
@@ -77,8 +76,8 @@ public class ALARM_TRAFFIC_FLOW_STAT_INFO extends NetSDKLib.SdkStructure {
             return "ALARM_TRAFFIC_FLOW_STAT_INFO{" +
                     "nAction=" + nAction +
                     ", nChannelID=" + nChannelID +
-                    ", szName UTF-8=" + new String(szName,"UTF-8").trim() +
-                    ", szName GBK=" + new String(szName,"GBK").trim() +
+                    ", szName UTF-8=" + new String(szName, "UTF-8").trim() +
+                    ", szName GBK=" + new String(szName, "GBK").trim() +
                     ", PTS=" + PTS +
                     ", nEventID=" + nEventID +
                     ", stuUTC=" + stuUTC.toStringTime() +

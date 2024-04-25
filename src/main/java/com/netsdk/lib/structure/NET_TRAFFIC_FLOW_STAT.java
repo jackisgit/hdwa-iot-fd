@@ -57,11 +57,11 @@ public class NET_TRAFFIC_FLOW_STAT extends NetSDKLib.SdkStructure {
     /**
      * 空间占有率，即按百分率计量的车辆长度总和除以时间间隔内车辆平均行驶距离
      */
-    public double					dbSpaceOccRatio;
+    public double dbSpaceOccRatio;
     /**
      * 车道中的所有车辆的数量，即车流量
      */
-    public  int					nCarVehicles;
+    public int nCarVehicles;
 
     /**
      * 保留字节

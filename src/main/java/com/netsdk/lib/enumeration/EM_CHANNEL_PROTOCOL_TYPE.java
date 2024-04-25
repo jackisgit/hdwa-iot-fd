@@ -6,60 +6,60 @@ package com.netsdk.lib.enumeration;
  * @date 2023/04/20 08:58:40
  */
 public enum EM_CHANNEL_PROTOCOL_TYPE {
-	/**
-	 * 未知
-	 */
-	EM_CHANNEL_PROTOCOL_TYPE_UNKNOWN(0, "未知"),
-	/**
-	 * Onvif接入
-	 */
-	EM_CHANNEL_PROTOCOL_TYPE_ONVIF(1, "Onvif接入"),
-	/**
-	 * 国标协议接入
-	 */
-	EM_CHANNEL_PROTOCOL_TYPE_GB28181(2, "国标协议接入"),
-	/**
-	 * Rtsp协议接入
-	 */
-	EM_CHANNEL_PROTOCOL_TYPE_RTSP(3, "Rtsp协议接入"),
-	/**
-	 * GB35114协议接入
-	 */
-	EM_CHANNEL_PROTOCOL_TYPE_GB35114(4, "GB35114协议接入");
+    /**
+     * 未知
+     */
+    EM_CHANNEL_PROTOCOL_TYPE_UNKNOWN(0, "未知"),
+    /**
+     * Onvif接入
+     */
+    EM_CHANNEL_PROTOCOL_TYPE_ONVIF(1, "Onvif接入"),
+    /**
+     * 国标协议接入
+     */
+    EM_CHANNEL_PROTOCOL_TYPE_GB28181(2, "国标协议接入"),
+    /**
+     * Rtsp协议接入
+     */
+    EM_CHANNEL_PROTOCOL_TYPE_RTSP(3, "Rtsp协议接入"),
+    /**
+     * GB35114协议接入
+     */
+    EM_CHANNEL_PROTOCOL_TYPE_GB35114(4, "GB35114协议接入");
 
-	private int value;
+    private int value;
 
-	private String note;
+    private String note;
 
-	public String getNote() {
-		return note;
-	}
+    EM_CHANNEL_PROTOCOL_TYPE(int givenValue, String note) {
+        this.value = givenValue;
+        this.note = note;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public static String getNoteByValue(int givenValue) {
+        for (EM_CHANNEL_PROTOCOL_TYPE enumType : EM_CHANNEL_PROTOCOL_TYPE.values()) {
+            if (givenValue == enumType.getValue()) {
+                return enumType.getNote();
+            }
+        }
+        return null;
+    }
 
-	EM_CHANNEL_PROTOCOL_TYPE(int givenValue, String note) {
-		this.value = givenValue;
-		this.note = note;
-	}
+    public static int getValueByNote(String givenNote) {
+        for (EM_CHANNEL_PROTOCOL_TYPE enumType : EM_CHANNEL_PROTOCOL_TYPE.values()) {
+            if (givenNote.equals(enumType.getNote())) {
+                return enumType.getValue();
+            }
+        }
+        return -1;
+    }
 
-	public static String getNoteByValue(int givenValue) {
-		for (EM_CHANNEL_PROTOCOL_TYPE enumType : EM_CHANNEL_PROTOCOL_TYPE.values()) {
-			if (givenValue == enumType.getValue()) {
-				return enumType.getNote();
-			}
-		}
-		return null;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public static int getValueByNote(String givenNote) {
-		for (EM_CHANNEL_PROTOCOL_TYPE enumType : EM_CHANNEL_PROTOCOL_TYPE.values()) {
-			if (givenNote.equals(enumType.getNote())) {
-				return enumType.getValue();
-			}
-		}
-		return -1;
-	}
+    public int getValue() {
+        return value;
+    }
 
 }

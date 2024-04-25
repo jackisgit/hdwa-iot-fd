@@ -8,16 +8,16 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/05/24 10:24:52
  */
 public class NET_IN_DELETE_CALIBRATEINFO_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 标定点ID
-	 */
-	public int nID;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 标定点ID
+     */
+    public int nID;
 
-	public NET_IN_DELETE_CALIBRATEINFO_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_DELETE_CALIBRATEINFO_INFO() {
+        this.dwSize = this.size();
+    }
 }

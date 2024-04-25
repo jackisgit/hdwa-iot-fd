@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+    private static boolean checking = false;
+
     public Utils() {
 
     }
 
     /**
      * 获取系统对应的编码
-     *
      */
     public static String getPlatformEncode() {
         String encode = "";
@@ -27,11 +28,11 @@ public class Utils {
             encode = "GBK";
         } else if (osPrefix.toLowerCase().startsWith("linux")) {
             encode = "UTF-8";
-        }else if(osPrefix.toLowerCase().startsWith("mac")){
-            encode="UTF-8";
+        } else if (osPrefix.toLowerCase().startsWith("mac")) {
+            encode = "UTF-8";
         }
-        if(encode.isEmpty()){
-            encode="UTF-8";
+        if (encode.isEmpty()) {
+            encode = "UTF-8";
         }
         return encode;
     }
@@ -128,8 +129,6 @@ public class Utils {
         return loadLibrary + library;
     }
 
-    private static boolean checking = false;
-
     public static void setChecking() {
         checking = true;
     }
@@ -140,6 +139,13 @@ public class Utils {
 
     public static boolean isChecking() {
         return checking;
+    }
+
+    // 获取当前时间
+    public static String getDate() {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDate.format(new java.util.Date())
+                .replace(" ", "_").replace(":", "-");
     }
 
     public static class LLong extends IntegerType {
@@ -198,13 +204,6 @@ public class Utils {
 
             return fieldOrderList;
         }
-    }
-
-    // 获取当前时间
-    public static String getDate() {
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return simpleDate.format(new java.util.Date())
-                .replace(" ", "_").replace(":", "-");
     }
 
 }

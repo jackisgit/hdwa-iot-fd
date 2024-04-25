@@ -8,20 +8,20 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 20:18:34
  */
 public class NET_OUT_GET_DEVICETYPE_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 设备类型,该字段被废弃
-	 */
-	public byte[] szType = new byte[32];
-	/**
-	 * 设备类型, 扩展设备类型建议使用此字段
-	 */
-	public byte[] szTypeEx = new byte[256];
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 设备类型,该字段被废弃
+     */
+    public byte[] szType = new byte[32];
+    /**
+     * 设备类型, 扩展设备类型建议使用此字段
+     */
+    public byte[] szTypeEx = new byte[256];
 
-	public NET_OUT_GET_DEVICETYPE_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_GET_DEVICETYPE_INFO() {
+        this.dwSize = this.size();
+    }
 }

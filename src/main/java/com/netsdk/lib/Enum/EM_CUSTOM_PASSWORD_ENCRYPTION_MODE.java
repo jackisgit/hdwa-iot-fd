@@ -13,7 +13,7 @@ public enum EM_CUSTOM_PASSWORD_ENCRYPTION_MODE {
      */
     EM_CUSTOM_PASSWORD_ENCRYPTION_MODE_PLAINTEXT,
     /**
-     *     MD5加密方式
-      */
+     * MD5加密方式
+     */
     EM_CUSTOM_PASSWORD_ENCRYPTION_MODE_MD5,
 }

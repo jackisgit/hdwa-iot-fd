@@ -8,23 +8,23 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 21:15:00
  */
 public class NET_NOTIFY_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 通知类型 {@link com.netsdk.lib.enumeration.NET_NOTIFY_TYPE}
-	 */
-	public int emType;
-	/**
-	 * 是否接受报警事件的推送
-	 */
-	public int bAlarmEvents;
-	/**
-	 * 是否接受故障事件的推送
-	 */
-	public int bSystemEvents;
-	/**
-	 * 是否接受操作事件的推送
-	 */
-	public int bOperationEvents;
+    /**
+     * 通知类型 {@link com.netsdk.lib.enumeration.NET_NOTIFY_TYPE}
+     */
+    public int emType;
+    /**
+     * 是否接受报警事件的推送
+     */
+    public int bAlarmEvents;
+    /**
+     * 是否接受故障事件的推送
+     */
+    public int bSystemEvents;
+    /**
+     * 是否接受操作事件的推送
+     */
+    public int bOperationEvents;
 
-	public NET_NOTIFY_INFO() {
-	}
+    public NET_NOTIFY_INFO() {
+    }
 }

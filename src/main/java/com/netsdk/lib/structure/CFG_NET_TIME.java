@@ -9,32 +9,32 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class CFG_NET_TIME extends NetSDKLib.SdkStructure {
 
-	public int nStructSize;
-	/**
-	 * 年
-	 */
-	public int dwYear;
-	/**
-	 * 月
-	 */
-	public int dwMonth;
-	/**
-	 * 日
-	 */
-	public int dwDay;
-	/**
-	 * 时
-	 */
-	public int dwHour;
-	/**
-	 * 分
-	 */
-	public int dwMinute;
-	/**
-	 * 秒
-	 */
-	public int dwSecond;
+    public int nStructSize;
+    /**
+     * 年
+     */
+    public int dwYear;
+    /**
+     * 月
+     */
+    public int dwMonth;
+    /**
+     * 日
+     */
+    public int dwDay;
+    /**
+     * 时
+     */
+    public int dwHour;
+    /**
+     * 分
+     */
+    public int dwMinute;
+    /**
+     * 秒
+     */
+    public int dwSecond;
 
-	public CFG_NET_TIME() {
-	}
+    public CFG_NET_TIME() {
+    }
 }

@@ -9,9 +9,9 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_OUT_ATTACH_LOWRATEWPAN extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
+    public int dwSize;
 
-	public NET_OUT_ATTACH_LOWRATEWPAN() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_ATTACH_LOWRATEWPAN() {
+        this.dwSize = this.size();
+    }
 }

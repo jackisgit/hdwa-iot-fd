@@ -8,21 +8,21 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/12/30 10:55:59
  */
 public class NET_IN_ACCESSCONTROL_CAPTURE_CMD extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 采集类型 (EM_COLLECTION_TYPE已被使用)
-	 * {@link com.netsdk.lib.enumeration.EM_GATHER_TYPE}
-	 */
-	public int emGathertype;
-	/**
-	 * 用户ID（智能楼宇需求，可选）
-	 */
-	public byte[] szUserID = new byte[12];
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 采集类型 (EM_COLLECTION_TYPE已被使用)
+     * {@link com.netsdk.lib.enumeration.EM_GATHER_TYPE}
+     */
+    public int emGathertype;
+    /**
+     * 用户ID（智能楼宇需求，可选）
+     */
+    public byte[] szUserID = new byte[12];
 
-	public NET_IN_ACCESSCONTROL_CAPTURE_CMD() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_ACCESSCONTROL_CAPTURE_CMD() {
+        this.dwSize = this.size();
+    }
 }

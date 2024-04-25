@@ -2,7 +2,6 @@ package com.netsdk.lib.structure;
 
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.enumeration.EM_RADAR_STATUS;
 
 /**
  * @author 260611

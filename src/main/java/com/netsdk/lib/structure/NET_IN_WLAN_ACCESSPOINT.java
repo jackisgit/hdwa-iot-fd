@@ -9,17 +9,17 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_IN_WLAN_ACCESSPOINT extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 需要获取信息的无线网络名称,为空时搜索所有网络
-	 */
-	public byte[] szSSID = new byte[36];
-	/**
-	 * 网卡名称, 为空时, 默认为eth2
-	 */
-	public byte[] szName = new byte[32];
+    public int dwSize;
+    /**
+     * 需要获取信息的无线网络名称,为空时搜索所有网络
+     */
+    public byte[] szSSID = new byte[36];
+    /**
+     * 网卡名称, 为空时, 默认为eth2
+     */
+    public byte[] szName = new byte[32];
 
-	public NET_IN_WLAN_ACCESSPOINT() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_WLAN_ACCESSPOINT() {
+        this.dwSize = this.size();
+    }
 }

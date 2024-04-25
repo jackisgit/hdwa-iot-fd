@@ -3,8 +3,6 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
-import java.util.Arrays;
-
 /**
  * @author 260611
  * @description 雷达信道配置能力

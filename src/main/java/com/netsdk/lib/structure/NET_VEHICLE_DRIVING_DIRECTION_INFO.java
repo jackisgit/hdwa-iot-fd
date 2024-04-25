@@ -2,8 +2,6 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
-import java.util.Arrays;
-
 /**
  * NET_VEHICLE_OBJECT szDrivingDirection 的拆解字段
  * {@link NET_VEHICLE_OBJECT#szDrivingDirection}

@@ -16,86 +16,6 @@ public interface ICBCNetSdkLib extends Library {
 
     //ICBCNetSdkLib NETSDK_ACDLL = (ICBCNetSdkLib) Native.load(absolutePath, ICBCNetSdkLib.class);
 
-    class LLong extends IntegerType {
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Size of a native long, in bytes.
-         */
-        public static int size;
-
-        static {
-            size = Native.LONG_SIZE;
-            if (Utils.getOsPrefix().equalsIgnoreCase("linux-amd64")
-                    || Utils.getOsPrefix().equalsIgnoreCase("win32-amd64")
-                    || Utils.getOsPrefix().equalsIgnoreCase("mac-64")) {
-                size = 8;
-            } else if (Utils.getOsPrefix().equalsIgnoreCase("linux-i386")
-                    || Utils.getOsPrefix().equalsIgnoreCase("win32-x86")) {
-                size = 4;
-            }
-        }
-
-        /**
-         * Create a zero-valued LLong.
-         */
-        public LLong() {
-            this(0);
-        }
-
-        /**
-         * Create a LLong with the given value.
-         */
-        public LLong(long value) {
-            super(size, value);
-        }
-    }
-
-    class SdkStructure extends Structure {
-        @Override
-        protected List<String> getFieldOrder() {
-            List<String> fieldOrderList = new ArrayList<String>();
-            for (Class<?> cls = getClass();
-                 !cls.equals(SdkStructure.class);
-                 cls = cls.getSuperclass()) {
-                Field[] fields = cls.getDeclaredFields();
-                int modifiers;
-                for (Field field : fields) {
-                    modifiers = field.getModifiers();
-                    if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
-                        continue;
-                    }
-                    fieldOrderList.add(field.getName());
-                }
-            }
-            //            System.out.println(fieldOrderList);
-
-            return fieldOrderList;
-        }
-
-        @Override
-        public int fieldOffset(String name) {
-            return super.fieldOffset(name);
-        }
-    }
-
-/******************************************************************************************************************************
- ********** 接口定义
- ******************************************************************************************************************************/
-    /**
-     * 登录回调
-     */
-    public interface fConnectCallback extends SDKCallback {
-        public void invoke(String szOutParam, Pointer pUser);
-    }
-
-    /**
-     * 门禁报警回调
-     */
-    public interface fAlarmInfoCallback extends SDKCallback {
-        public void invoke(String szOutParam, Pointer pUser);
-    }
-
     /**
      * 初始化SDK
      *
@@ -104,11 +24,14 @@ public interface ICBCNetSdkLib extends Library {
      */
     public boolean Init(fConnectCallback cb, Pointer pUser);
 
-
     /**
      * 释放SDK资源
      */
     public void Cleanup();
+
+/******************************************************************************************************************************
+ ********** 接口定义
+ ******************************************************************************************************************************/
 
     /**
      * 登录接口
@@ -252,7 +175,6 @@ public interface ICBCNetSdkLib extends Library {
      */
     public Boolean GetHolidayGroupConfig(String szInParam, byte[] szOutParam, int nOutBufSize);
 
-
     /**
      * 假日计划(以门为对象设置)
      *
@@ -300,7 +222,6 @@ public interface ICBCNetSdkLib extends Library {
      * @param szOutParam
      */
     public Boolean GetOpenDoorGroupConfig(String szInParam, byte[] szOutParam, int nOutBufSize);
-
 
     /**
      * 互锁联动门首卡开门  (设置)
@@ -406,7 +327,6 @@ public interface ICBCNetSdkLib extends Library {
      */
     public Boolean StopSubscribeDeviceMessage(String szInParam, byte[] szOutParam, int nOutBufSize);
 
-
     /**
      * 开门信息查询
      *
@@ -441,6 +361,7 @@ public interface ICBCNetSdkLib extends Library {
 
     /**
      * 应用场景配置
+     *
      * @param szInParam
      * @param szOutParam
      * @param nOutBufSize
@@ -448,9 +369,9 @@ public interface ICBCNetSdkLib extends Library {
      */
     public Boolean GetWorkScence(String szInParam, byte[] szOutParam, int nOutBufSize);
 
-
     /**
      * 下发应用场景配置
+     *
      * @param szInParam
      * @param szOutParam
      * @param nOutBufSize
@@ -460,11 +381,89 @@ public interface ICBCNetSdkLib extends Library {
 
     /**
      * 远程开门
+     *
      * @param szInParam
      * @param szOutParam
      * @param nOutBufSize
      * @return
      */
     public Boolean AccessControlOpenDoor(String szInParam, byte[] szOutParam, int nOutBufSize);
+
+    /**
+     * 登录回调
+     */
+    public interface fConnectCallback extends SDKCallback {
+        public void invoke(String szOutParam, Pointer pUser);
+    }
+
+    /**
+     * 门禁报警回调
+     */
+    public interface fAlarmInfoCallback extends SDKCallback {
+        public void invoke(String szOutParam, Pointer pUser);
+    }
+
+    class LLong extends IntegerType {
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Size of a native long, in bytes.
+         */
+        public static int size;
+
+        static {
+            size = Native.LONG_SIZE;
+            if (Utils.getOsPrefix().equalsIgnoreCase("linux-amd64")
+                    || Utils.getOsPrefix().equalsIgnoreCase("win32-amd64")
+                    || Utils.getOsPrefix().equalsIgnoreCase("mac-64")) {
+                size = 8;
+            } else if (Utils.getOsPrefix().equalsIgnoreCase("linux-i386")
+                    || Utils.getOsPrefix().equalsIgnoreCase("win32-x86")) {
+                size = 4;
+            }
+        }
+
+        /**
+         * Create a zero-valued LLong.
+         */
+        public LLong() {
+            this(0);
+        }
+
+        /**
+         * Create a LLong with the given value.
+         */
+        public LLong(long value) {
+            super(size, value);
+        }
+    }
+
+    class SdkStructure extends Structure {
+        @Override
+        protected List<String> getFieldOrder() {
+            List<String> fieldOrderList = new ArrayList<String>();
+            for (Class<?> cls = getClass();
+                 !cls.equals(SdkStructure.class);
+                 cls = cls.getSuperclass()) {
+                Field[] fields = cls.getDeclaredFields();
+                int modifiers;
+                for (Field field : fields) {
+                    modifiers = field.getModifiers();
+                    if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
+                        continue;
+                    }
+                    fieldOrderList.add(field.getName());
+                }
+            }
+            //            System.out.println(fieldOrderList);
+
+            return fieldOrderList;
+        }
+
+        @Override
+        public int fieldOffset(String name) {
+            return super.fieldOffset(name);
+        }
+    }
 
 }

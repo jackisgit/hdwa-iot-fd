@@ -6,9 +6,6 @@ package com.netsdk.lib.structure;/**
  */
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.Utils;
-
-import java.util.Arrays;
 
 /**
  * @author 47081

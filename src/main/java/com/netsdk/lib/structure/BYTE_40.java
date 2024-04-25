@@ -9,5 +9,5 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/03/15 20:35
  */
 public class BYTE_40 extends NetSDKLib.SdkStructure {
-	public byte[] STR_40 = new byte[40];
+    public byte[] STR_40 = new byte[40];
 }

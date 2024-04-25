@@ -9,17 +9,17 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DH_IN_SPLIT_SET_TOP_WINDOW extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 通道号(屏号)
-	 */
-	public int nChannel;
-	/**
-	 * 窗口序号
-	 */
-	public int nWindowID;
+    public int dwSize;
+    /**
+     * 通道号(屏号)
+     */
+    public int nChannel;
+    /**
+     * 窗口序号
+     */
+    public int nWindowID;
 
-	public DH_IN_SPLIT_SET_TOP_WINDOW() {
-		this.dwSize = this.size();
-	}
+    public DH_IN_SPLIT_SET_TOP_WINDOW() {
+        this.dwSize = this.size();
+    }
 }

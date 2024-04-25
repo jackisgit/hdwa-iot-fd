@@ -2,7 +2,8 @@ package com.netsdk.lib.structure;
 
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.NetSDKLib.*;
+import com.netsdk.lib.NetSDKLib.NET_MSG_OBJECT;
+import com.netsdk.lib.NetSDKLib.SCENE_IMAGE_INFO;
 
 /**
  * @author 421657

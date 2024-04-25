@@ -1,7 +1,7 @@
 package com.netsdk.lib.constant;
 
-import com.netsdk.lib.structure.ALARM_SOLARCELL_SYSTEM_INFO;
 import com.netsdk.lib.NetSDKLib;
+import com.netsdk.lib.structure.ALARM_SOLARCELL_SYSTEM_INFO;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 

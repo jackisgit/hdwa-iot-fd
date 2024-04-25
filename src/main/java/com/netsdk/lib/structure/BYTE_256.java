@@ -8,7 +8,7 @@ import com.netsdk.lib.NetSDKLib;
  * @description
  * @date 2023/7/28 14:58
  */
-public class BYTE_256 extends NetSDKLib.SdkStructure{
+public class BYTE_256 extends NetSDKLib.SdkStructure {
 
-    public	 byte[]					SN_256=new byte[256];
+    public byte[] SN_256 = new byte[256];
 }

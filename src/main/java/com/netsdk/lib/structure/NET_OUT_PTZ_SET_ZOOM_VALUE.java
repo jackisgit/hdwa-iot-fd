@@ -9,12 +9,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/10/16 14:11:22
  */
 public class NET_OUT_PTZ_SET_ZOOM_VALUE extends NetSDKLib.SdkStructure {
-	/**
-	 *  结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_PTZ_SET_ZOOM_VALUE() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_PTZ_SET_ZOOM_VALUE() {
+        this.dwSize = this.size();
+    }
 }

@@ -8,7 +8,7 @@ import com.netsdk.lib.NetSDKLib;
  * @description
  * @date 2022/12/22 10:05
  */
-public class BYTE_64 extends NetSDKLib.SdkStructure{
+public class BYTE_64 extends NetSDKLib.SdkStructure {
 
-    public	 byte[]					SN_64=new byte[64];
+    public byte[] SN_64 = new byte[64];
 }

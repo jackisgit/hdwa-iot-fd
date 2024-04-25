@@ -8,12 +8,12 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2023/05/11 14:19:51
  */
 public class NET_OUT_SET_STATEMANAGER_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
 
-	public NET_OUT_SET_STATEMANAGER_INFO() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_SET_STATEMANAGER_INFO() {
+        this.dwSize = this.size();
+    }
 }

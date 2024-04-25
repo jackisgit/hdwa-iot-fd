@@ -38,7 +38,7 @@ public class ToolKits {
         int nBufferLen = 2 * 1024 * 1024;
         byte[] strBuffer = new byte[nBufferLen];
 
-        if (!netsdkapi.CLIENT_GetNewDevConfig(hLoginHandle, strCmd, nChn, strBuffer, nBufferLen, error, 5000,null)) {
+        if (!netsdkapi.CLIENT_GetNewDevConfig(hLoginHandle, strCmd, nChn, strBuffer, nBufferLen, error, 5000, null)) {
             System.err.printf("Get %s Config Failed!Last Error = %x\n", strCmd, netsdkapi.CLIENT_GetLastError());
             return -1;
         }
@@ -74,7 +74,7 @@ public class ToolKits {
         IntByReference retLen = new IntByReference(0);
         int nBufferLen = 2 * 1024 * 1024;
         byte[] strBuffer = new byte[nBufferLen];
-        if (!netsdkapi.CLIENT_GetNewDevConfig(hLoginHandle, strCmd, nChn, strBuffer, nBufferLen, error, 5000,null)) {
+        if (!netsdkapi.CLIENT_GetNewDevConfig(hLoginHandle, strCmd, nChn, strBuffer, nBufferLen, error, 5000, null)) {
             System.err.printf("Get %s Config Failed!Last Error = %x\n", strCmd, netsdkapi.CLIENT_GetLastError());
             return false;
         }
@@ -377,11 +377,12 @@ public class ToolKits {
 
     public static String getLastError() {
         int lastError = netsdkapi.CLIENT_GetLastError();
-        return   "FinalVar.java 对应的错误码 ：[0x80000000|" + (lastError & 0x7fffffff) + "]" + "\n" +
+        return "FinalVar.java 对应的错误码 ：[0x80000000|" + (lastError & 0x7fffffff) + "]" + "\n" +
                 "十六进制错误码 ：[" + String.format("%x", lastError) + "]" + "\n" +
-                "对应中文错误信息为 ：[" + LastErrorNew.getChnNoteByValue(lastError) + "]"+ "\n" +
-                "The corresponding English error message is ：[" + LastErrorNew.getEngNoteByValue(lastError) + "]"+ "\n";
+                "对应中文错误信息为 ：[" + LastErrorNew.getChnNoteByValue(lastError) + "]" + "\n" +
+                "The corresponding English error message is ：[" + LastErrorNew.getEngNoteByValue(lastError) + "]" + "\n";
     }
+
     /**
      * 显示目录中文件和子目录
      *

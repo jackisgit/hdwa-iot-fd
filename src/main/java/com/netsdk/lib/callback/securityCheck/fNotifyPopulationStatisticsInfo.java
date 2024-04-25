@@ -8,8 +8,8 @@ import com.sun.jna.Pointer;
 /**
  * @author ： 291189
  * @since ： Created in 2021/7/5
-// 接口 CLIENT_AttachPopulationStatistics 回调函数
-// pstuPopulationStatisticsInfos 人数变化信息
+ * // 接口 CLIENT_AttachPopulationStatistics 回调函数
+ * // pstuPopulationStatisticsInfos 人数变化信息
  */
 public interface fNotifyPopulationStatisticsInfo extends SDKCallback {
 

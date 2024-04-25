@@ -10,21 +10,21 @@ import com.sun.jna.Pointer;
  */
 public class NET_OUT_QUERYNEXTLOG extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 用户指定分配结构体个数,需大于等于NET_IN_GETNEXTLOG的nGetCount
-	 */
-	public int nMaxCount;
-	/**
-	 * 返回日志信息,缓存大小由用户指定,大小为nMaxCount*sizeof(NET_LOG_INFO)
-	 */
-	public Pointer pstuLogInfo;
-	/**
-	 * 实际返回日志条数
-	 */
-	public int nRetCount;
+    public int dwSize;
+    /**
+     * 用户指定分配结构体个数,需大于等于NET_IN_GETNEXTLOG的nGetCount
+     */
+    public int nMaxCount;
+    /**
+     * 返回日志信息,缓存大小由用户指定,大小为nMaxCount*sizeof(NET_LOG_INFO)
+     */
+    public Pointer pstuLogInfo;
+    /**
+     * 实际返回日志条数
+     */
+    public int nRetCount;
 
-	public NET_OUT_QUERYNEXTLOG() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_QUERYNEXTLOG() {
+        this.dwSize = this.size();
+    }
 }

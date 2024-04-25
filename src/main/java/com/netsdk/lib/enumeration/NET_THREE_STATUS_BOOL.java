@@ -25,14 +25,6 @@ public enum NET_THREE_STATUS_BOOL {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     NET_THREE_STATUS_BOOL(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -63,6 +55,14 @@ public enum NET_THREE_STATUS_BOOL {
             }
         }
         return NET_THREE_STATUS_BOOL.BOOL_STATUS_FALSE;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

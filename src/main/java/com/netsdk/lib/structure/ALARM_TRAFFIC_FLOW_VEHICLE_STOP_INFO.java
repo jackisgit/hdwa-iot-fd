@@ -4,7 +4,6 @@ package com.netsdk.lib.structure;
 import com.netsdk.lib.NetSDKLib;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 /**
  * @author ： 260611
@@ -52,8 +51,8 @@ public class ALARM_TRAFFIC_FLOW_VEHICLE_STOP_INFO extends NetSDKLib.SdkStructure
             return "ALARM_TRAFFIC_FLOW_VEHICLE_STOP_INFO{" +
                     "nAction=" + nAction +
                     ", nChannel=" + nChannel +
-                    ", szName UTF-8=" + new String(szName,"UTF-8").trim() +
-                    ", szName GBK=" + new String(szName,"GBK").trim() +
+                    ", szName UTF-8=" + new String(szName, "UTF-8").trim() +
+                    ", szName GBK=" + new String(szName, "GBK").trim() +
                     ", stuUTC=" + stuUTC.toStringTime() +
                     ", nUTCMS=" + nUTCMS +
                     ", nSequence=" + nSequence +

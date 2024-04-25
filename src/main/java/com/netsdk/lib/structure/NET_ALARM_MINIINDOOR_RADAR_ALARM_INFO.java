@@ -3,8 +3,6 @@ package com.netsdk.lib.structure;
 
 import com.netsdk.lib.NetSDKLib;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * @author 260611
  * @description Mini雷达报警事件(对应 DH_ALARM_MINIINDOOR_RADAR_ALARM)

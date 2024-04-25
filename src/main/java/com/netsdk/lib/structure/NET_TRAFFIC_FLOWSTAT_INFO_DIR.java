@@ -4,7 +4,6 @@ package com.netsdk.lib.structure;
 import com.netsdk.lib.NetSDKLib;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 /**
  * @author ： 260611
@@ -35,10 +34,10 @@ public class NET_TRAFFIC_FLOWSTAT_INFO_DIR extends NetSDKLib.SdkStructure {
         try {
             return "NET_TRAFFIC_FLOWSTAT_INFO_DIR{" +
                     "emDrivingDir=" + emDrivingDir +
-                    ", szUpGoing UTF-8=" + new String(szUpGoing,"UTF-8").trim() +
-                    ", szUpGoing GBK=" + new String(szUpGoing,"GBK").trim() +
-                    ", szDownGoing UTF-8=" + new String(szDownGoing,"UTF-8").trim() +
-                    ", szDownGoing GBK=" + new String(szDownGoing,"GBK").trim() +
+                    ", szUpGoing UTF-8=" + new String(szUpGoing, "UTF-8").trim() +
+                    ", szUpGoing GBK=" + new String(szUpGoing, "GBK").trim() +
+                    ", szDownGoing UTF-8=" + new String(szDownGoing, "UTF-8").trim() +
+                    ", szDownGoing GBK=" + new String(szDownGoing, "GBK").trim() +
                     '}';
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

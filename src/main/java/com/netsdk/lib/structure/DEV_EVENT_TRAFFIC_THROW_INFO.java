@@ -77,7 +77,7 @@ public class DEV_EVENT_TRAFFIC_THROW_INFO extends NetSDKLib.SdkStructure {
      */
     public NetSDKLib.EVENT_TRAFFIC_CAR_PART_INFO stuTrafficCarPartInfo = new NetSDKLib.EVENT_TRAFFIC_CAR_PART_INFO();
     /**
-     * GPS信息 
+     * GPS信息
      */
     public NetSDKLib.NET_GPS_INFO stuGPSInfo = new NetSDKLib.NET_GPS_INFO();
     /**

@@ -9,13 +9,13 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_IN_QUERYNEXTLOG extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 需要查询的日志条数
-	 */
-	public int nGetCount;
+    public int dwSize;
+    /**
+     * 需要查询的日志条数
+     */
+    public int nGetCount;
 
-	public NET_IN_QUERYNEXTLOG() {
-		this.dwSize = this.size();
-	}
+    public NET_IN_QUERYNEXTLOG() {
+        this.dwSize = this.size();
+    }
 }

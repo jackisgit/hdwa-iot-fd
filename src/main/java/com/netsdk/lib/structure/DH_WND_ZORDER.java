@@ -9,17 +9,17 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DH_WND_ZORDER extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 窗口序号
-	 */
-	public int nWindowID;
-	/**
-	 * Z次序
-	 */
-	public int nZOrder;
+    public int dwSize;
+    /**
+     * 窗口序号
+     */
+    public int nWindowID;
+    /**
+     * Z次序
+     */
+    public int nZOrder;
 
-	public DH_WND_ZORDER() {
-		this.dwSize = this.size();
-	}
+    public DH_WND_ZORDER() {
+        this.dwSize = this.size();
+    }
 }

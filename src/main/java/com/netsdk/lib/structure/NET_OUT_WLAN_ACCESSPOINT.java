@@ -9,20 +9,20 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class NET_OUT_WLAN_ACCESSPOINT extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 无线网络接入点个数
-	 */
-	public int nCount;
-	/**
-	 * 接入点信息
-	 */
-	public NET_WLAN_ACCESSPOINT_INFO[] stuInfo = new NET_WLAN_ACCESSPOINT_INFO[128];
+    public int dwSize;
+    /**
+     * 无线网络接入点个数
+     */
+    public int nCount;
+    /**
+     * 接入点信息
+     */
+    public NET_WLAN_ACCESSPOINT_INFO[] stuInfo = new NET_WLAN_ACCESSPOINT_INFO[128];
 
-	public NET_OUT_WLAN_ACCESSPOINT() {
-		for (int i = 0; i < stuInfo.length; i++) {
-			stuInfo[i] = new NET_WLAN_ACCESSPOINT_INFO();
-		}
-		this.dwSize = this.size();
-	}
+    public NET_OUT_WLAN_ACCESSPOINT() {
+        for (int i = 0; i < stuInfo.length; i++) {
+            stuInfo[i] = new NET_WLAN_ACCESSPOINT_INFO();
+        }
+        this.dwSize = this.size();
+    }
 }

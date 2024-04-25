@@ -10,21 +10,21 @@ import com.sun.jna.Pointer;
  */
 public class DH_OUT_SPLIT_SET_TOP_WINDOW extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 窗口次序数组,由用户申请内存,大小为sizeof(DH_WND_ZORDER)*nMaxWndCount
-	 */
-	public Pointer pZOders;
-	/**
-	 * 窗口次序数组大小
-	 */
-	public int nMaxWndCount;
-	/**
-	 * 返回的窗口数量
-	 */
-	public int nWndCount;
+    public int dwSize;
+    /**
+     * 窗口次序数组,由用户申请内存,大小为sizeof(DH_WND_ZORDER)*nMaxWndCount
+     */
+    public Pointer pZOders;
+    /**
+     * 窗口次序数组大小
+     */
+    public int nMaxWndCount;
+    /**
+     * 返回的窗口数量
+     */
+    public int nWndCount;
 
-	public DH_OUT_SPLIT_SET_TOP_WINDOW() {
-		this.dwSize = this.size();
-	}
+    public DH_OUT_SPLIT_SET_TOP_WINDOW() {
+        this.dwSize = this.size();
+    }
 }

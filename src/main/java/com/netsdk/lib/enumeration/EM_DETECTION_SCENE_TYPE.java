@@ -11,31 +11,23 @@ public enum EM_DETECTION_SCENE_TYPE {
     /**
      * 未知
      */
-    EM_DETECTION_SCENE_TYPE_UNKNOWN(0,"未知"),
+    EM_DETECTION_SCENE_TYPE_UNKNOWN(0, "未知"),
     /**
      * 兽类场景，可检测动物、人、车
      */
-    EM_DETECTION_SCENE_TYPE_ANIMAL(1,"兽类场景，可检测动物、人、车"),
+    EM_DETECTION_SCENE_TYPE_ANIMAL(1, "兽类场景，可检测动物、人、车"),
     /**
      * 鸟类场景，可检测鸟类，人、车
      */
-    EM_DETECTION_SCENE_TYPE_BIRD(2,"鸟类场景，可检测鸟类，人、车"),	
-	/**
-	 * 猪类场景，可检测猪只
-	 */
-	EM_DETECTION_SCENE_TYPE_PIG(3, "猪类场景，可检测猪只");
+    EM_DETECTION_SCENE_TYPE_BIRD(2, "鸟类场景，可检测鸟类，人、车"),
+    /**
+     * 猪类场景，可检测猪只
+     */
+    EM_DETECTION_SCENE_TYPE_PIG(3, "猪类场景，可检测猪只");
 
     private int value;
 
     private String note;
-
-    public String getNote() {
-             return note;
-         }
-
-    public int getValue() {
-             return value;
-         }
 
     EM_DETECTION_SCENE_TYPE(int givenValue, String note) {
         this.value = givenValue;
@@ -66,6 +58,14 @@ public enum EM_DETECTION_SCENE_TYPE {
                 return e;
         }
         return EM_DETECTION_SCENE_TYPE.EM_DETECTION_SCENE_TYPE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

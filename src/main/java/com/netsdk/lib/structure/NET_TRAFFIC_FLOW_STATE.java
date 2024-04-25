@@ -324,6 +324,7 @@ public class NET_TRAFFIC_FLOW_STATE extends NetSDKLib.SdkStructure {
      * / 保留字节
      */
     public byte[] reserved = new byte[92];
+
     @Override
     public String toString() {
         return "NET_TRAFFIC_FLOW_STATE{" +

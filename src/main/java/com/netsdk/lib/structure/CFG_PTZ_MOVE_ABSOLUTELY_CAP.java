@@ -6,7 +6,6 @@ package com.netsdk.lib.structure;/**
  */
 
 import com.netsdk.lib.NetSDKLib;
-import com.netsdk.lib.Utils;
 
 /**
  * @author 47081

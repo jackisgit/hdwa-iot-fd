@@ -49,14 +49,6 @@ public enum NET_EM_LIGHTING_MODE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     NET_EM_LIGHTING_MODE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -87,6 +79,14 @@ public enum NET_EM_LIGHTING_MODE {
             }
         }
         return NET_EM_LIGHTING_MODE.NET_EM_LIGHTING_UNKNOW;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

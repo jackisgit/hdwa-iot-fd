@@ -1,10 +1,10 @@
 package com.netsdk.lib.enumeration;
 
 import com.netsdk.lib.NetSDKLib;
+import com.netsdk.lib.structure.NET_CFG_HEALTH_CODE_INFO;
 import com.netsdk.lib.structure.NET_CFG_VSP_GAYS_SERVER_INFO;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import com.netsdk.lib.structure.NET_CFG_HEALTH_CODE_INFO;
 
 /**
  * 配置枚举值列表 对应接口: 获取配置 {@link NetSDKLib#CLIENT_GetConfig(NetSDKLib.LLong, int, int, Pointer, int,
@@ -50,14 +50,14 @@ public class NET_EM_CFG_OPERATE_TYPE {
     public static final int NET_EM_CFG_QR_CODE =
             26; // 配置二维码有效时间, 对应的结构体 NET_CFG_QR_CODE_INFO , 通道号需要填成-1
 
-    public static final int NET_EM_CFG_TRAFFIC_LAMP_CONFIG=45; // 时间间隔配置, 对应结构体 NET_CFG_TRAFFIC_LAMP_CONFIG_INFO, 与通道不相关,通道号需要填成-1
-    public static final int NET_EM_CFG_DISABLE_BEEP_LINKAGE=47; // 防蜂鸣联动项使能配置, 对应结构体 NET_CFG_DISABLE_BEEP_LINKAGE_INFO, 与通道不相关,通道号需要填成-1
-    public static final int NET_EM_CFG_AREA_ARM_MODE = 48;	// Area布撤防配置, 对应结构体 NET_CFG_AREA_ARM_MODE_INFO, 与通道不相关,通道号需要填成-1
-    
-    public static final int NET_EM_CFG_CONTROL_CASE = 61;	// 控制智能机箱开关配置, 对应结构体 NET_CFG_CONTROL_CASE_INFO, 与通道不相关,通道号需要填成-1
-    public static final int NET_EM_CFG_LAMP_EXTERNAL_DEVICE =62;// 智慧灯杆项外设配置, 对应结构体 NET_CFG_LAMP_EXTERNAL_DEVICE_INFO, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_TRAFFIC_LAMP_CONFIG = 45; // 时间间隔配置, 对应结构体 NET_CFG_TRAFFIC_LAMP_CONFIG_INFO, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_DISABLE_BEEP_LINKAGE = 47; // 防蜂鸣联动项使能配置, 对应结构体 NET_CFG_DISABLE_BEEP_LINKAGE_INFO, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_AREA_ARM_MODE = 48;    // Area布撤防配置, 对应结构体 NET_CFG_AREA_ARM_MODE_INFO, 与通道不相关,通道号需要填成-1
 
-    public static final int NET_EM_CFG_AUTO_PAN = 71;	// 水平旋转设置配置, 对应结构体 NET_CFG_AUTO_PAN_INFO
+    public static final int NET_EM_CFG_CONTROL_CASE = 61;    // 控制智能机箱开关配置, 对应结构体 NET_CFG_CONTROL_CASE_INFO, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_LAMP_EXTERNAL_DEVICE = 62;// 智慧灯杆项外设配置, 对应结构体 NET_CFG_LAMP_EXTERNAL_DEVICE_INFO, 与通道不相关,通道号需要填成-1
+
+    public static final int NET_EM_CFG_AUTO_PAN = 71;    // 水平旋转设置配置, 对应结构体 NET_CFG_AUTO_PAN_INFO
     public static final int NET_EM_CFG_PTZ_MOVEMENT = 72;// 云台动作配置, 对应结构体 NET_CFG_PTZ_MOVEMENT_INFO
 
     /*********OSD叠加相关配置*************************************************************************************************/
@@ -216,7 +216,7 @@ public class NET_EM_CFG_OPERATE_TYPE {
     /**************NetApp配置需求*************************************************************************************/
     public static final int NET_EM_CFG_NETAPP_LINK_LAYER_VPN =
             1900; // 链路层VPN设置,对应结构体 NET_NETAPP_LINK_LAYER_VPN_CFG
-    public static final int NET_EM_CFG_NETAPP_COMMUNICATION_LIST = 1902;// 通讯录配置, 对应结构体 NET_NETAPP_COMMUNICATION_LIST_CFG, 与通道不相关,通道号需要填成-1  
+    public static final int NET_EM_CFG_NETAPP_COMMUNICATION_LIST = 1902;// 通讯录配置, 对应结构体 NET_NETAPP_COMMUNICATION_LIST_CFG, 与通道不相关,通道号需要填成-1
 
     /**************中国铁塔平台接入***********************************************************************************/
     public static final int NET_EM_CFG_VSP_CHINA_TOWER = 2000; // 安徽治超平台接入配置,对应结构体 NET_VSP_CHINA_TOWER
@@ -347,7 +347,7 @@ public class NET_EM_CFG_OPERATE_TYPE {
             = 4016;     // 单片机兼容cpu卡和ic卡功能切换,对应结构体 NET_CFG_CARD_MNG_INFO
     public static final int NET_EM_CFG_VSP_LXSJ = 4004;        // 灵信视觉平台接入配置 对应结构体 NET_CFG_VSP_LXSJ_INFO，配置较大，建议内存new出来
 
-    public static final int NET_EM_CFG_FINANCIAL_CABINET_CONFIG     = 4020;     // 金融业务库配置 对应结构体 NET_CFG_FINANCIAL_CABINET_CONFIG_INFO
+    public static final int NET_EM_CFG_FINANCIAL_CABINET_CONFIG = 4020;     // 金融业务库配置 对应结构体 NET_CFG_FINANCIAL_CABINET_CONFIG_INFO
 
 
     /***********雷球联动配置************************************************************************************************/
@@ -356,9 +356,9 @@ public class NET_EM_CFG_OPERATE_TYPE {
     public static final int NET_EM_CFG_RADAR_SCREEN_RULE = 6012;    // 雷达屏幕显示规则配置, 对应结构体NET_CFG_RADAR_SCREEN_RULE_INFO
     public static final int NET_EM_CFG_MINIRADAR_DECT_PARAM = 6016;     // Mini雷达探测参数配置, 对应结构体 NET_CFG_MINIRADAR_DECT_PARAM_INFO
     public static final int NET_EM_CFG_MINIRADAR_INDOOR_ALARM = 6017;   // Mini雷达报警配置, 对应结构体 NET_CFG_MINIRADAR_INDOOR_ALARM_INFO
-    public static final int NET_EM_CFG_MINIRADAR_COMP_INFO = 6018;		// Mini雷达角度补偿配置, 对应结构体 NET_CFG_MINIRADAR_COMP_INFO
-    public static final int NET_EM_CFG_MINIRADAR_INSTALL_INFO = 6019;	// Mini雷达安装信息配置, 对应结构体 NET_CFG_MINIRADAR_INSTALL_INFO
-    public static final int NET_EM_CFG_MINIRADAR_REGION_DETECT = 6020;	// Mini雷达探测区域配置, 对应结构体 NET_CFG_MINIRADAR_REGION_DETECT_INFO
+    public static final int NET_EM_CFG_MINIRADAR_COMP_INFO = 6018;        // Mini雷达角度补偿配置, 对应结构体 NET_CFG_MINIRADAR_COMP_INFO
+    public static final int NET_EM_CFG_MINIRADAR_INSTALL_INFO = 6019;    // Mini雷达安装信息配置, 对应结构体 NET_CFG_MINIRADAR_INSTALL_INFO
+    public static final int NET_EM_CFG_MINIRADAR_REGION_DETECT = 6020;    // Mini雷达探测区域配置, 对应结构体 NET_CFG_MINIRADAR_REGION_DETECT_INFO
 
     /***********第三方配置************************************************************************************************/
     public static final int NET_EM_CFG_VSP_PAAS = 9000; // 乐橙云注册配置修改, 对应结构体 NET_CFG_VSP_PAAS_INFO
@@ -374,15 +374,15 @@ public class NET_EM_CFG_OPERATE_TYPE {
 
     /***********道闸配置************************************************************************************************/
     public static final int NET_EM_CFG_TRAFFICSTROBE = 9100; // 道闸配置, 对应结构体 NET_CFG_TRAFFICSTROBE_INFO
-       
-	/***********布撤防配置************************************************************************************************/
-    public static final int NET_EM_CFG_DISABLE_LINKAGE = 
-    		9300; // 一键撤防配置,对应结构体 NET_CFG_DISABLE_LINKAGE, 与通道不相关,通道号需要填成-1
-    public static final int NET_EM_CFG_DISABLE_LINKAGE_TIME_SECTION = 
-    		9301; // 周期撤防联动项功能总开关, 对应结构体 NET_CFG_DISABLE_LINKAGE_TIME_SECTION, 与通道不相关,通道号需要填成-1
-    public static final int NET_EM_CFG_REMOTE_DISABLE_LINKAGE_TIME_SECTION_SYNC = 
-    		9303; //  远程通道是否同步本地端"周期一键布撤防"配置, 对应结构体 NET_CFG_REMOTE_DISABLE_LINKAGE_TIME_SECTION_SYNC_INFO, 与通道不相关,接口通道号需要填成-1
-    
+
+    /***********布撤防配置************************************************************************************************/
+    public static final int NET_EM_CFG_DISABLE_LINKAGE =
+            9300; // 一键撤防配置,对应结构体 NET_CFG_DISABLE_LINKAGE, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_DISABLE_LINKAGE_TIME_SECTION =
+            9301; // 周期撤防联动项功能总开关, 对应结构体 NET_CFG_DISABLE_LINKAGE_TIME_SECTION, 与通道不相关,通道号需要填成-1
+    public static final int NET_EM_CFG_REMOTE_DISABLE_LINKAGE_TIME_SECTION_SYNC =
+            9303; //  远程通道是否同步本地端"周期一键布撤防"配置, 对应结构体 NET_CFG_REMOTE_DISABLE_LINKAGE_TIME_SECTION_SYNC_INFO, 与通道不相关,接口通道号需要填成-1
+
     /***********Traffic相关配置***************************************************************************************************/
     public static final int NET_EM_CFG_TRAFFIC_LATTICE_SCREEN =
             10000; // 点阵屏显示信息配置, 对应结构体 NET_CFG_TRAFFIC_LATTICE_SCREEN_INFO
@@ -394,11 +394,11 @@ public class NET_EM_CFG_OPERATE_TYPE {
 
     /***********热成像相关配置******************************************************************************************/
     public static final int NET_EM_CFG_HOT_COLD_SPOT_WARNING = 1505; // 热冷点报警配置, 对应的结构体 NET_HOT_COLD_SPOT_WARNING_INFO
-    public static final int NET_EM_CFG_SENSOR_MAINTAIN = 11100;		// 热成像机芯维护配置,对应结构体 NET_CFG_SENSOR_MAINTAIN
-    public static final int NET_EM_CFG_TILT_LIMIT = 11101;		    // 激光测距俯仰角限制,对应结构体 NET_CFG_TILT_LIMIT
-    public static final int NET_EM_CFG_RADIO_REGULATOR = 11102;		// 人体测温标准黑体配置, 对应结构体 NET_CFG_RADIO_REGULATOR，通道号不能为-1
+    public static final int NET_EM_CFG_SENSOR_MAINTAIN = 11100;        // 热成像机芯维护配置,对应结构体 NET_CFG_SENSOR_MAINTAIN
+    public static final int NET_EM_CFG_TILT_LIMIT = 11101;            // 激光测距俯仰角限制,对应结构体 NET_CFG_TILT_LIMIT
+    public static final int NET_EM_CFG_RADIO_REGULATOR = 11102;        // 人体测温标准黑体配置, 对应结构体 NET_CFG_RADIO_REGULATOR，通道号不能为-1
     public static final int NET_EM_CFG_HUMAN_THERM_CALIBRATE = 11103;// 人体测温标定信息, 对应结构体 NET_CFG_HUMAN_THERM_CALLBRATE_INFO ，通道号必须是-1
-    public static final int NET_EM_CFG_TELESCOPE_OPTIONS = 11104;	// 望远镜配置,对应结构体 NET_CFG_TELESCOPE_OPTIONS_INFO
+    public static final int NET_EM_CFG_TELESCOPE_OPTIONS = 11104;    // 望远镜配置,对应结构体 NET_CFG_TELESCOPE_OPTIONS_INFO
     public static final int NET_EM_CFG_ENVIRONMENT_THERM_INFO = 11105;    // 环境温度信息(热成像内部配置,只可读,不可设),通道号需要填热成像通道号  对应结构体 NET_CFG_ENVIRONMENT_THERM_INFO
     public static final int NET_EM_CFG_THERMOMETRY_SHIELD = 11106;    // 测温屏蔽区配置 对应结构体 NET_CFG_THERMOMETRY_SHIELD_INFO
 
@@ -412,7 +412,7 @@ public class NET_EM_CFG_OPERATE_TYPE {
     public static final int NET_EM_CFG_COURSE_RECORD_UPLOAD =
             12101; // 录播设备支持录像文件上传配置, 对应结构体 NET_CFG_COURSE_RECORD_UPLOAD
     /***********硬盘相关配置******************************************************************************************/
-    public static final int NET_EM_CFG_NAS_DIRECTORY = 12302;					// 共享文件夹信息配置, 对应结构体 NET_CFG_NAS_DIRECTORY
+    public static final int NET_EM_CFG_NAS_DIRECTORY = 12302;                    // 共享文件夹信息配置, 对应结构体 NET_CFG_NAS_DIRECTORY
     /***********信号机相关配置******************************************************************************************/
     public static final int NET_EM_CFG_RTSC_SCH_CROSSLIST = 14000;                // 路口数据列表配置, 对应结构体NET_CFG_RTSC_SCH_CROSSLIST_INFO, 与通道无关, 通道号需填成-1
     public static final int NET_EM_CFG_RTSC_SCH_CHANNELS = 14001;                    // 通道表, 对应结构体NET_CFG_RTSC_SCH_CHANNELS_INFO

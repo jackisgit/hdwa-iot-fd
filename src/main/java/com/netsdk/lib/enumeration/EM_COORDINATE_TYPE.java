@@ -24,14 +24,6 @@ public enum EM_COORDINATE_TYPE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_COORDINATE_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -61,6 +53,14 @@ public enum EM_COORDINATE_TYPE {
                 return e;
         }
         return EM_COORDINATE_TYPE.EM_COORDINATE_TYPE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

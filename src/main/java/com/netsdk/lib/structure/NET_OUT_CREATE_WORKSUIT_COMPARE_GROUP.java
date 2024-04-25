@@ -8,20 +8,20 @@ import com.netsdk.lib.NetSDKLib;
  * @date 2022/10/08 17:06:16
  */
 public class NET_OUT_CREATE_WORKSUIT_COMPARE_GROUP extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 字节对齐
-	 */
-	public byte[] szReserved = new byte[4];
-	/**
-	 * 合规库组ID
-	 */
-	public byte[] szGroupID = new byte[64];
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 字节对齐
+     */
+    public byte[] szReserved = new byte[4];
+    /**
+     * 合规库组ID
+     */
+    public byte[] szGroupID = new byte[64];
 
-	public NET_OUT_CREATE_WORKSUIT_COMPARE_GROUP() {
-		this.dwSize = this.size();
-	}
+    public NET_OUT_CREATE_WORKSUIT_COMPARE_GROUP() {
+        this.dwSize = this.size();
+    }
 }

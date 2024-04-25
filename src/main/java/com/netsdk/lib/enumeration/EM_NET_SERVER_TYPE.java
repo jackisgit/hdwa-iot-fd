@@ -6,59 +6,59 @@ package com.netsdk.lib.enumeration;
  * @date 2023/04/20 08:58:40
  */
 public enum EM_NET_SERVER_TYPE {
-	/**
-	 * 未知
-	 */
-	EM_NET_SERVER_TYPE_UNKNOWN(-1, "未知"),
-	/**
-	 * 自动
-	 */
-	EM_NET_SERVER_TYPE_AUTO(0, "自动"),
-	/**
-	 * TCP
-	 */
-	EM_NET_SERVER_TYPE_TCP(1, "TCP"),
-	/**
-	 * UDP
-	 */
-	EM_NET_SERVER_TYPE_UDP(2, "UDP"),
-	/**
-	 * 组播
-	 */
-	EM_NET_SERVER_TYPE_MULTICAST(3, "组播");
+    /**
+     * 未知
+     */
+    EM_NET_SERVER_TYPE_UNKNOWN(-1, "未知"),
+    /**
+     * 自动
+     */
+    EM_NET_SERVER_TYPE_AUTO(0, "自动"),
+    /**
+     * TCP
+     */
+    EM_NET_SERVER_TYPE_TCP(1, "TCP"),
+    /**
+     * UDP
+     */
+    EM_NET_SERVER_TYPE_UDP(2, "UDP"),
+    /**
+     * 组播
+     */
+    EM_NET_SERVER_TYPE_MULTICAST(3, "组播");
 
-	private int value;
+    private int value;
 
-	private String note;
+    private String note;
 
-	public String getNote() {
-		return note;
-	}
+    EM_NET_SERVER_TYPE(int givenValue, String note) {
+        this.value = givenValue;
+        this.note = note;
+    }
 
-	public int getValue() {
-		return value;
-	}
+    public static String getNoteByValue(int givenValue) {
+        for (EM_NET_SERVER_TYPE enumType : EM_NET_SERVER_TYPE.values()) {
+            if (givenValue == enumType.getValue()) {
+                return enumType.getNote();
+            }
+        }
+        return null;
+    }
 
-	EM_NET_SERVER_TYPE(int givenValue, String note) {
-		this.value = givenValue;
-		this.note = note;
-	}
+    public static int getValueByNote(String givenNote) {
+        for (EM_NET_SERVER_TYPE enumType : EM_NET_SERVER_TYPE.values()) {
+            if (givenNote.equals(enumType.getNote())) {
+                return enumType.getValue();
+            }
+        }
+        return -2;
+    }
 
-	public static String getNoteByValue(int givenValue) {
-		for (EM_NET_SERVER_TYPE enumType : EM_NET_SERVER_TYPE.values()) {
-			if (givenValue == enumType.getValue()) {
-				return enumType.getNote();
-			}
-		}
-		return null;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public static int getValueByNote(String givenNote) {
-		for (EM_NET_SERVER_TYPE enumType : EM_NET_SERVER_TYPE.values()) {
-			if (givenNote.equals(enumType.getNote())) {
-				return enumType.getValue();
-			}
-		}
-		return -2;
-	}
+    public int getValue() {
+        return value;
+    }
 }

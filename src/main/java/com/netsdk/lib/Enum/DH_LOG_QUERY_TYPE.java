@@ -2,6 +2,7 @@ package com.netsdk.lib.Enum;
 
 /**
  * 日志查询类型
+ *
  * @author 47081
  */
 public enum DH_LOG_QUERY_TYPE {

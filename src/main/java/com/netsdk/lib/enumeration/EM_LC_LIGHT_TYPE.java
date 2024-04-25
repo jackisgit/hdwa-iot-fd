@@ -37,14 +37,6 @@ public enum EM_LC_LIGHT_TYPE {
 
     private String note;
 
-    public String getNote() {
-        return note;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     EM_LC_LIGHT_TYPE(int givenValue, String note) {
         this.value = givenValue;
         this.note = note;
@@ -75,6 +67,14 @@ public enum EM_LC_LIGHT_TYPE {
             }
         }
         return EM_LC_LIGHT_TYPE.EM_LC_LIGHT_TYPE_UNKNOWN;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

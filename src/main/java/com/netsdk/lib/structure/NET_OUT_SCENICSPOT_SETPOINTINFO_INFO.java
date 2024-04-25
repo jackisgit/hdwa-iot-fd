@@ -10,20 +10,20 @@ import com.netsdk.lib.NetSDKLib;
  * @since ： Created in 2020/10/26 16:14
  */
 public class NET_OUT_SCENICSPOT_SETPOINTINFO_INFO extends NetSDKLib.SdkStructure {
-	/**
-	 * 结构体大小
-	 */
-	public int dwSize;
-	/**
-	 * 标签同步通道有效个数
-	 */
-	public int nSyncToChannelNum;
-	/**
-	 * 标签同步通道
-	 */
-	public short[] nSyncToChannels = new short[16];
+    /**
+     * 结构体大小
+     */
+    public int dwSize;
+    /**
+     * 标签同步通道有效个数
+     */
+    public int nSyncToChannelNum;
+    /**
+     * 标签同步通道
+     */
+    public short[] nSyncToChannels = new short[16];
 
-	public NET_OUT_SCENICSPOT_SETPOINTINFO_INFO() {
-		dwSize = this.size();
-	}
+    public NET_OUT_SCENICSPOT_SETPOINTINFO_INFO() {
+        dwSize = this.size();
+    }
 }

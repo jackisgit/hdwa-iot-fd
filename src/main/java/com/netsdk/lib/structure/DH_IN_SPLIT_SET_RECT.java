@@ -9,25 +9,25 @@ import com.netsdk.lib.NetSDKLib;
  */
 public class DH_IN_SPLIT_SET_RECT extends NetSDKLib.SdkStructure {
 
-	public int dwSize;
-	/**
-	 * 通道号(屏号)
-	 */
-	public int nChannel;
-	/**
-	 * 窗口序号
-	 */
-	public int nWindowID;
-	/**
-	 * 窗口位置, 0~8191
-	 */
-	public NetSDKLib.DH_RECT stuRect = new NetSDKLib.DH_RECT();
-	/**
-	 * 坐标是否满足直通条件, 直通是指拼接屏方式下,此窗口区域正好为物理屏区域
-	 */
-	public int bDirectable;
+    public int dwSize;
+    /**
+     * 通道号(屏号)
+     */
+    public int nChannel;
+    /**
+     * 窗口序号
+     */
+    public int nWindowID;
+    /**
+     * 窗口位置, 0~8191
+     */
+    public NetSDKLib.DH_RECT stuRect = new NetSDKLib.DH_RECT();
+    /**
+     * 坐标是否满足直通条件, 直通是指拼接屏方式下,此窗口区域正好为物理屏区域
+     */
+    public int bDirectable;
 
-	public DH_IN_SPLIT_SET_RECT() {
-		this.dwSize = this.size();
-	}
+    public DH_IN_SPLIT_SET_RECT() {
+        this.dwSize = this.size();
+    }
 }
