@@ -321,10 +321,16 @@ public class HikVisionEasDevice extends BaseDevice {
 
     @Override
     public boolean processData() throws Exception {
+        Set<String> ipSet = new HashSet<>();
         deviceParamListMap.entrySet().forEach(entry -> {
-            List<String> ipList = Arrays.asList(entry.getKey().split("_"));
-            String ip = ipList.get(0);
-            Queue<String> allIp = new LinkedList<String>();
+            if (entry.getKey().contains(ONLINE_STATUS)) {
+                List<String> ipList = Arrays.asList(entry.getKey().split("_"));
+                String ip = ipList.get(0);
+                ipSet.add(ip);
+            }
+        });
+        ipSet.forEach(ip -> {
+            Queue<String> allIp = new LinkedList<>();
             allIp.offer(ip);
             PingUtil pingUtil = new PingUtil(allIp);
             pingUtil.setIpsOK("");
