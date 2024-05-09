@@ -7,6 +7,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.wanda.epc.param.DeviceMessage;
 import com.wanda.epc.util.PingUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,6 @@ public class HikVisionEasDevice extends BaseDevice {
     static int lListenHandle = -1;//报警监听句柄
     static FMSGCallBack fMSFCallBack = null;
     static HCNetSDK.FMSGCallBack_V31 fMSFCallBack_V31 = null;
-    @Value("${epc.group}")
-    private String epcGroup;
     @Value("${hikVision.ip}")
     private String ip;
 
@@ -396,19 +395,19 @@ public class HikVisionEasDevice extends BaseDevice {
     public void dispatchCommand(String meter, Integer funcid, String value, String message) throws Exception {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
+        String outParamId = deviceMessage.getOutParamId();
         log.info("接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
-        if (deviceMessage != null && deviceMessage.getOutParamId() != null && deviceMessage.getOutParamId().endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
+        if (ObjectUtils.isNotEmpty(deviceMessage) && StringUtils.isNotBlank(outParamId) && outParamId.endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             try {
-                String[] groups = epcGroup.split(",");
-                if (groups.length == 0) {
+                if (redisUtil.hasKey(outParamId)) {
                     return;
                 }
-                for (String group : groups) {
-                    if ("1.0".equals(value)) {
-                        alarmHostSubSystemSetupAlarmChan(Integer.valueOf(group));
-                    } else {
-                        alarmHostSubSystemCloseAlarmChan(Integer.valueOf(group));
-                    }
+                redisUtil.set(outParamId, "0", 5);
+                final String[] strings = outParamId.split("_");
+                if ("1.0".equals(value)) {
+                    alarmHostSubSystemSetupAlarmChan(Integer.valueOf(strings[0]));
+                } else {
+                    alarmHostSubSystemCloseAlarmChan(Integer.valueOf(strings[0]));
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());
