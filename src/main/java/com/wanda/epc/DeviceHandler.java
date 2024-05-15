@@ -40,7 +40,7 @@ public class DeviceHandler extends BaseDevice {
      */
     @PostConstruct
     public void init() {
-        zoneArmMode.initTest();
+        zoneArmMode.init();
     }
 
     /**
@@ -48,7 +48,7 @@ public class DeviceHandler extends BaseDevice {
      */
     @PreDestroy
     public void destroy() {
-        zoneArmMode.endTest();
+        zoneArmMode.end();
     }
 
     @Override

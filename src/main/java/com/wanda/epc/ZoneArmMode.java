@@ -796,7 +796,7 @@ public class ZoneArmMode {
     /**
      * 初始化测试
      */
-    public void initTest() {
+    public void init() {
         initSdk();
         loginWithHighLevel();
         //开启回调会使日志过多
@@ -806,7 +806,7 @@ public class ZoneArmMode {
     /**
      * 结束测试
      */
-    public void endTest() {
+    public void end() {
         this.logOut(); // 登出设备
         cleanAndExit(); // 清理资源并退出
     }
