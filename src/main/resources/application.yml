@@ -32,3 +32,4 @@ ip: 192.168.1.134
 port: 37777
 user: admin
 password: admin123456
+clientAddress: 192.168.11.17
