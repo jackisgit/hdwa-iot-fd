@@ -171,8 +171,9 @@ public class DeviceHandler extends BaseDevice {
         String outParamId = deviceMessage.getOutParamId();
         String[] param = outParamId.split("_");
         Integer zoneNo = Integer.valueOf(param[0]);
+        //D是撤防，T是布防
         String armMode = "D";
-        if (!value.equals("1.0")) {
+        if (value.equals("1.0")) {
             armMode = "T";
         }
         zoneArmMode.setZoneArmMode(zoneNo, armMode);
