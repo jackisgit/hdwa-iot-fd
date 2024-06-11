@@ -6,19 +6,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * @author LianYanFei
- * @description 防盗系统
- * @date 2023/3/30
- */
+ * @author: 孙率众
+ **/
 @Configuration
 @EnableScheduling
 public class CommonTask {
 
     @Autowired
-    private HikVisionEasDevice hikVisionEasDevice;
+    private DeviceHandler deviceHandler;
 
-    @Scheduled(cron = "${epc.cron:0/60 * * * * ?}")
-    public boolean processData() throws Exception {
-        return hikVisionEasDevice.processData();
+    @Scheduled(cron = "${cron.cron:0/30 * * * * ?}")
+    public void getOnlineStatus() throws Exception {
+        deviceHandler.processData();
     }
+
 }
