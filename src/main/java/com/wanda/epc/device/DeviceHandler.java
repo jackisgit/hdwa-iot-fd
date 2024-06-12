@@ -106,7 +106,7 @@ public class DeviceHandler extends BaseDevice {
         // post请求Form表单参数
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageNo", "1");
-        paramMap.put("pageSize", "20000");
+        paramMap.put("pageSize", "200");
         String result = sendHttps(search, paramMap);
         log.info("接口:{},参数:{},返回:{}", search, JSONObject.toJSONString(paramMap), result);
         deviceParamListMap.forEach((key, value) -> {
