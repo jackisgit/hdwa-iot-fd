@@ -15,7 +15,7 @@ beanName: deviceHandler
 spring:
   redis:
     host: 127.0.0.1
-    port: 16379
+    port: 6379
     password:
 #广场ID及GatewayId
 epc:
