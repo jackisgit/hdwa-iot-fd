@@ -27,11 +27,13 @@ epc:
   appKey: 26194113
   appSecret: gxw4VWg0jF8UmBjalX1U
   cron: 0/30 * * * * ?
-#  查询
-  search: /api/resource/v2/iasChannel/search
+  #查询报警主机
+  search: /api/resource/v2/iasDevice/search
+  #查询防区通道列表
+  searchDefence: /api/scpms/v1/iasDevice/defence
   #  控制
   control: /api/scpms/v1/subsystem/status/issue
-#  子系统状态
+  #子系统状态
   subSysStatus: /api/scpms/v1/subSys/status
   #  防区状态
   defenceStatus: /api/scpms/v1/defence/status
