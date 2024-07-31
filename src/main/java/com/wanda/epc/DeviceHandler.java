@@ -94,6 +94,11 @@ public class DeviceHandler extends BaseDevice {
                     String key = i + FAULT_STATUS;
                     sendMsg(key, "1");
                     set.remove(key);
+
+                    //单个设备
+                    String key2 = stuZoneStatus1.nIndex + FAULT_STATUS;
+                    sendMsg(key2, "1");
+                    set.remove(key2);
                 }
             }
         } else {
@@ -108,6 +113,10 @@ public class DeviceHandler extends BaseDevice {
                     String key = i + FAULT_STATUS;
                     sendMsg(key, "1");
                     set.remove(key);
+
+                    String key2 = stuZoneStatus1.nIndex + FAULT_STATUS;
+                    sendMsg(key2, "1");
+                    set.remove(key2);
                 }
             }
         }
