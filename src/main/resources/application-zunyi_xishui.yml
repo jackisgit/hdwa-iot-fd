@@ -20,7 +20,7 @@ spring:
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 5001130030
+  gcId: 5203300010
   subsystem: fdxt/
   threadNum: 1
   host: https://192.168.21.251
@@ -32,5 +32,6 @@ epc:
   version: 1.0.0
   service: ThirdParty
   localhost: 10.107.192.21
-  machineId: 1002202
+  machineId: 1002218
+jobs:
   cron: 0/30 * * * * ?
