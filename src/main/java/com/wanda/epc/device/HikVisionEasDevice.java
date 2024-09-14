@@ -138,7 +138,7 @@ public class HikVisionEasDevice extends BaseDevice {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区布防
         net_dvr_alarmin_setup.write();
-        Boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSetupAlarmChan(lUserID, net_dvr_alarmin_setup);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSetupAlarmChan(lUserID, net_dvr_alarmin_setup);
         if (!aBoolean) {
             log.error("对防区" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
             if (hCNetSDK.NET_DVR_GetLastError() == 1209) {
@@ -158,7 +158,7 @@ public class HikVisionEasDevice extends BaseDevice {
      */
     private static void alarmHostSubSystemSetupAlarmChan(int num) {
         //报警撤防
-        Boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(lUserID, num);
+        boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(lUserID, num);
         if (!aBoolean1) {
             log.info("对子系统" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
@@ -173,7 +173,7 @@ public class HikVisionEasDevice extends BaseDevice {
      */
     private static void alarmHostSubSystemCloseAlarmChan(int num) {
         //报警撤防
-        Boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(lUserID, num);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(lUserID, num);
         if (!aBoolean) {
             log.info("对子系统" + num + "撤防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
@@ -190,7 +190,7 @@ public class HikVisionEasDevice extends BaseDevice {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区1布防
         net_dvr_alarmin_setup.write();
-        Boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostCloseAlarmChan(lUserID, net_dvr_alarmin_setup);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostCloseAlarmChan(lUserID, net_dvr_alarmin_setup);
         if (!aBoolean) {
             log.error("对防区" + num + "撤防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
@@ -402,7 +402,7 @@ public class HikVisionEasDevice extends BaseDevice {
         commonDevice.feedback(message);
         DeviceMessage deviceMessage = controlParamMap.get(meter + "-" + funcid);
         String outParamId = deviceMessage.getOutParamId();
-        log.info("接收到防盗报警撤布防指令 meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
+        log.info("  meter:{},funcId:{},value:{},deviceMessage:{}", meter, funcid, value, JSON.toJSONString(deviceMessage));
         if (ObjectUtils.isNotEmpty(deviceMessage) && StringUtils.isNotBlank(outParamId) && outParamId.endsWith(DEPLOY_WITHDRAW_ALARM_SET)) {
             try {
                 if (redisUtil.hasKey(outParamId)) {
@@ -410,10 +410,11 @@ public class HikVisionEasDevice extends BaseDevice {
                 }
                 redisUtil.set(outParamId, "0", 5);
                 final String[] strings = outParamId.split("_");
+                //单设备布防
                 if ("1.0".equals(value)) {
-                    alarmHostSubSystemSetupAlarmChan(Integer.valueOf(strings[0]));
+                    setAlarm(Integer.valueOf(strings[0]));
                 } else {
-                    alarmHostSubSystemCloseAlarmChan(Integer.valueOf(strings[0]));
+                    closeAlarmChan(Integer.valueOf(strings[0]));
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());

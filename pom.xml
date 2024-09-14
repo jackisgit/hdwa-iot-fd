@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>iot_epc_fd</artifactId>
-    <version>1.0.0-R20240408</version>
+    <version>1.0.0-R20240914</version>
 
     <dependencies>
         <dependency>
@@ -38,7 +38,7 @@
 
 
     <build>
-        <finalName>IOT_EPC_FD_hikvision_IVMS-8700E_${version}</finalName>
+        <finalName>IOT_EPC_FD_hikvision_IVMS-8700E_eqSetArm_${version}</finalName>
     </build>
 
 </project>
