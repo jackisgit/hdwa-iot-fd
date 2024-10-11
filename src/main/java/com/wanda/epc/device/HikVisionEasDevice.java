@@ -320,11 +320,11 @@ public class HikVisionEasDevice extends BaseDevice {
     }
 
     @Override
-    public boolean processData() throws Exception {
+    public boolean processData() {
         Set<String> ipSet = new HashSet<>();
-        deviceParamListMap.entrySet().forEach(entry -> {
-            if (entry.getKey().contains(ONLINE_STATUS)) {
-                List<String> ipList = Arrays.asList(entry.getKey().split("_"));
+        deviceParamListMap.forEach((key, value) -> {
+            if (key.contains(ONLINE_STATUS)) {
+                List<String> ipList = Arrays.asList(key.split("_"));
                 String ip = ipList.get(0);
                 ipSet.add(ip);
             }
@@ -367,7 +367,7 @@ public class HikVisionEasDevice extends BaseDevice {
                 fMSFCallBack_V31 = new FMSGCallBack_V31();
                 Pointer pUser = null;
                 if (!hCNetSDK.NET_DVR_SetDVRMessageCallBack_V31(fMSFCallBack_V31, pUser)) {
-                    log.info("设置回调函数失败!", hCNetSDK.NET_DVR_GetLastError());
+                    log.error("设置回调函数失败：" + hCNetSDK.NET_DVR_GetLastError());
                 }
             }
             // 这里需要对设备进行相应的参数设置，不设置或设置错误都会导致设备注册失败
@@ -412,9 +412,9 @@ public class HikVisionEasDevice extends BaseDevice {
                 final String[] strings = outParamId.split("_");
                 //单设备布防
                 if ("1.0".equals(value)) {
-                    setAlarm(Integer.valueOf(strings[0]));
+                    setAlarm(Integer.parseInt(strings[0]));
                 } else {
-                    closeAlarmChan(Integer.valueOf(strings[0]));
+                    closeAlarmChan(Integer.parseInt(strings[0]));
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());
@@ -433,7 +433,7 @@ public class HikVisionEasDevice extends BaseDevice {
      * @date 2023/5/24
      */
     private void alarmStatus() {
-        log.info("开始主动查询防区状态信息");
+        log.info("==========开始主动查询防区状态信息==========");
         HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40 acsWorkStatus = new HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40();
         Pointer pAcsWorkStatus = acsWorkStatus.getPointer();
         if (!hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_ALARMHOST_MAIN_STATUS_V40, 0, pAcsWorkStatus,
@@ -443,31 +443,40 @@ public class HikVisionEasDevice extends BaseDevice {
         }
         acsWorkStatus.read();
         //撤布防状态
-        log.info("bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
+        log.info("------bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
         for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
             byte b = acsWorkStatus.bySetupAlarmStatus[i];
             //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
             sendMsg(i + 1 + DEPLOY_WITHDRAW_ALARM_STATUS, String.valueOf(b));
         }
         //防区报警状态
-        log.info("byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
+        log.info("------byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInStatus[i];
+            if (b == 1) {
+                log.warn(i + 1 + ":防区报警");
+            }
             //0- 对应防区当前无报警，1- 对应防区当前有报警
             sendMsg(i + 1 + ALARM_STATUS, String.valueOf(b));
         }
         //防区故障状态
-        log.info("byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
+        log.info("------byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInFaultStatus[i];
+            if (b == 1) {
+                log.warn(i + 1 + ":防区故障");
+            }
             //0-对应防区处于正常状态，1-对应防区处于故障状态
             sendMsg(i + 1 + FAULT_STATUS, String.valueOf(b));
         }
         //防区防拆状态
-        log.info("byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
+        log.info("------byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
         for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
             byte b = acsWorkStatus.byAlarmInTamperStatus[i];
             //0-对应防区当前无报警，1-对应防区当前有报警
+            if (b == 1) {
+                log.warn(i + 1 + ":防区防拆报警");
+            }
             sendMsg(i + 1 + FANGCHAI_STATUS, String.valueOf(b));
         }
     }

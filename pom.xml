@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>iot_epc_fd</artifactId>
-    <version>1.0.0-R20240914</version>
+    <version>1.0.0-R20241011</version>
 
     <dependencies>
         <dependency>
