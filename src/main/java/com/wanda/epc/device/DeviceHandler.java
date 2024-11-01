@@ -170,15 +170,14 @@ public class DeviceHandler extends BaseDevice {
                 return;
             }
             List<defenceAreaDTO> defenceAreaDTOS = new ArrayList<>();
-            for (int i = 0; i < values.size(); i++) {
-                List<defenceAreaDTO> defenceAreaList = values.get(i).getDefenceAreaList();
+            for (com.wanda.epc.DTO.Value value : values) {
+                List<defenceAreaDTO> defenceAreaList = value.getDefenceAreaList();
                 defenceAreaDTOS.addAll(defenceAreaList);
             }
             for (defenceAreaDTO defenceAreaDTO : defenceAreaDTOS) {
                 String status = defenceAreaDTO.getStatus();
                 String defenceAreaId = defenceAreaDTO.getDefenceAreaId();
-                String isOnline = defenceAreaDTO.getIsOnline();
-                sendMsg(defenceAreaId + ONLINE_STATUS, isOnline);
+                sendMsg(defenceAreaId + ONLINE_STATUS, "1");
                 if ("5".equals(status)) {
                     sendMsg(defenceAreaId + ALARM_STATUS, "1");
                 } else {
@@ -187,8 +186,6 @@ public class DeviceHandler extends BaseDevice {
                         sendMsg(defenceAreaId + DEPLOY_WITHDRAW_ALARM_STATUS, "1");
                     } else if ("2".equals(status)) {
                         sendMsg(defenceAreaId + DEPLOY_WITHDRAW_ALARM_STATUS, "0");
-                    } else if ("6".equals(status)) {
-                        sendMsg(defenceAreaId + ONLINE_STATUS, "1");
                     } else if ("7".equals(status)) {
                         sendMsg(defenceAreaId + ONLINE_STATUS, "0");
                     }
