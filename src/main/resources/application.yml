@@ -17,20 +17,19 @@ spring:
     port: 16379
     password:
 
-beanName: hikVisionEasDevice
+beanName: hikVisionEasDeviceManyIp
 
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 1504020100
+  gcId: 3502110030
   subsystem: fdxt/
   threadNum: 5
   cron: 0/60 * * * * ?
   #使能分组
   group: 1,2,3,4,5
 
-hikVision:
-  ip: 10.86.16.188
-  port: 8000
-  user: admin
-  pwd: bj123456
+devices_ip: 192.168.7.64,192.168.7.65,192.168.7.55
+devices_user: admin,admin,admin
+devices_port: 8000,8000,8000
+devices_password: ytdz3619,ytdz3619,ytdz3619

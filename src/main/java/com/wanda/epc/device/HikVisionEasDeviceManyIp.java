@@ -1,4 +1,4 @@
-//package com.wanda.epc.device;
+package com.wanda.epc.device;
 
 import com.alibaba.fastjson.JSON;
 import com.sun.jna.Native;
@@ -13,13 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.*;
 
-/*
+
 @Slf4j
 @Component
-public class HikVisionEasDevice extends BaseDevice {
+public class HikVisionEasDeviceManyIp extends BaseDevice {
 
     public static final String DEPLOY_WITHDRAW_ALARM_STATUS = "_deployWithdrawAlarmStatus";
     public static final String ALARM_STATUS = "_alarmStatus";
@@ -28,28 +27,27 @@ public class HikVisionEasDevice extends BaseDevice {
     public static final String DEPLOY_WITHDRAW_ALARM_SET = "deployWithdrawAlarmSet";
     public static final String ONLINE_STATUS = "_onlineStatus";
     static HCNetSDK hCNetSDK;
-    static int lUserID = -1;//用户句柄 实现对设备登录
     static int lListenHandle = -1;//报警监听句柄
     static FMSGCallBack fMSFCallBack = null;
     static HCNetSDK.FMSGCallBack_V31 fMSFCallBack_V31 = null;
-    @Value("${hikVision.ip}")
-    private String ip;
 
-    @Value("${hikVision.port}")
-    private short port;
+    private static final Map<String, Integer> userIds = new HashMap<>();
 
-    @Value("${hikVision.user}")
-    private String user;
+    @Value("${devices_ip}")
+    private String devicesIp;
+    @Value("${devices_port}")
+    private String devicesPort;
+    @Value("${devices_user}")
+    private String devicesUser;
+    @Value("${devices_password}")
+    private String devicesPassword;
 
-    @Value("${hikVision.pwd}")
-    private String pwd;
-
-    *//**
+    /**
      * 开启监听
      *
      * @param ip   监听IP
      * @param port 监听端口
-     *//*
+     */
     public static void startListen(String ip, short port) {
         if (fMSFCallBack == null) {
             fMSFCallBack = new FMSGCallBack();
@@ -63,11 +61,11 @@ public class HikVisionEasDevice extends BaseDevice {
         }
     }
 
-    *//**
+    /**
      * 动态库加载
      *
      * @return
-     *//*
+     */
     private static boolean createSDKInstance() {
         if (hCNetSDK == null) {
             synchronized (HCNetSDK.class) {
@@ -90,51 +88,50 @@ public class HikVisionEasDevice extends BaseDevice {
         return true;
     }
 
-    *//**
+    /**
      * 设备登录V40 与V30功能一致
      *
      * @param ip   设备IP
      * @param port SDK端口，默认设备的8000端口
      * @param user 设备用户名
      * @param psw  设备密码
-     *//*
-    private static void login_V40(String ip, short port, String user, String psw) {
-        //注册
-        HCNetSDK.NET_DVR_USER_LOGIN_INFO m_strLoginInfo = new HCNetSDK.NET_DVR_USER_LOGIN_INFO();//设备登录信息
-        HCNetSDK.NET_DVR_DEVICEINFO_V40 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V40();//设备信息
+     */
+    private int login_V40(String ip, short port, String user, String psw) {
+        // 设备登录的逻辑
+        HCNetSDK.NET_DVR_USER_LOGIN_INFO m_strLoginInfo = new HCNetSDK.NET_DVR_USER_LOGIN_INFO();
+        HCNetSDK.NET_DVR_DEVICEINFO_V40 m_strDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V40();
 
-        String m_sDeviceIP = ip;//设备ip地址
         m_strLoginInfo.sDeviceAddress = new byte[HCNetSDK.NET_DVR_DEV_ADDRESS_MAX_LEN];
-        System.arraycopy(m_sDeviceIP.getBytes(), 0, m_strLoginInfo.sDeviceAddress, 0, m_sDeviceIP.length());
+        System.arraycopy(ip.getBytes(), 0, m_strLoginInfo.sDeviceAddress, 0, ip.length());
 
-        String m_sUsername = user;//设备用户名
         m_strLoginInfo.sUserName = new byte[HCNetSDK.NET_DVR_LOGIN_USERNAME_MAX_LEN];
-        System.arraycopy(m_sUsername.getBytes(), 0, m_strLoginInfo.sUserName, 0, m_sUsername.length());
+        System.arraycopy(user.getBytes(), 0, m_strLoginInfo.sUserName, 0, user.length());
 
-        String m_sPassword = psw;//设备密码
         m_strLoginInfo.sPassword = new byte[HCNetSDK.NET_DVR_LOGIN_PASSWD_MAX_LEN];
-        System.arraycopy(m_sPassword.getBytes(), 0, m_strLoginInfo.sPassword, 0, m_sPassword.length());
+        System.arraycopy(psw.getBytes(), 0, m_strLoginInfo.sPassword, 0, psw.length());
 
         m_strLoginInfo.wPort = port;
-        m_strLoginInfo.bUseAsynLogin = false; //是否异步登录：0- 否，1- 是
-        m_strLoginInfo.byLoginMode = 0;  //ISAPI登录
+        m_strLoginInfo.bUseAsynLogin = false;  // 是否异步登录
+        m_strLoginInfo.byLoginMode = 0;  // ISAPI 登录
         m_strLoginInfo.write();
 
-        lUserID = hCNetSDK.NET_DVR_Login_V40(m_strLoginInfo, m_strDeviceInfo);
+        long lUserID = hCNetSDK.NET_DVR_Login_V40(m_strLoginInfo, m_strDeviceInfo);
 
         if (lUserID == -1) {
             log.info("登录失败，错误码为" + hCNetSDK.NET_DVR_GetLastError());
+            return -1;
         } else {
-            log.info(ip + ":设备登录成功！");
+            log.info(ip + ": 设备登录成功！");
+            return (int) lUserID;
         }
     }
 
-    *//**
+    /**
      * 报警布防接口
      *
      * @param
-     *//*
-    public static void setAlarm(int num) {
+     */
+    /*public static void setAlarm(int num) {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区布防
         net_dvr_alarmin_setup.write();
@@ -149,14 +146,14 @@ public class HikVisionEasDevice extends BaseDevice {
             log.info("对防区" + num + "布防成功");
         }
 
-    }
+    }*/
 
-    *//**
+    /**
      * 子系统报警布防
      *
      * @param num 子系统号，子系统关联的防区将会全部布防，实现防区一键布防
-     *//*
-    private static void alarmHostSubSystemSetupAlarmChan(int num) {
+     */
+   /* private static void alarmHostSubSystemSetupAlarmChan(int num) {
         //报警撤防
         boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(lUserID, num);
         if (!aBoolean1) {
@@ -164,14 +161,14 @@ public class HikVisionEasDevice extends BaseDevice {
         } else {
             log.info("对子系统" + num + "布防成功");
         }
-    }
+    }*/
 
-    *//**
+    /**
      * 子系统报警撤防
      *
      * @param num
-     *//*
-    private static void alarmHostSubSystemCloseAlarmChan(int num) {
+     */
+   /* private static void alarmHostSubSystemCloseAlarmChan(int num) {
         //报警撤防
         boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(lUserID, num);
         if (!aBoolean) {
@@ -179,14 +176,14 @@ public class HikVisionEasDevice extends BaseDevice {
         } else {
             log.info("对子系统" + num + "撤防成功");
         }
-    }
+    }*/
 
-    *//**
+    /**
      * 设备撤防，设备注销
      *
      * @param
-     *//*
-    public static void closeAlarmChan(int num) {
+     */
+   /* public static void closeAlarmChan(int num) {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区1布防
         net_dvr_alarmin_setup.write();
@@ -197,9 +194,9 @@ public class HikVisionEasDevice extends BaseDevice {
             log.info("对防区" + num + "撤防成功");
         }
 
-    }
+    }*/
 
-    *//**
+    /**
      * 功能描述:子系统关联防区
      * 子系统关联参数设置规则：索引都默认为0代表关联1-8防区（subsystem_param_ex.byJointAlarmIn[0]） 1代表9-16防区，以此类推 subsystem_param_ex.byJointAlarmIn[1]）
      * 所设置的十进制值将会转换成2禁止，转成二进制1代表关联，0代表取消关联
@@ -209,28 +206,33 @@ public class HikVisionEasDevice extends BaseDevice {
      * 注意：由于byte最大值为127，如果8位二进制转成byte超出，直接强转成byte,或自动进行补位
      *
      * @param alarmsubsystem_code:子系统号
-     *//*
+     */
     public static void subsystemParamEx(int alarmsubsystem_code) {
         log.info("使能开始，子系统号：{}", alarmsubsystem_code);
-        *//**************开启子系统使能**************//*
+        //**************开启子系统使能**************
         HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
         net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
         net_dvr_alarmsubsystemparam.write();
         IntByReference lpBytesReturned = new IntByReference(0);
-        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(lUserID, 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
-        if (b_GetAcsCfg) {
-            net_dvr_alarmsubsystemparam.read();
-            net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
-            net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
-            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
-            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(lUserID, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
-            if (!b_SetAcsCfg) {
-                log.error("设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+
+        userIds.forEach((key, value) -> {
+            boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(value, 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
+            if (b_GetAcsCfg) {
+                net_dvr_alarmsubsystemparam.read();
+                net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
+                net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
+                net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
+                boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(value, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
+                if (!b_SetAcsCfg) {
+                    log.error(key + "设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                }
+            } else {
+                log.error(key + "获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
             }
-        } else {
-            log.error("获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
-        }
-        log.info("使能成功，子系统号：{}", alarmsubsystem_code);
+            log.info(key + "使能成功，子系统号：{}", alarmsubsystem_code);
+        });
+
+
     }
 
     @PostConstruct
@@ -264,9 +266,9 @@ public class HikVisionEasDevice extends BaseDevice {
             hCNetSDK.NET_DVR_SetSDKInitCfg(2, struComPath.getPointer());
         }
 
-        *//**初始化*//*
+        /**初始化*/
         hCNetSDK.NET_DVR_Init();
-        *//**加载日志*//*
+        /**加载日志*/
         hCNetSDK.NET_DVR_SetLogToFile(3, "./sdklog", false);
         //设置报警回调函数
         if (fMSFCallBack_V31 == null) {
@@ -279,10 +281,10 @@ public class HikVisionEasDevice extends BaseDevice {
                 log.info("设置回调函数成功!");
             }
         }
-        *//** 设备上传的报警信息是COMM_VCA_ALARM(0x4993)类型，
+        /** 设备上传的报警信息是COMM_VCA_ALARM(0x4993)类型，
          在SDK初始化之后增加调用NET_DVR_SetSDKLocalCfg(enumType为NET_DVR_LOCAL_CFG_TYPE_GENERAL)设置通用参数NET_DVR_LOCAL_GENERAL_CFG的byAlarmJsonPictureSeparate为1，
          将Json数据和图片数据分离上传，这样设置之后，报警布防回调函数里面接收到的报警信息类型为COMM_ISAPI_ALARM(0x6009)，
-         报警信息结构体为NET_DVR_ALARM_ISAPI_INFO（与设备无关，SDK封装的数据结构），更便于解析。*//*
+         报警信息结构体为NET_DVR_ALARM_ISAPI_INFO（与设备无关，SDK封装的数据结构），更便于解析。*/
 
         HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG struNET_DVR_LOCAL_GENERAL_CFG = new HCNetSDK.NET_DVR_LOCAL_GENERAL_CFG();
         struNET_DVR_LOCAL_GENERAL_CFG.byAlarmJsonPictureSeparate = 1;   //设置JSON透传报警数据和图片分离
@@ -290,14 +292,24 @@ public class HikVisionEasDevice extends BaseDevice {
         Pointer pStrNET_DVR_LOCAL_GENERAL_CFG = struNET_DVR_LOCAL_GENERAL_CFG.getPointer();
         hCNetSDK.NET_DVR_SetSDKLocalCfg(17, pStrNET_DVR_LOCAL_GENERAL_CFG);
 
-        login_V40(ip, port, user, pwd);  //登录设备
+        String[] ips = devicesIp.split(",");
+        String[] users = devicesUser.split(",");
+        String[] passwords = devicesPassword.split(",");
+        String[] ports = devicesPort.split(",");
 
-        setupAlarmChan(lUserID, -1);//建立报警布防通道
-
+        for (int i = 0; i < ips.length; i++) {
+            // 登录设备
+            int lUserID = login_V40(ips[i], Short.parseShort(ports[i]), users[i], passwords[i]);
+            if (lUserID != -1) {
+                // 设置报警通道
+                setupAlarmChan(lUserID, -1);
+                userIds.put(ips[i], lUserID);
+            }
+        }
 
     }
 
-    @PreDestroy
+   /* @PreDestroy
     public void LogoutAndStopListen() {
         if (lListenHandle > -1) {
             if (hCNetSDK.NET_DVR_StopListen_V30(lListenHandle)) {
@@ -310,7 +322,7 @@ public class HikVisionEasDevice extends BaseDevice {
             }
         }
         hCNetSDK.NET_DVR_Cleanup();
-    }
+    }*/
 
     @Override
     public void sendMessage(DeviceMessage dm) {
@@ -321,46 +333,50 @@ public class HikVisionEasDevice extends BaseDevice {
 
     @Override
     public boolean processData() {
-        Set<String> ipSet = new HashSet<>();
-        deviceParamListMap.forEach((key, value) -> {
-            if (key.contains(ONLINE_STATUS)) {
-                List<String> ipList = Arrays.asList(key.split("_"));
-                String ip = ipList.get(0);
-                ipSet.add(ip);
-            }
-        });
-        ipSet.forEach(ip -> {
-            Queue<String> allIp = new LinkedList<>();
-            allIp.offer(ip);
-            PingUtil pingUtil = new PingUtil(allIp);
-            pingUtil.setIpsOK("");
-            pingUtil.setIpsNO("");
-            pingUtil.startPing();
-            String ipsOK = pingUtil.getIpsOK();
-            String ipsNo = pingUtil.getIpsNO();
-            if (StringUtils.isNotBlank(ipsOK)) {
-                sendMsg(ip.concat(ONLINE_STATUS), "1");
-            }
-            if (StringUtils.isNotBlank(ipsNo)) {
-                sendMsg(ip.concat(ONLINE_STATUS), "0");
-            }
-        });
+        try {
+            Set<String> ipSet = new HashSet<>();
+            deviceParamListMap.forEach((key, value) -> {
+                if (key.contains(ONLINE_STATUS)) {
+                    List<String> ipList = Arrays.asList(key.split("_"));
+                    String ip = ipList.get(0);
+                    ipSet.add(ip);
+                }
+            });
+            ipSet.forEach(ip -> {
+                Queue<String> allIp = new LinkedList<>();
+                allIp.offer(ip);
+                PingUtil pingUtil = new PingUtil(allIp);
+                pingUtil.setIpsOK("");
+                pingUtil.setIpsNO("");
+                pingUtil.startPing();
+                String ipsOk = pingUtil.getIpsOK();
+                String ipsNo = pingUtil.getIpsNO();
+                deviceParamListMap.forEach((key, value) -> {
+                    if (key.contains(ONLINE_STATUS) && key.contains(ip)) {
+                        if (StringUtils.isNotBlank(ipsOk)) {
+                            sendMsg(key, "1");
+                        } else if (StringUtils.isNotBlank(ipsNo)) {
+                            sendMsg(key, "0");
+                        }
+                    }
+                });
+            });
+        } catch (Exception e) {
+            log.error("查询在离线状态出现异常", e);
+        }
+
         alarmStatus();
         return false;
     }
 
-    *//**
+    /**
      * 建立布防上传通道，用于传输数据
      *
      * @param lUserID      唯一标识符
      * @param lAlarmHandle 报警处理器
-     *//*
+     */
     private int setupAlarmChan(int lUserID, int lAlarmHandle) {
         // 根据设备注册生成的lUserID建立布防的上传通道，即数据的上传通道
-        if (lUserID == -1) {
-            log.info("请先注册");
-            return lUserID;
-        }
         if (lAlarmHandle < 0) {
             // 设备尚未布防,需要先进行布防
             if (fMSFCallBack_V31 == null) {
@@ -385,7 +401,7 @@ public class HikVisionEasDevice extends BaseDevice {
             // 布防成功，返回布防成功的数据传输通道号
             lAlarmHandle = hCNetSDK.NET_DVR_SetupAlarmChan_V41(lUserID, m_strAlarmInfo);
             if (lAlarmHandle == -1) {
-                log.info("设备布防失败，错误码=========={}", hCNetSDK.NET_DVR_GetLastError());
+                log.error("设备布防失败，错误码=========={}", hCNetSDK.NET_DVR_GetLastError());
                 // 注销 释放sdk资源
                 hCNetSDK.NET_DVR_Logout(lUserID);
                 return lAlarmHandle;
@@ -412,9 +428,9 @@ public class HikVisionEasDevice extends BaseDevice {
                 final String[] strings = outParamId.split("_");
                 //单设备布防
                 if ("1.0".equals(value)) {
-                    setAlarm(Integer.parseInt(strings[0]));
+                    //setAlarm(Integer.parseInt(strings[0]));
                 } else {
-                    closeAlarmChan(Integer.parseInt(strings[0]));
+                    //closeAlarmChan(Integer.parseInt(strings[0]));
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());
@@ -427,63 +443,68 @@ public class HikVisionEasDevice extends BaseDevice {
         return false;
     }
 
-    *//**
+    /**
      * @description 查询防盗报警撤布防状态
      * @author LianYanFei
      * @date 2023/5/24
-     *//*
+     */
     private void alarmStatus() {
         log.info("==========开始主动查询防区状态信息==========");
         HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40 acsWorkStatus = new HCNetSDK.NET_DVR_ALARMHOST_MAIN_STATUS_V40();
         Pointer pAcsWorkStatus = acsWorkStatus.getPointer();
-        if (!hCNetSDK.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_ALARMHOST_MAIN_STATUS_V40, 0, pAcsWorkStatus,
-                acsWorkStatus.size(), new IntByReference(0))) {
-            log.error("Failed to get door status! Error code: " + hCNetSDK.NET_DVR_GetLastError());
-            return;
-        }
-        acsWorkStatus.read();
-        //撤布防状态
-        log.info("------bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
-        for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
-            byte b = acsWorkStatus.bySetupAlarmStatus[i];
-            //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
-            sendMsg(i + 1 + DEPLOY_WITHDRAW_ALARM_STATUS, String.valueOf(b));
-        }
-        //防区报警状态
-        log.info("------byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInStatus[i];
-            if (b == 1) {
-                log.warn(i + 1 + ":防区报警");
+
+        userIds.forEach((key, value) -> {
+            if (!hCNetSDK.NET_DVR_GetDVRConfig(value, HCNetSDK.NET_DVR_GET_ALARMHOST_MAIN_STATUS_V40, 0, pAcsWorkStatus,
+                    acsWorkStatus.size(), new IntByReference(0))) {
+                log.error("Failed to get door status! Error code: " + hCNetSDK.NET_DVR_GetLastError());
+                return;
             }
-            //0- 对应防区当前无报警，1- 对应防区当前有报警
-            sendMsg(i + 1 + ALARM_STATUS, String.valueOf(b));
-        }
-        //防区故障状态
-        log.info("------byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInFaultStatus[i];
-            if (b == 1) {
-                log.warn(i + 1 + ":防区故障");
+            acsWorkStatus.read();
+            //撤布防状态
+            log.info("------bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
+            for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
+                byte b = acsWorkStatus.bySetupAlarmStatus[i];
+                //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
+                sendMsg(key + "_" + (i + 1) + DEPLOY_WITHDRAW_ALARM_STATUS, String.valueOf(b));
             }
-            //0-对应防区处于正常状态，1-对应防区处于故障状态
-            sendMsg(i + 1 + FAULT_STATUS, String.valueOf(b));
-        }
-        //防区防拆状态
-        log.info("------byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
-        for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
-            byte b = acsWorkStatus.byAlarmInTamperStatus[i];
-            //0-对应防区当前无报警，1-对应防区当前有报警
-            if (b == 1) {
-                log.warn(i + 1 + ":防区防拆报警");
+            //防区报警状态
+            log.info("------byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
+            for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
+                byte b = acsWorkStatus.byAlarmInStatus[i];
+                if (b == 1) {
+                    log.warn(key + "_" + (i + 1) + ":防区报警");
+                }
+                //0- 对应防区当前无报警，1- 对应防区当前有报警
+                sendMsg(key + "_" + (i + 1) + ALARM_STATUS, String.valueOf(b));
             }
-            sendMsg(i + 1 + FANGCHAI_STATUS, String.valueOf(b));
-        }
+            //防区故障状态
+            log.info("------byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
+            for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
+                byte b = acsWorkStatus.byAlarmInFaultStatus[i];
+                if (b == 1) {
+                    log.warn(key + "_" + (i + 1) + ":防区故障");
+                }
+                //0-对应防区处于正常状态，1-对应防区处于故障状态
+                sendMsg(key + "_" + (i + 1) + FAULT_STATUS, String.valueOf(b));
+            }
+            //防区防拆状态
+            log.info("------byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
+            for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
+                byte b = acsWorkStatus.byAlarmInTamperStatus[i];
+                //0-对应防区当前无报警，1-对应防区当前有报警
+                if (b == 1) {
+                    log.warn(key + "_" + (i + 1) + ":防区防拆报警");
+                }
+                sendMsg(key + "_" + (i + 1) + FANGCHAI_STATUS, String.valueOf(b));
+            }
+        });
+
+
     }
 
-    *//**
+    /**
      * 获取异常信息
-     *//*
+     */
     public static class FExceptionCallBack_Imp implements HCNetSDK.FExceptionCallBack {
         private static Map<Integer, String> ipUserIdMap = new HashMap<>();
 
@@ -610,4 +631,4 @@ public class HikVisionEasDevice extends BaseDevice {
             }
         }
     }
-}*/
+}

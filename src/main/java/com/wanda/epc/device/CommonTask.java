@@ -15,10 +15,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class CommonTask {
 
     @Autowired
-    private HikVisionEasDevice hikVisionEasDevice;
+    private HikVisionEasDeviceManyIp hikVisionEasDeviceManyIp;
 
     @Scheduled(cron = "${epc.cron:0/60 * * * * ?}")
     public boolean processData() throws Exception {
-        return hikVisionEasDevice.processData();
+        return hikVisionEasDeviceManyIp.processData();
     }
 }

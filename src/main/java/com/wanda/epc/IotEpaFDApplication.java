@@ -1,6 +1,6 @@
 package com.wanda.epc;
 
-import com.wanda.epc.device.HikVisionEasDevice;
+import com.wanda.epc.device.HikVisionEasDeviceManyIp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +21,7 @@ public class IotEpaFDApplication {
         }
         for (String group : groups) {
             log.info("使能开始，子系统号：{}", group);
-            HikVisionEasDevice.subsystemParamEx(Integer.valueOf(group));
+            HikVisionEasDeviceManyIp.subsystemParamEx(Integer.parseInt(group));
             log.info("使能结束，子系统号：{}", group);
         }
     }
