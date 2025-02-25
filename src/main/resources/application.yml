@@ -29,7 +29,7 @@ epc:
   #使能分组
   group: 1,2,3,4,5
 
-devices_ip: 192.168.7.64,192.168.7.65,192.168.7.55
-devices_user: admin,admin,admin
-devices_port: 8000,8000,8000
-devices_password: ytdz3619,ytdz3619,ytdz3619
+devices_ip: 192.168.7.64,192.168.7.65,192.168.7.55,192.168.7.57
+devices_user: admin,admin,admin,admin
+devices_port: 8000,8000,8000,8000
+devices_password: ytdz3619,ytdz3619,ytdz3619,ytdz3619

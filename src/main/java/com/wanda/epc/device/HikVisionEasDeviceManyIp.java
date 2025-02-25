@@ -131,22 +131,22 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
      *
      * @param
      */
-    /*public static void setAlarm(int num) {
+    public static void setAlarm(String ip, int num) {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区布防
         net_dvr_alarmin_setup.write();
-        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSetupAlarmChan(lUserID, net_dvr_alarmin_setup);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSetupAlarmChan(userIds.get(ip), net_dvr_alarmin_setup);
         if (!aBoolean) {
-            log.error("对防区" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            log.error("对主机：" + ip + "，防区：" + num + "，布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
             if (hCNetSDK.NET_DVR_GetLastError() == 1209) {
-                subsystemParamEx(1);
-                subsystemParamEx(2);
+                subsystemParamEx(1, ip);
+                subsystemParamEx(2, ip);
             }
         } else {
-            log.info("对防区" + num + "布防成功");
+            log.info("对主机：" + ip + "，防区：" + num + "，布防成功");
         }
 
-    }*/
+    }
 
     /**
      * 子系统报警布防
@@ -183,18 +183,18 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
      *
      * @param
      */
-   /* public static void closeAlarmChan(int num) {
+    public static void closeAlarmChan(String ip, int num) {
         HCNetSDK.NET_DVR_ALARMIN_SETUP net_dvr_alarmin_setup = new HCNetSDK.NET_DVR_ALARMIN_SETUP();
         net_dvr_alarmin_setup.byAssiciateAlarmIn[num - 1] = 1; // 对防区1布防
         net_dvr_alarmin_setup.write();
-        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostCloseAlarmChan(lUserID, net_dvr_alarmin_setup);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostCloseAlarmChan(userIds.get(ip), net_dvr_alarmin_setup);
         if (!aBoolean) {
-            log.error("对防区" + num + "撤防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            log.error("对主机：" + ip + "，防区：" + num + "，撤防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
-            log.info("对防区" + num + "撤防成功");
+            log.info("对主机：" + ip + "，防区：" + num + "，撤防成功");
         }
 
-    }*/
+    }
 
     /**
      * 功能描述:子系统关联防区
@@ -225,14 +225,40 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
                 boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(value, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
                 if (!b_SetAcsCfg) {
                     log.error(key + "设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                    return;
                 }
             } else {
                 log.error(key + "获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                return;
             }
             log.info(key + "使能成功，子系统号：{}", alarmsubsystem_code);
         });
+    }
 
+    public static void subsystemParamEx(int alarmsubsystem_code, String userId) {
+        log.info(userId + "----使能开始，子系统号：{}", alarmsubsystem_code);
+        //**************开启子系统使能**************
+        HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
+        net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
+        net_dvr_alarmsubsystemparam.write();
+        IntByReference lpBytesReturned = new IntByReference(0);
 
+        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(userIds.get(userId), 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
+        if (b_GetAcsCfg) {
+            net_dvr_alarmsubsystemparam.read();
+            net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
+            net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
+            net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
+            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(userIds.get(userId), 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
+            if (!b_SetAcsCfg) {
+                log.error(userId + "设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                return;
+            }
+        } else {
+            log.error(userId + "获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            return;
+        }
+        log.info(userId + "使能成功，子系统号：{}", alarmsubsystem_code);
     }
 
     @PostConstruct
@@ -428,9 +454,9 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
                 final String[] strings = outParamId.split("_");
                 //单设备布防
                 if ("1.0".equals(value)) {
-                    //setAlarm(Integer.parseInt(strings[0]));
+                    setAlarm(strings[0], Integer.parseInt(strings[1]));
                 } else {
-                    //closeAlarmChan(Integer.parseInt(strings[0]));
+                    closeAlarmChan(strings[0], Integer.parseInt(strings[1]));
                 }
             } catch (Exception e) {
                 log.error("防盗报警控制命令下发失败：" + e.getMessage());
@@ -461,14 +487,14 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
             }
             acsWorkStatus.read();
             //撤布防状态
-            log.info("------bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
+            log.info(key + "------bySetupAlarmStatus(撤布防状态):{}", acsWorkStatus.bySetupAlarmStatus.length);
             for (int i = 0; i < acsWorkStatus.bySetupAlarmStatus.length; i++) {
                 byte b = acsWorkStatus.bySetupAlarmStatus[i];
                 //0- 对应防区处于撤防状态，1- 对应防区处于布防状态
                 sendMsg(key + "_" + (i + 1) + DEPLOY_WITHDRAW_ALARM_STATUS, String.valueOf(b));
             }
             //防区报警状态
-            log.info("------byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
+            log.info(key + "------byAlarmInStatus(防区报警状态):{}", acsWorkStatus.byAlarmInStatus.length);
             for (int i = 0; i < acsWorkStatus.byAlarmInStatus.length; i++) {
                 byte b = acsWorkStatus.byAlarmInStatus[i];
                 if (b == 1) {
@@ -478,7 +504,7 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
                 sendMsg(key + "_" + (i + 1) + ALARM_STATUS, String.valueOf(b));
             }
             //防区故障状态
-            log.info("------byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
+            log.info(key + "------byAlarmInFaultStatus(防区故障状态):{}", acsWorkStatus.byAlarmInFaultStatus.length);
             for (int i = 0; i < acsWorkStatus.byAlarmInFaultStatus.length; i++) {
                 byte b = acsWorkStatus.byAlarmInFaultStatus[i];
                 if (b == 1) {
@@ -488,7 +514,7 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
                 sendMsg(key + "_" + (i + 1) + FAULT_STATUS, String.valueOf(b));
             }
             //防区防拆状态
-            log.info("------byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
+            log.info(key + "------byAlarmInFaultStatus(防区防拆状态):{}", acsWorkStatus.byAlarmInTamperStatus.length);
             for (int i = 0; i < acsWorkStatus.byAlarmInTamperStatus.length; i++) {
                 byte b = acsWorkStatus.byAlarmInTamperStatus[i];
                 //0-对应防区当前无报警，1-对应防区当前有报警
