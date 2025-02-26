@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.*;
 
 
@@ -153,30 +154,30 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
      *
      * @param num 子系统号，子系统关联的防区将会全部布防，实现防区一键布防
      */
-   /* private static void alarmHostSubSystemSetupAlarmChan(int num) {
+    private static void alarmHostSubSystemSetupAlarmChan(String ip, int num) {
         //报警撤防
-        boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(lUserID, num);
+        boolean aBoolean1 = hCNetSDK.NET_DVR_AlarmHostSubSystemSetupAlarmChan(userIds.get(ip), num);
         if (!aBoolean1) {
             log.info("对子系统" + num + "布防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
             log.info("对子系统" + num + "布防成功");
         }
-    }*/
+    }
 
     /**
      * 子系统报警撤防
      *
      * @param num
      */
-   /* private static void alarmHostSubSystemCloseAlarmChan(int num) {
+    private static void alarmHostSubSystemCloseAlarmChan(String ip, int num) {
         //报警撤防
-        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(lUserID, num);
+        boolean aBoolean = hCNetSDK.NET_DVR_AlarmHostSubSystemCloseAlarmChan(userIds.get(ip), num);
         if (!aBoolean) {
             log.info("对子系统" + num + "撤防失败，错误码：" + hCNetSDK.NET_DVR_GetLastError());
         } else {
             log.info("对子系统" + num + "撤防成功");
         }
-    }*/
+    }
 
     /**
      * 设备撤防，设备注销
@@ -208,7 +209,7 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
      * @param alarmsubsystem_code:子系统号
      */
     public static void subsystemParamEx(int alarmsubsystem_code) {
-        log.info("使能开始，子系统号：{}", alarmsubsystem_code);
+        log.info("程序启动-使能开始，子系统号：{}", alarmsubsystem_code);
         //**************开启子系统使能**************
         HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
         net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
@@ -224,41 +225,41 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
                 net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
                 boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(value, 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
                 if (!b_SetAcsCfg) {
-                    log.error(key + "设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                    log.error(key + "，设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
                     return;
                 }
             } else {
-                log.error(key + "获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                log.error(key + "，获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
                 return;
             }
-            log.info(key + "使能成功，子系统号：{}", alarmsubsystem_code);
+            log.info(key + "，能成功，子系统号：{}", alarmsubsystem_code);
         });
     }
 
-    public static void subsystemParamEx(int alarmsubsystem_code, String userId) {
-        log.info(userId + "----使能开始，子系统号：{}", alarmsubsystem_code);
+    public static void subsystemParamEx(int alarmsubsystem_code, String ip) {
+        log.info(ip + "----使能开始，子系统号：{}", alarmsubsystem_code);
         //**************开启子系统使能**************
         HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM net_dvr_alarmsubsystemparam = new HCNetSDK.NET_DVR_ALARMSUBSYSTEMPARAM();
         net_dvr_alarmsubsystemparam.dwSize = net_dvr_alarmsubsystemparam.size();
         net_dvr_alarmsubsystemparam.write();
         IntByReference lpBytesReturned = new IntByReference(0);
 
-        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(userIds.get(userId), 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
+        boolean b_GetAcsCfg = hCNetSDK.NET_DVR_GetDVRConfig(userIds.get(ip), 2001, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size(), lpBytesReturned);
         if (b_GetAcsCfg) {
             net_dvr_alarmsubsystemparam.read();
             net_dvr_alarmsubsystemparam.bySubsystemEnable = 1;//子系统使能：0- 不启用，1- 启用
             net_dvr_alarmsubsystemparam.bySingleZoneSetupAlarmEnable = 1;//单防区布撤防使能：0-禁能，1-使能
             net_dvr_alarmsubsystemparam.byOneKeySetupAlarmEnable = 1;//一键布防使能：0-禁能，1-使能
-            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(userIds.get(userId), 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
+            boolean b_SetAcsCfg = hCNetSDK.NET_DVR_SetDVRConfig(userIds.get(ip), 2002, alarmsubsystem_code, net_dvr_alarmsubsystemparam.getPointer(), net_dvr_alarmsubsystemparam.size());
             if (!b_SetAcsCfg) {
-                log.error(userId + "设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+                log.error(ip + "，设置子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
                 return;
             }
         } else {
-            log.error(userId + "获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
+            log.error(ip + "，获取子系统参数失败！ 错误码：" + hCNetSDK.NET_DVR_GetLastError());
             return;
         }
-        log.info(userId + "使能成功，子系统号：{}", alarmsubsystem_code);
+        log.info(ip + "，使能成功，子系统号：{}", alarmsubsystem_code);
     }
 
     @PostConstruct
@@ -335,20 +336,25 @@ public class HikVisionEasDeviceManyIp extends BaseDevice {
 
     }
 
-   /* @PreDestroy
+    @PreDestroy
     public void LogoutAndStopListen() {
         if (lListenHandle > -1) {
             if (hCNetSDK.NET_DVR_StopListen_V30(lListenHandle)) {
                 log.info("停止监听成功");
             }
         }
-        if (lUserID > -1) {
-            if (hCNetSDK.NET_DVR_Logout(lUserID)) {
-                log.info("注销成功");
+
+        userIds.forEach((s, integer) -> {
+            if (integer > -1) {
+                if (hCNetSDK.NET_DVR_Logout(integer)) {
+                    log.info(s + "：注销成功");
+                }
             }
-        }
+
+        });
+
         hCNetSDK.NET_DVR_Cleanup();
-    }*/
+    }
 
     @Override
     public void sendMessage(DeviceMessage dm) {
