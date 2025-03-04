@@ -10,7 +10,7 @@
 
     <artifactId>iot_epc_fd</artifactId>
     <name>iot_epc_fd</name>
-    <version>1.0.0-R20241101</version>
+    <version>1.0.0-R20250304</version>
 
     <dependencies>
         <dependency>

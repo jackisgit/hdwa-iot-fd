@@ -243,6 +243,7 @@ public class DeviceHandler extends BaseDevice {
                 sendMsg(defenceAreaId + ONLINE_STATUS, "1");
                 if ("5".equals(status)) {
                     sendMsg(defenceAreaId + ALARM_STATUS, "1");
+                    sendMsg(defenceAreaId + DEPLOY_WITHDRAW_ALARM_STATUS, "1");
                 } else {
                     sendMsg(defenceAreaId + ALARM_STATUS, "0");
                     if ("1".equals(status)) {
