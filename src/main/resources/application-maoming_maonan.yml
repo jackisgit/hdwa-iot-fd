@@ -23,7 +23,14 @@ epc:
   gcId: 4409021082
   subsystem: fdxt/
   threadNum: 1
-  ip: 192.168.1.251
-  appKey: 27263895
-  appSecret: uhxGW8GuZz8dzl1sUPAu
+  host: https://192.168.1.200
+  clientId: maomingmaonan
+  clientSecret: 6a8e7ba0-f6bb-47a9-ad55-35f13d68d232
+  grantType: password
+  username: openApiUser
+  password: system12345
+  version: 1.0.0
+  service: ThirdParty
+  localhost: 10.165.176.120
+  machineId: 1000085
   cron: 0/30 * * * * ?
