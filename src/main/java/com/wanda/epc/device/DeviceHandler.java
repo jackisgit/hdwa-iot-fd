@@ -61,24 +61,6 @@ public class DeviceHandler extends BaseDevice {
     private static String operateURI = "/evo-apigw/evo-alarm/{0}/alarmhosts/operate/?nodeCode={1}&operate={2}";
 
 
-    /**
-     * 获取报警设备列表
-     */
-    private static String getDeviceURI="/artemis/api/resource/v1/iasDevice/get";
-
-    /**
-     * 获取设备下的所有防区
-     */
-    private static String getAreaURI="/artemis/api/scpms/v1/iasDevice/defence";
-
-    /**
-     * 获取防区状态 （未知：-1，离线：0，正常：1，故障：2，报警：3，旁路：4）
-     */
-    private static String getAreaStatus="/artemis/api/scpms/v1/defence/status";
-
-
-
-
     @Resource
     private CommonDevice commonDevice;
     private Map<String, String> header = new HashMap<>();
