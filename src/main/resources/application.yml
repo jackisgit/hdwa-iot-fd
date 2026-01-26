@@ -26,11 +26,8 @@ epc:
   subsystem: fdxt/
   threadNum: 5
   cron: 0/60 * * * * ?
-  #使能分组
-  group: 1,2,3,4,5
 
-hikVision:
-  ip: 10.86.16.188
-  port: 8000
-  user: admin
-  pwd: bj123456
+isc:
+  host:
+  appKey:
+  appSecret:
