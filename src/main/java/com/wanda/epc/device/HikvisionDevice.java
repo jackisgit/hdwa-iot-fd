@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONPath;
 import com.hikvision.artemis.sdk.ArtemisHttpUtil;
 import com.hikvision.artemis.sdk.config.ArtemisConfig;
 import com.wanda.epc.param.DeviceMessage;
-import com.wanda.epc.util.ConvertUtil;
 import com.wanda.epc.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +93,7 @@ public class HikvisionDevice extends BaseDevice {
         String outParamId = deviceMessage.getOutParamId();
         String[] split = outParamId.split("_");
         String indexCode = split[0];
-        Integer command;
+        int command;
         if ("1.0".equals(value)) {
             log.info("布防操作");
             command = 1;
@@ -224,8 +223,7 @@ public class HikvisionDevice extends BaseDevice {
                 JSONArray dlpList = jsonObject.getJSONArray("list");
                 List<HikvisionIasChannelVo> hikvisionIasChannelVoList = JSON.parseArray(JSON.toJSONString(dlpList), HikvisionIasChannelVo.class);
                 if (!CollectionUtils.isEmpty(hikvisionIasChannelVoList)) {
-                    List<String> indexCodList = hikvisionIasChannelVoList.stream().map(hikvision -> hikvision.getIndexCode()).collect(Collectors.toList());
-                    return indexCodList;
+                    return hikvisionIasChannelVoList.stream().map(HikvisionIasChannelVo::getIndexCode).collect(Collectors.toList());
                 }
 
             }
@@ -272,8 +270,7 @@ public class HikvisionDevice extends BaseDevice {
             if ("0".equals(code)) {
                 JSONObject jsonObject = (JSONObject) JSONPath.read(result, "$.data");
                 JSONArray dlpList = jsonObject.getJSONArray("list");
-                List<HikvisionDefenceStatusVo> hikvisionDefenceStatusVoList = JSON.parseArray(JSON.toJSONString(dlpList), HikvisionDefenceStatusVo.class);
-                return hikvisionDefenceStatusVoList;
+                return JSON.parseArray(JSON.toJSONString(dlpList), HikvisionDefenceStatusVo.class);
             }
         }
         return null;
@@ -317,8 +314,7 @@ public class HikvisionDevice extends BaseDevice {
             if ("0".equals(code)) {
                 JSONObject jsonObject = (JSONObject) JSONPath.read(result, "$.data");
                 JSONArray dlpList = jsonObject.getJSONArray("list");
-                List<HikvisionsubSystemIStatusVo> hikvisionDefenceStatusVoList = JSON.parseArray(JSON.toJSONString(dlpList), HikvisionsubSystemIStatusVo.class);
-                return hikvisionDefenceStatusVoList;
+                return JSON.parseArray(JSON.toJSONString(dlpList), HikvisionsubSystemIStatusVo.class);
             }
         }
         return null;

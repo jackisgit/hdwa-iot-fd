@@ -22,13 +22,13 @@ beanName: hikvisionDevice
 #广场ID及GatewayId
 epc:
   gatewayId: FD
-  gcId: 1501050050
+  gcId: 2025000550
   subsystem: fdxt/
   threadNum: 10
   cron: 0/30 * * * * ?
-host: 192.168.10.253:443
-appKey: 23710630
-appSecret: DJEs5iMZ58Tk3FBdOItu
+host: 172.16.2.9:443
+appKey: 24521159
+appSecret: QBUQKYEngEznKoUFENDT
 type: application/json
 artemisPath: /artemis
 #查询入侵报警主机通道列表v2

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>iot_epc_fd</artifactId>
-    <version>1.0.0-R20240124</version>
+    <version>1.0.0-R20260126</version>
 
     <dependencies>
         <dependency>
@@ -37,7 +37,7 @@
 
 
     <build>
-        <finalName>IOT_EPC_FD_hikvision_v1.5.102_${version}</finalName>
+        <finalName>IOT_EPC_FD_hikvision_ISC_v1.5.102_${version}</finalName>
     </build>
 
 </project>
